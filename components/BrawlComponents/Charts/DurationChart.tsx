@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "../../ui/chart";
 import { ModeSelector } from "../Selectors/ModeSelector";
 import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
+import { boltColors } from "@/lib/BrawlUtility/BrawlConstants";
 
 
 function getDurationChartData(frequencyCompiler: any) {
@@ -64,7 +65,7 @@ export const DurationChart = ({ playerTag }: { playerTag: string }) => {
                             cursor={false}
                             content={<ChartTooltipContent hideLabel />}
                         />
-                        <Bar dataKey="games" fill="#666666" radius={[8, 8, 0, 0]} />
+                        <Bar dataKey="games" fill={boltColors.blue700} radius={[8, 8, 0, 0]} />
                         <ReferenceLine
                             y={Math.max(...chartData.map(item => {
 

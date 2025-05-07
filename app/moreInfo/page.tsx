@@ -24,7 +24,8 @@ const Page = () => {
                         <h3 className="text-xl font-semibold text-gray-200 mb-2">Tracking Details</h3>
                         <p className="text-gray-400">
                             The Brawl Stars API provides access to a player's most recent 25 games.
-                            Every 60 minutes, BrawlBolt accesses these and saves any unsaved matches for each player.
+                            Every 60 minutes, BrawlBolt accesses these and saves any unsaved matches for every account that has been active on this site in the past 30 days.
+                            To ensure your account is continually tracked, access your account's statistics at least once a month.
                             If a player plays more than 25 games in a 60 minute period, there is a chance that BrawlBolt will be unable to save some of the games.
                             BrawlBolt saves raw API data in a database. Currently, match history is unavailable, but this is <b>coming soon!</b>{" "}
                         </p>

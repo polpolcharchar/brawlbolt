@@ -5,11 +5,11 @@ import { PlayerDataProvider } from "@/lib/BrawlUtility/PlayerDataProvider";
 import { ThemeProvider } from "@/lib/ThemeProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import "./globals.css";
+import Head from "next/head";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -81,6 +81,12 @@ export default function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
+      <Head>
+        <title>BrawlBolt</title>
+        <meta name="description" content={metadata.description} />
+        <meta name="keywords" content={metadata.keywords.join(", ")} />
+        <link rel="icon" type="image/png" href="/favicon.png" />
+      </Head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Analytics />
         <SpeedInsights />
@@ -112,9 +118,9 @@ export default function RootLayout({
                         <Image
                           src="/logo.png"
                           alt="Circular Logo"
-                          layout="fill"
-                          objectFit="cover"
                           className="rounded-full"
+                          width={999}
+                          height={999}
                         />
                       </div>
                     </div>
@@ -123,11 +129,11 @@ export default function RootLayout({
                     <div className="flex-2">
                       <p className="text-2xl sm:text-3xl text-blue-700">Lightning Fast Statistics</p>
 
-                      <p className="text-xl text-cyan-300">
+                      {/* <p className="text-xl text-cyan-300">
                         <Link href="/track">
                           Click <i>here</i> to start tracking
                         </Link>
-                      </p>
+                      </p> */}
                     </div>
 
                   </div>
@@ -140,9 +146,9 @@ export default function RootLayout({
 
             <Toaster />
 
-            <AboutBrawlBoltPage/>
+            <AboutBrawlBoltPage />
 
-            
+
 
           </PlayerDataProvider>
         </ThemeProvider>

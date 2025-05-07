@@ -1,4 +1,4 @@
-import { brawlerLabels, modeLabelMap } from "@/lib/BrawlUtility/BrawlConstants";
+import { boltColors, brawlerLabels, modeLabelMap } from "@/lib/BrawlUtility/BrawlConstants";
 import { RecursiveCompiledStats, usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
 import clsx from "clsx";
 import { Check, ChevronsUpDown } from "lucide-react";
@@ -142,14 +142,26 @@ export const RecursiveStatisticChart = ({ playerTag }: { playerTag: string }) =>
                                 type="single"
                                 value={rankedVsRegularToggleValue}
                                 onValueChange={(val) => {
-                                    if (val) setRankedVsRegularToggleValue(val)
+                                    if (val) setRankedVsRegularToggleValue(val);
                                 }}
                                 className="border rounded-lg max-w-[200px] w-full"
                             >
-                                <ToggleGroupItem value="ranked" className="px-4 py-2" disabled={statType === "trophyChange" || statType === "trophyChangePerGame"}>Ranked</ToggleGroupItem>
-                                <ToggleGroupItem value="regular" className="px-4 py-2">{/*playerData[playerTag].playerStats.playerName*/"Regular"}</ToggleGroupItem>
+                                <ToggleGroupItem
+                                    value="ranked"
+                                    className="px-4 py-2 data-[state=on]:bg-blue-700 data-[state=on]:text-white data-[state=on]:border-blue-700"
+                                    disabled={statType === "trophyChange" || statType === "trophyChangePerGame"}
+                                >
+                                    Ranked
+                                </ToggleGroupItem>
+                                <ToggleGroupItem
+                                    value="regular"
+                                    className="px-4 py-2 data-[state=on]:bg-blue-700 data-[state=on]:text-white data-[state=on]:border-blue-700"
+                                >
+                                    Regular
+                                </ToggleGroupItem>
                             </ToggleGroup>
                         </div>
+
 
                         {/* brawler popovercenter  */}
                         <Popover open={brawlerPopoverOpen} onOpenChange={setBrawlerPopoverOpen}>
@@ -239,7 +251,7 @@ export const RecursiveStatisticChart = ({ playerTag }: { playerTag: string }) =>
                             <Bar
                                 dataKey={statType}
                                 radius={[8, 8, 0, 0]}
-                                fill="#666666"
+                                fill={boltColors.blue700}
                             />
 
                             <ReferenceLine
@@ -247,7 +259,7 @@ export const RecursiveStatisticChart = ({ playerTag }: { playerTag: string }) =>
 
                                     const x = item[statType as keyof typeof item];
 
-                                    if(x){
+                                    if (x) {
                                         return Number(x);
                                     }
                                     return 0;

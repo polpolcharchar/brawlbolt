@@ -128,3 +128,7 @@ export const modeLabelMap = {
     duels: "Duels",
     trophyThieves: "UNO"
 }
+
+export const boltColors = {
+    blue700: "rgb(29 78 216)",
+}

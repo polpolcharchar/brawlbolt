@@ -6,6 +6,7 @@ import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { Skeleton } from "../ui/skeleton";
+import ScarceDataAlertCard from "./ScarceDataAlertCard";
 
 export const PlayerSearchAndDataPage = () => {
 
@@ -59,16 +60,19 @@ export const PlayerSearchAndDataPage = () => {
     <div className="flex flex-col items-center">
       <PlayerTagInput />
 
-      
+
 
       {
         Object.entries(playerData).map(([playerTag, playerData]) => {
-            return (
-              <PlayerCard key={playerTag} playerTag={playerTag} />
-            )
+          return (
+            <PlayerCard key={playerTag} playerTag={playerTag} />
+          )
 
         })
       }
+
+      <ScarceDataAlertCard />
+
 
     </div>
   );

@@ -120,8 +120,8 @@ const Page = () => {
     return (
         <div className="flex flex-col items-center justify-center">
             <Card className="max-w-xl w-full shadow-lg rounded-2xl">
-                <CardContent className="p-6">
-                    <h1 className="text-6xl font-bold text-center mb-4">
+                <CardContent className="p-4 pb-0">
+                    <h1 className="text-4xl font-bold text-center mb-4">
                         Begin Tracking Your Account NOW
                     </h1>
                     <Input
@@ -142,11 +142,13 @@ const Page = () => {
                     >
                         Submit
                     </Button>
-                    <ul className="mt-6 list-[circle] list-inside text-3xl font-bold text-center">
-                        <li>Save your games</li>
+                    <ul className="mt-6 list-[circle] list-inside text-3xl font-bold text-center pb-2">
+                        <li>Save every game you play*</li>
                         <li>Get personalized insights</li>
                         <li>Analyze your playstyle</li>
                     </ul>
+
+                    <footer className="text-sm text-gray-600 text-center">*: Access your account's statistics at least once per month to ensure continual tracking.</footer>
                 </CardContent>
 
                 <CardFooter className="p-4 text-sm text-gray-600 text-center block">

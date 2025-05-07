@@ -26,7 +26,7 @@ export const PlayerCard = ({ playerTag }: { playerTag: string }) => {
     };
 
     return (
-        <Card className="w-full max-w-5xl mb-8">
+        <Card className="w-full max-w-5xl mb-8 border-blue-700 border-2">
 
             {(typeof playerData[playerTag] !== "string") ? (
                 <div className="text-center">

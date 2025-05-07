@@ -4,6 +4,7 @@ import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "
 import { ModeSelector } from "../Selectors/ModeSelector";
 import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
 import { useState } from "react";
+import { boltColors } from "@/lib/BrawlUtility/BrawlConstants";
 
 function getChartDataForRankCompiler(rankCompiler: any) {
     if (!rankCompiler) return [];
@@ -62,7 +63,7 @@ export const ShowdownRankChart = ({ playerTag }: { playerTag: string }) => {
                             content={<ChartTooltipContent hideLabel />}
                         />
 
-                        <Bar dataKey='games' radius={[8, 8, 0, 0]} fill="#666666" />
+                        <Bar dataKey='games' radius={[8, 8, 0, 0]} fill={boltColors.blue700} />
 
                         <ReferenceLine
                             y={Math.max(...chartData.map(item => {

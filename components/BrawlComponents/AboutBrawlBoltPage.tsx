@@ -43,8 +43,9 @@ export const AboutBrawlBoltPage = () => {
                                 <h3 className="text-xl font-semibold text-gray-200 mb-2">Tracking</h3>
                                 <p className="text-gray-400">
                                     Player games are passively tracked and compiled as needed.
-                                    As soon as you begin tracking your account, your last 25 games and every future game you play is saved.
-                                    Unfortunately, past games are inaccessible.
+                                    As soon as you begin tracking your account, <u>every single game you play for the next month is saved</u>.
+                                    To ensure your account is continually tracked, <u>access your account's statistics at least once a month</u>.
+                                    Unfortunately, a record of games played before tracking began is inaccessible {"(other than the most recent 25 games)"}.
                                 </p>
                             </section>
 
