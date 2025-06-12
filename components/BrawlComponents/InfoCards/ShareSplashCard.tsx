@@ -1,23 +1,34 @@
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { useEffect, useState } from "react";
-import { LinkCopyIndicator } from "../LinkCopyIndicator";
+import { LinkCopyIndicator } from "../Selectors/LinkCopyIndicator";
 
-const messages = [
-    "Tell your friends!",
-    "Share with 3 friends or you will never reach legendary rank!",
-    "Share = Unlock Leon!",
-    "Sharing this site statistically improves your winrate!",
-    "Share in your club chat!",
-    "Help out your club: share today!",
-    "Visit brawlbolt.com, select high winrate brawler, WIN!",
-    "Share if you hate Edgar!",
+const splashMessages = [
+    //Share:
+    "\"Tell your friends!\"",
+    "\"Share with 3 friends or you will never reach legendary rank!\"",
+    "\"Share = Unlock Leon!\"",
+    "\"Share in your club chat!\"",
+    "\"Help out your club: share TODAY!\"",
+    "\"Help out your friends: share TODAY!\"",
+    "\"Share if you hate Edgar!\"",
+    "\"Tag a creator!\"",
+    
+    //Benefits
+    "\"No ADs!",
+    "\"Its FREE!",
+    "\"Visit brawlbolt.com, select high winrate brawler, WIN!\"",
+    "\"Don't just play the meta, KNOW the meta!\"",
+    
+    //Funny
+    "\"Sharing this site statistically improves your winrate!\"",
+    "\"Carbon Neutral!\"",
 ]
 
 export const ShareSplashCard = () => {
     const [message, setMessage] = useState("");
 
     useEffect(() => {
-        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        const randomMessage = splashMessages[Math.floor(Math.random() * splashMessages.length)];
         setMessage(randomMessage);
     }, []);
 

@@ -79,6 +79,14 @@ export function BrawlerDataTable<TData, TValue>({
         },
     ]);
 
+    const dateFormat: any = {
+        month: "numeric",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+    }
+
     const {
         playerData
     } = usePlayerData();
@@ -131,14 +139,12 @@ export function BrawlerDataTable<TData, TValue>({
                             {new Date(
                                 new Date(playerData[playerTag]["datetime"]).getTime() -
                                 playerData[playerTag]["hourRange"] * 60 * 60 * 1000
-                            ).toLocaleString()}{" "}
-                            to {new Date(playerData[playerTag]["datetime"]).toLocaleString()}
+                            ).toLocaleString("en-US", dateFormat)}{" "}
+                            to {new Date(playerData[playerTag]["datetime"]).toLocaleString("en-US", dateFormat)}
                         </p>
                     )}
 
                     <p className="text-sm text-gray-400 mb-4">Hover values for 95% confidence interval (may not be applicable)</p>
-
-
 
                     <div className="flex flex-wrap gap-4">
                         <RegularRankedToggle

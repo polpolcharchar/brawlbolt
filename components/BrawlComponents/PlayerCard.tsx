@@ -10,7 +10,7 @@ import { RecursiveStatisticChart } from "./Charts/RecursiveStatisticChart";
 import { ShowdownRankChart } from "./Charts/ShowdownRankChart";
 import { BrawlerDataTable } from "./Tables/BrawlerTable/BrawlerTable";
 import { columns } from "./Tables/BrawlerTable/Columns";
-import { LinkCopyIndicator } from "./LinkCopyIndicator";
+import { LinkCopyIndicator } from "./Selectors/LinkCopyIndicator";
 import { ShareSplashCard } from "./InfoCards/ShareSplashCard";
 
 

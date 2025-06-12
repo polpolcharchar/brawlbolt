@@ -8,11 +8,13 @@ import {
     ChartTooltipContent,
 } from "@/components/ui/chart";
 import { useEffect, useState } from "react";
-import { Area, AreaChart, CartesianGrid, ReferenceLine, XAxis, YAxis } from "recharts";
+import { Area, AreaChart, CartesianGrid, Curve, ReferenceLine, XAxis, YAxis } from "recharts";
 import { BrawlerSelector } from "../Selectors/BrawlerSelector";
 import { ModeSelector } from "../Selectors/ModeSelector";
 import { RegularRankedToggle } from "../Selectors/RegularRankedToggle";
 import { modeLabels, rankedModeLabelMap, rankedModeLabels } from "@/lib/BrawlUtility/BrawlConstants";
+import { ChartSplineIcon, LineChart, LineChartIcon } from "lucide-react";
+import { LinearNaturalChartToggle } from "../Selectors/LinearNaturalChartToggle";
 
 const chartConfig = {
     winrate: {
@@ -32,7 +34,7 @@ interface Stat {
 }
 
 export const BrawlerOverTimeChart = () => {
-    const [mode, setMode] = useState("");
+    const [mode, setMode] = useState("brawlBall");
     const [rankedVsRegularToggleValue, setRankedVsRegularToggleValue] = useState("regular");
     const updateRankedVsRegularToggleValue = (newValue: string) => {
         if (newValue == "ranked" && rankedModeLabelMap[mode as keyof typeof rankedModeLabelMap] == undefined) {
@@ -41,8 +43,10 @@ export const BrawlerOverTimeChart = () => {
         setRankedVsRegularToggleValue(newValue);
     }
 
-    const [brawler, setBrawler] = useState("8-BIT");
+    const [brawler, setBrawler] = useState("JACKY");
     const [chartData, setChartData] = useState<Stat[]>([]);
+
+    const [chartType, setChartType] = useState<"linear" | "natural">("natural");
 
     const changeBrawler = (newBrawler: string) => {
         if (newBrawler !== "") setBrawler(newBrawler);
@@ -123,6 +127,8 @@ export const BrawlerOverTimeChart = () => {
                     />
                     <ModeSelector mode={mode} setMode={setMode} selectModeLabels={rankedVsRegularToggleValue == "regular" ? modeLabels : rankedModeLabels} />
                     <BrawlerSelector brawler={brawler} setBrawler={changeBrawler} />
+                    <LinearNaturalChartToggle type={chartType} setType={setChartType}/>
+
                 </div>
             </CardHeader>
             <CardContent>
@@ -153,11 +159,12 @@ export const BrawlerOverTimeChart = () => {
                             }
                         />
                         <YAxis
-                            tickLine={false}
+                            tickLine={true}
                             axisLine={false}
                             tickMargin={8}
                             width={40}
                             tickFormatter={(value) => `${value}%`}
+                            ticks={[16.6, 33.3, 50, 66.6]}
                         />
                         <ChartTooltip
                             cursor={true}
@@ -198,14 +205,14 @@ export const BrawlerOverTimeChart = () => {
                         />
                         <Area
                             dataKey="winrate"
-                            type="linear"
+                            type={chartType}
                             fill="url(#fillWinrate)"
                             stroke="var(--chart-1)"
                             stackId="a"
                         />
                         <Area
                             dataKey="starRate"
-                            type="linear"
+                            type={chartType}
                             fill="url(#fillStarRate)"
                             stroke="var(--chart-2)"
                             stackId="b"

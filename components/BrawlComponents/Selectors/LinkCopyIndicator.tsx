@@ -1,7 +1,7 @@
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
 
-export const LinkCopyIndicator = ({url, title, copyClassName="w-6 h-6", pulseAnimation=false} : {url: string, title: string, copyClassName?: string, pulseAnimation?: boolean}) => {
+export const LinkCopyIndicator = ({ url, title, copyClassName = "w-6 h-6", pulseAnimation = false }: { url: string, title: string, copyClassName?: string, pulseAnimation?: boolean }) => {
 
     const [copied, setCopied] = useState(false);
 
@@ -21,11 +21,10 @@ export const LinkCopyIndicator = ({url, title, copyClassName="w-6 h-6", pulseAni
                     <Copy className={copyClassName + (pulseAnimation && " animate-pulse")} />
                 )}
             </div>
-            {!copied && (
-                <span className="absolute left-10 -top-1/2 transform -translate-x-1 bg-gray-700 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100">
-                    {title}
-                </span>
-            )}
+
+            <span className="absolute left-10 -top-1/2 transform -translate-x-1 bg-gray-700 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100">
+                {copied ? "Copied" : title}
+            </span>
         </div>
     )
 }

@@ -62,6 +62,14 @@ export const PlayerSearchAndDataPage = () => {
       {
         Object.entries(playerData)
           .sort(([tagA, dataA], [tagB, dataB]) => {
+
+            //show Loading first
+            if(dataA === "Loading..."){
+              return -1;
+            }else if(dataB === "Loading..."){
+              return 1;
+            }
+
             const indexA = (dataA as { sortIndex?: number }).sortIndex;
             const indexB = (dataB as { sortIndex?: number }).sortIndex;
 

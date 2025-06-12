@@ -100,17 +100,17 @@ export const modeLabels = [
     { "value": "gemGrab", "label": "Gem Grab" },
     { "value": "bounty", "label": "Bounty" },
     { "value": "knockout", "label": "Knockout" },
-    { "value": "wipeout", "label": "Wipeout" },
-    { "value": "siege", "label": "Siege" },
+    { "value": "brawlArena", "label": "Brawl Arena" },
+    { "value": "duels", "label": "Duels" },
     { "value": "soloShowdown", "label": "Solo Showdown" },
     { "value": "duoShowdown", "label": "Duo Showdown" },
     { "value": "trioShowdown", "label": "Trio Showdown" },
     { "value": "gemGrab5V5", "label": "Gem Grab 5v5" },
     { "value": "brawlBall5V5", "label": "Brawl Ball 5v5" },
     { "value": "knockout5V5", "label": "Knockout 5v5" },
-    { "value": "duels", "label": "Duels" },
     { "value": "trophyThieves", "label": "UNO" },
-    { "value": "brawlArena", "label": "Brawl Arena" },
+    { "value": "wipeout", "label": "Wipeout" },
+    { "value": "siege", "label": "Siege" },
 ]
 export const rankedModeLabels = [
     { "value": "brawlBall", "label": "Brawl Ball" },
@@ -128,17 +128,17 @@ export const modeLabelMap = {
     gemGrab: "Gem Grab",
     bounty: "Bounty",
     knockout: "Knockout",
-    wipeout: "Wipeout",
-    siege: "Siege/Cleaning Duty",
+    brawlArena: "Brawl Arena",
+    duels: "Duels",
     soloShowdown: "Solo Showdown",
     duoShowdown: "Duo Showdown",
     trioShowdown: "Trio Showdown",
     gemGrab5V5: "Gem Grab 5v5",
     brawlBall5V5: "Brawl Ball 5v5",
     knockout5V5: "Knockout 5v5",
-    duels: "Duels",
     trophyThieves: "UNO",
-    brawlArena: "Brawl Arena"
+    wipeout: "Wipeout",
+    siege: "Siege/Cleaning Duty",
 }
 export const rankedModeLabelMap = {
     brawlBall: "Brawl Ball",
@@ -151,4 +151,23 @@ export const rankedModeLabelMap = {
 
 export const boltColors = {
     blue700: "rgb(29 78 216)",
+}
+
+export function isValidTag(tag: string): boolean {
+    // Define the set of valid characters
+    const validChars = new Set(['P', 'Y', 'L', 'Q', 'G', 'R', 'J', 'C', 'U', 'V', '0', '2', '8', '9', '#']);
+
+    // Check if the tag contains only valid characters
+    for (let char of tag.toUpperCase()) {
+        if (!validChars.has(char)) {
+            return false;
+        }
+    }
+
+    // Ensure the tag has at least 3 characters (the shortest valid tag found)
+    if (tag.length < 3) {
+        return false;
+    }
+
+    return true;
 }

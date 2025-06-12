@@ -144,7 +144,6 @@ export class OverallPlayerData {
 
 const PlayerDataContext = createContext<any>(null);
 
-
 export const PlayerDataProvider = ({ children }: { children: React.ReactNode }) => {
   const [playerData, setPlayerData] = useState<Record<string, OverallPlayerData>>({});
   const [index, setIndex] = useState(0);
@@ -179,5 +178,6 @@ export const PlayerDataProvider = ({ children }: { children: React.ReactNode }) 
     </PlayerDataContext.Provider>
   );
 };
-
 export const usePlayerData = () => useContext(PlayerDataContext);
+
+
