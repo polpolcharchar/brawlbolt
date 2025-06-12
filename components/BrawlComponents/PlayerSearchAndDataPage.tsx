@@ -6,7 +6,7 @@ import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { Skeleton } from "../ui/skeleton";
-import ScarceDataAlertCard from "./ScarceDataAlertCard";
+import ScarceDataAlertCard from "./InfoCards/ScarceDataAlertCard";
 
 export const PlayerSearchAndDataPage = () => {
 
@@ -16,7 +16,7 @@ export const PlayerSearchAndDataPage = () => {
   } = usePlayerData();
 
   const searchParams = useSearchParams();
-  const tagParameter = searchParams.get('tag'); // Get the 'playerID' query parameter
+  const tagParameter = searchParams.get('tag');
 
   //Load Default
   useEffect(() => {
@@ -53,22 +53,26 @@ export const PlayerSearchAndDataPage = () => {
     };
 
     fetchData();
-  }, [tagParameter]); // Add tagParameter to the dependency array
+  }, [tagParameter]);
 
 
   return (
     <div className="flex flex-col items-center">
       <PlayerTagInput />
-
-
-
       {
-        Object.entries(playerData).map(([playerTag, playerData]) => {
-          return (
-            <PlayerCard key={playerTag} playerTag={playerTag} />
-          )
+        Object.entries(playerData)
+          .sort(([tagA, dataA], [tagB, dataB]) => {
+            const indexA = (dataA as { sortIndex?: number }).sortIndex;
+            const indexB = (dataB as { sortIndex?: number }).sortIndex;
 
-        })
+            if (indexA === undefined && indexB === undefined) return 0;
+            if (indexA === undefined) return 1;
+            if (indexB === undefined) return -1;
+            return indexB - indexA;
+          })
+          .map(([playerTag, playerData]) => {
+            return <PlayerCard key={playerTag} playerTag={playerTag} />;
+          })
       }
 
       <ScarceDataAlertCard />

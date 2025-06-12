@@ -74,6 +74,7 @@ const Page = () => {
                                 As of now, the individual games of a ranked match are considered individual games.
                                 This means that if you win a ranked match 2-0, it is represented as two different games.
                             </li>
+                            <li>The API does not differentiate between the siege and cleaning duty gamemode, so they are listed as one mode here.</li>
                         </ul>
                     </section>
 

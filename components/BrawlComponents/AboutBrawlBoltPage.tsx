@@ -34,7 +34,7 @@ export const AboutBrawlBoltPage = () => {
                                     BrawlBolt provides unique detailed statistics using every piece of game data possible.
                                     The options for personalized data analysis are unrivaled compared to other Brawl Stars tracking sites.
                                     Normal account statistics like trophies, level, and club exist on any Brawl website; they are not prioritized here.{" "}
-                                    <a className="underline" href="/track">Begin tracking</a> your account to get started for <b>FREE</b>!
+                                    Search your account to get started for <b>FREE</b>!
                                 </p>
                             </section>
 
@@ -66,8 +66,19 @@ export const AboutBrawlBoltPage = () => {
                     </Card>
 
                     <footer className="text-sm text-gray-500">
-                        Not affiliated with nor endorsed by Supercell.
+                        This material is unofficial and is not endorsed by Supercell.
                     </footer>
+                    <footer className="text-sm text-gray-500">
+                        For more information see Supercell's Fan Content Policy:{" "}
+                        <a
+                            href="https://www.supercell.com/fan-content-policy"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            www.supercell.com/fan-content-policy
+                        </a>.
+                    </footer>
+
                 </div>
             )}
         </div>

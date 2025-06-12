@@ -43,9 +43,11 @@ export const brawlerLabels = [
     { "value": "GUS", "label": "Gus" },
     { "value": "HANK", "label": "Hank" },
     { "value": "JACKY", "label": "Jacky" },
+    { "value": "JAE-YONG", "label": "Jae-yong" },
     { "value": "JANET", "label": "Janet" },
     { "value": "JESSIE", "label": "Jessie" },
     { "value": "JUJU", "label": "Juju" },
+    { "value": "KAZE", "label": "Kaze" },
     { "value": "KENJI", "label": "Kenji" },
     { "value": "KIT", "label": "Kit" },
     { "value": "LARRY & LAWRIE", "label": "Larry & Lawrie" },
@@ -108,6 +110,15 @@ export const modeLabels = [
     { "value": "knockout5V5", "label": "Knockout 5v5" },
     { "value": "duels", "label": "Duels" },
     { "value": "trophyThieves", "label": "UNO" },
+    { "value": "brawlArena", "label": "Brawl Arena" },
+]
+export const rankedModeLabels = [
+    { "value": "brawlBall", "label": "Brawl Ball" },
+    { "value": "heist", "label": "Heist" },
+    { "value": "hotZone", "label": "Hot Zone" },
+    { "value": "gemGrab", "label": "Gem Grab" },
+    { "value": "bounty", "label": "Bounty" },
+    { "value": "knockout", "label": "Knockout" },
 ]
 
 export const modeLabelMap = {
@@ -116,17 +127,26 @@ export const modeLabelMap = {
     hotZone: "Hot Zone",
     gemGrab: "Gem Grab",
     bounty: "Bounty",
+    knockout: "Knockout",
     wipeout: "Wipeout",
-    siege: "Siege",
+    siege: "Siege/Cleaning Duty",
     soloShowdown: "Solo Showdown",
     duoShowdown: "Duo Showdown",
     trioShowdown: "Trio Showdown",
-    knockout: "Knockout",
     gemGrab5V5: "Gem Grab 5v5",
     brawlBall5V5: "Brawl Ball 5v5",
     knockout5V5: "Knockout 5v5",
     duels: "Duels",
-    trophyThieves: "UNO"
+    trophyThieves: "UNO",
+    brawlArena: "Brawl Arena"
+}
+export const rankedModeLabelMap = {
+    brawlBall: "Brawl Ball",
+    heist: "Heist",
+    hotZone: "Hot Zone",
+    gemGrab: "Gem Grab",
+    bounty: "Bounty",
+    knockout: "Knockout",
 }
 
 export const boltColors = {

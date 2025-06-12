@@ -5,6 +5,7 @@ import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "
 import { ModeSelector } from "../Selectors/ModeSelector";
 import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
 import { boltColors } from "@/lib/BrawlUtility/BrawlConstants";
+import { RegularRankedToggle } from "../Selectors/RegularRankedToggle";
 
 
 function getDurationChartData(frequencyCompiler: any) {
@@ -32,22 +33,36 @@ export const DurationChart = ({ playerTag }: { playerTag: string }) => {
     } satisfies ChartConfig;
 
     const [mode, setMode] = useState("");
+    const [rankedVsRegularToggleValue, setRankedVsRegularToggleValue] = useState("regular");
 
-    const baseMap = playerData[playerTag].playerStats.regularModeMapBrawler;
+    const baseMap = rankedVsRegularToggleValue == "regular" ? playerData[playerTag].playerStats.regularModeMapBrawler : playerData[playerTag].playerStats.rankedModeMapBrawler;
     const chartData = !playerTag ? [] : getDurationChartData(
         (mode === "") ?
             baseMap.overallResults.durationFrequencies
             :
             baseMap.stat_map[mode]?.overallResults?.durationFrequencies);
 
+    if (playerTag === "Global") {
+        return (
+            <Card className="border-none w-full h-full flex items-center justify-center shadow-lg rounded-lg">
+                <h2 className="text-2xl font-semibold">
+                    Duration Data Unavailable for Global Statistics!
+                </h2>
+            </Card>
+        )
+    }
+
     return (
         <Card className="border-none">
-            <CardHeader className="flex justify-between items-start">
+            <CardHeader className="block justify-between items-start">
                 <div>
                     <CardTitle className="text-2xl font-bold mb-4">Match Duration Distribution</CardTitle>
                 </div>
 
-                <ModeSelector mode={mode} setMode={setMode} />
+                <div className="flex flex-wrap gap-4">
+                    <RegularRankedToggle rankedVsRegularToggleValue={rankedVsRegularToggleValue} setRankedVsRegularToggleValue={setRankedVsRegularToggleValue} statType="duration" />
+                    <ModeSelector mode={mode} setMode={setMode} />
+                </div>
             </CardHeader>
             <CardContent className="">
                 <ChartContainer config={chartConfig}>

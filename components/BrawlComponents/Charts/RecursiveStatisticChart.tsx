@@ -1,16 +1,12 @@
 import { boltColors, brawlerLabels, modeLabelMap } from "@/lib/BrawlUtility/BrawlConstants";
 import { RecursiveCompiledStats, usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
-import clsx from "clsx";
-import { Check, ChevronsUpDown } from "lucide-react";
 import { useState } from "react";
 import { Bar, BarChart, CartesianGrid, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from "recharts";
-import { Button } from "../../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 import { ChartTooltip } from "../../ui/chart";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../../ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
-import { ToggleGroup, ToggleGroupItem } from "../../ui/toggle-group";
+import { BrawlerSelector } from "../Selectors/BrawlerSelector";
 import { ModeSelector } from "../Selectors/ModeSelector";
+import { RegularRankedToggle } from "../Selectors/RegularRankedToggle";
 import { StatTypeSelector } from "../Selectors/StatTypeSelector";
 
 function getChartDataForChildrenStats(stats: RecursiveCompiledStats) {
@@ -35,7 +31,7 @@ const CustomPlayerTooltip = ({ active, payload }: any) => {
         const { value, payload: data } = payload[0];
         const modeName: string = data.value;
         return (
-            <div className="bg-black p-2 border rounded shadow text-sm text-white">
+            <div className="bg-black p-2 border rounded-lg shadow text-sm text-white">
                 <p>{modeLabelMap[modeName as keyof typeof modeLabelMap] ?? data.value}</p>
                 <p>Winrate: {(data.winrate * 100).toFixed(1)}%</p>
                 <p>Star Rate: {(data.starRate * 100).toFixed(1)}%</p>
@@ -76,7 +72,6 @@ export const RecursiveStatisticChart = ({ playerTag }: { playerTag: string }) =>
         return playerDiff;
     });
 
-    const [brawlerPopoverOpen, setBrawlerPopoverOpen] = useState(false);
     const [brawler, setBrawler] = useState("");
 
     const [mode, setMode] = useState("");
@@ -94,7 +89,6 @@ export const RecursiveStatisticChart = ({ playerTag }: { playerTag: string }) =>
         }
         setStatType(value);
     }
-
 
     //Get Chart Data:
     const chartData = !playerTag ? [] : getChartDataForChildrenStats(
@@ -131,40 +125,20 @@ export const RecursiveStatisticChart = ({ playerTag }: { playerTag: string }) =>
                 <CardHeader className="block justify-between items-start">
                     <CardTitle className="text-2xl font-bold mb-4">Recursive Stat Chart</CardTitle>
 
-                    <div className="grid grid-cols-2 grid-rows-2 gap-4">
+                    <div className="flex flex-wrap gap-4">
+                        {/* regular vs ranked */}
+                        <RegularRankedToggle
+                            rankedVsRegularToggleValue={rankedVsRegularToggleValue}
+                            setRankedVsRegularToggleValue={setRankedVsRegularToggleValue}
+                            statType={statType}
+                        />
+
                         <StatTypeSelector statType={statType} setStatType={setStatTypeAndUpdateOverallToggle} />
 
                         <ModeSelector mode={mode} setMode={setMode} />
 
-                        {/* regular vs ranked */}
-                        <div className="flex items-center justify-between gap-4">
-                            <ToggleGroup
-                                type="single"
-                                value={rankedVsRegularToggleValue}
-                                onValueChange={(val) => {
-                                    if (val) setRankedVsRegularToggleValue(val);
-                                }}
-                                className="border rounded-lg max-w-[200px] w-full"
-                            >
-                                <ToggleGroupItem
-                                    value="ranked"
-                                    className="px-4 py-2 data-[state=on]:bg-blue-700 data-[state=on]:text-white data-[state=on]:border-blue-700"
-                                    disabled={statType === "trophyChange" || statType === "trophyChangePerGame"}
-                                >
-                                    Ranked
-                                </ToggleGroupItem>
-                                <ToggleGroupItem
-                                    value="regular"
-                                    className="px-4 py-2 data-[state=on]:bg-blue-700 data-[state=on]:text-white data-[state=on]:border-blue-700"
-                                >
-                                    Regular
-                                </ToggleGroupItem>
-                            </ToggleGroup>
-                        </div>
-
-
-                        {/* brawler popovercenter  */}
-                        <Popover open={brawlerPopoverOpen} onOpenChange={setBrawlerPopoverOpen}>
+                        {/* brawler popovercenter */}
+                        {/* <Popover open={brawlerPopoverOpen} onOpenChange={setBrawlerPopoverOpen}>
                             <PopoverTrigger asChild>
                                 <Button
                                     variant="outline"
@@ -206,7 +180,8 @@ export const RecursiveStatisticChart = ({ playerTag }: { playerTag: string }) =>
                                     </CommandList>
                                 </Command>
                             </PopoverContent>
-                        </Popover>
+                        </Popover> */}
+                        <BrawlerSelector brawler={brawler} setBrawler={setBrawler} selectBrawlerLabels={sortedBrawlers}/>
                     </div>
                 </CardHeader>
 
