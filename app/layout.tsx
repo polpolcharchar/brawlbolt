@@ -85,7 +85,7 @@ export default function RootLayout({
         <title>BrawlBolt</title>
         <meta name="description" content={metadata.description} />
         <meta name="keywords" content={metadata.keywords.join(", ")} />
-        <link rel="icon" type="image/png" href="/favicon.png" />
+        {/* <link rel="icon" type="image/png" href="/favicon.png" /> */}
       </Head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Analytics />

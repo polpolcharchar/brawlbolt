@@ -1,9 +1,9 @@
 "use client"
 
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { Button } from "../ui/button"
 import { Card } from "../ui/card"
-import { usePathname } from "next/navigation"
 
 
 export const AboutBrawlBoltPage = () => {
@@ -57,11 +57,6 @@ export const AboutBrawlBoltPage = () => {
                                     Recursive data analysis allows for extremely detailed results.
                                 </p>
                             </section>
-
-                            {/* Footer */}
-                            <footer className="text-sm text-gray-500">
-                                Tracked games may be used for global statistics in the future. Stay tuned for updates!
-                            </footer>
                         </div>
                     </Card>
 

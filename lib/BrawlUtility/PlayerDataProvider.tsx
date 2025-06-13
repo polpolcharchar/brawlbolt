@@ -151,7 +151,8 @@ export const PlayerDataProvider = ({ children }: { children: React.ReactNode }) 
   const updatePlayerData = (playerTag: string, playerD: any) => {
 
     if (typeof playerD !== "string") {
-      const test = new OverallPlayerData(playerD, index);
+
+      const test = new OverallPlayerData(playerD, playerTag === "Global" ? -1 : index);
       setIndex(index + 1);
 
       setPlayerData((prevData) => ({

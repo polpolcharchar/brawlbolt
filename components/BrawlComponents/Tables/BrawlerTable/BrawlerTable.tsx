@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import * as React from "react"
 import {
     ColumnDef,
     SortingState,
@@ -8,7 +7,9 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
+import * as React from "react"
 
+import { ScrollArea } from "@/components/ui/scroll-area"
 import {
     Table,
     TableBody,
@@ -18,11 +19,9 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { RecursiveCompiledStats, usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider"
-import { useMemo, useState } from "react"
-import { RegularRankedToggle } from "../../Selectors/RegularRankedToggle"
+import { useMemo } from "react"
 import { ModeSelector } from "../../Selectors/ModeSelector"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Subtitles } from "lucide-react"
+import { RegularRankedToggle } from "../../Selectors/RegularRankedToggle"
 
 export type BrawlerData = {
     name: string
@@ -30,7 +29,6 @@ export type BrawlerData = {
     drawRate: number
     starRate: number
     numGames: number
-
 }
 
 function getTableDataForChildrenStats(stats: RecursiveCompiledStats): BrawlerData[] {
@@ -65,17 +63,25 @@ interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     playerTag: string
     onBrawlerClick: (brawlerName: string) => void
+    mode: string
+    setMode: (value: string) => void
+    rankedVsRegularToggleValue: string
+    setRankedVsRegularToggleValue: (value: string) => void
 }
 
 export function BrawlerDataTable<TData, TValue>({
     columns,
     playerTag,
-    onBrawlerClick
+    onBrawlerClick,
+    mode,
+    setMode,
+    rankedVsRegularToggleValue,
+    setRankedVsRegularToggleValue,
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([
         {
-            id: "winrate", // Replace "columnId" with the actual ID of the column you want to sort by
-            desc: true,   // `false` for ascending, `true` for descending
+            id: "winrate",
+            desc: true,
         },
     ]);
 
@@ -91,10 +97,6 @@ export function BrawlerDataTable<TData, TValue>({
         playerData
     } = usePlayerData();
 
-    const [mode, setMode] = useState("");
-    const [rankedVsRegularToggleValue, setRankedVsRegularToggleValue] = useState("regular");
-
-
     const data = useMemo(() => {
         if (!playerTag) return [];
 
@@ -106,7 +108,6 @@ export function BrawlerDataTable<TData, TValue>({
             ? (mode === "" ? (playerTag === "Global" ? "regularBrawler" : "regularBrawlerModeMap") : `regularModeBrawler.stat_map.${mode}`)
             : (mode === "" ? (playerTag === "Global" ? "rankedBrawler" : "rankedBrawlerModeMap") : `rankedModeBrawler.stat_map.${mode}`);
 
-        // Safely access nested keys to prevent errors when keys are undefined
         const mapData = mapKey.split('.').reduce((acc, key) => acc?.[key], stats);
 
         return getTableDataForChildrenStats(mapData) as TData[];
@@ -125,26 +126,32 @@ export function BrawlerDataTable<TData, TValue>({
 
     return (
         <div>
-            <Card className="border-none">
+            <Card className="border-none p-0">
                 <CardHeader className="block justify-between items-start">
                     <CardTitle className="text-2xl font-bold mb-0">Brawler Table</CardTitle>
 
-                    {playerData[playerTag]["numGames"] && (
-                        <p className="text-sm text-gray-400 mb-0">
-                            Calculated using{" "}
-                            {playerData[playerTag]["numGames"]
-                                .toString()
-                                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{" "}
-                            unique games from{" "}
-                            {new Date(
-                                new Date(playerData[playerTag]["datetime"]).getTime() -
-                                playerData[playerTag]["hourRange"] * 60 * 60 * 1000
-                            ).toLocaleString("en-US", dateFormat)}{" "}
-                            to {new Date(playerData[playerTag]["datetime"]).toLocaleString("en-US", dateFormat)}
-                        </p>
-                    )}
+                    <div className="text-sm text-gray-300 mb-4">
 
-                    <p className="text-sm text-gray-400 mb-4">Hover values for 95% confidence interval (may not be applicable)</p>
+                        {playerData[playerTag]["numGames"] && (
+                            <>
+                                <p>
+                                    Calculated using{" "}
+                                    {playerData[playerTag]["numGames"]
+                                        .toString()
+                                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{" "}
+                                    unique games from{" "}
+                                    {new Date(
+                                        new Date(playerData[playerTag]["datetime"]).getTime() -
+                                        playerData[playerTag]["hourRange"] * 60 * 60 * 1000
+                                    ).toLocaleString("en-US", dateFormat)}{" "}
+                                    to {new Date(playerData[playerTag]["datetime"]).toLocaleString("en-US", dateFormat)}
+                                </p>
+                                <p><u><b>Click</b></u> rows to access historical data</p>
+                            </>
+                        )}
+
+                        <p>Hover values for 95% confidence interval (may not be applicable)</p>
+                    </div>
 
                     <div className="flex flex-wrap gap-4">
                         <RegularRankedToggle
@@ -158,7 +165,7 @@ export function BrawlerDataTable<TData, TValue>({
 
                 </CardHeader>
                 <CardContent>
-                    <ScrollArea className="h-[500px] rounded-md border p-4">
+                    <div className="h-[600px] overflow-auto border">
                         <Table>
                             <TableHeader>
                                 {table.getHeaderGroups().map((headerGroup) => (
@@ -184,6 +191,7 @@ export function BrawlerDataTable<TData, TValue>({
                                         <TableRow
                                             key={row.id}
                                             data-state={row.getIsSelected() && "selected"}
+                                            className={playerTag === "Global" ? "cursor-pointer" : ""}
                                         >
                                             {row.getVisibleCells().map((cell) => (
                                                 <TableCell key={cell.id} onClick={() => onBrawlerClick(row.getValue("name"))}>
@@ -201,7 +209,7 @@ export function BrawlerDataTable<TData, TValue>({
                                 )}
                             </TableBody>
                         </Table>
-                    </ScrollArea>
+                    </div>
                 </CardContent>
             </Card>
         </div>

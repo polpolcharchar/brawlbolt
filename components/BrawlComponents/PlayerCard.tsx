@@ -1,17 +1,18 @@
+import { rankedModeLabelMap, rankedModeLabels } from "@/lib/BrawlUtility/BrawlConstants";
 import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
-import { AlertTriangle, ArrowRight, Check, Copy } from "lucide-react";
+import { AlertTriangle, ArrowLeft, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
+import { Carousel, CarouselApi, CarouselContent, CarouselItem, CarouselPrevious } from "../ui/carousel";
 import { Skeleton } from "../ui/skeleton";
 import { BrawlerOverTimeChart } from "./Charts/BrawlerOverTimeChart";
 import { DurationChart } from "./Charts/DurationChart";
 import { RecursiveStatisticChart } from "./Charts/RecursiveStatisticChart";
 import { ShowdownRankChart } from "./Charts/ShowdownRankChart";
+import { ShareSplashCard } from "./InfoCards/ShareSplashCard";
+import { LinkCopyIndicator } from "./Selectors/LinkCopyIndicator";
 import { BrawlerDataTable } from "./Tables/BrawlerTable/BrawlerTable";
 import { columns } from "./Tables/BrawlerTable/Columns";
-import { LinkCopyIndicator } from "./Selectors/LinkCopyIndicator";
-import { ShareSplashCard } from "./InfoCards/ShareSplashCard";
 
 
 export const PlayerCard = ({ playerTag }: { playerTag: string }) => {
@@ -20,7 +21,19 @@ export const PlayerCard = ({ playerTag }: { playerTag: string }) => {
         playerData
     } = usePlayerData();
 
-    
+    const [api, setApi] = useState<CarouselApi | null>(null);
+
+    const [mode, setMode] = useState("brawlBall");
+    const [rankedVsRegularToggleValue, setRankedVsRegularToggleValue] = useState("regular");
+    const updateRankedVsRegularToggleValue = (newValue: string) => {
+        if (newValue == "ranked" && rankedModeLabelMap[mode as keyof typeof rankedModeLabelMap] == undefined) {
+            setMode(rankedModeLabels[0]['value']);
+        }
+        setRankedVsRegularToggleValue(newValue);
+    }
+    const [brawler, setBrawler] = useState("JACKY");
+
+    const [trigger, setTrigger] = useState<(statTypeString: string) => void>(() => { });
 
     return (
         <Card className="w-full max-w-5xl mb-8 border-blue-700 border-2">
@@ -33,14 +46,14 @@ export const PlayerCard = ({ playerTag }: { playerTag: string }) => {
 
                     {/* Share Splash */}
                     {(playerTag === "Global") && (
-                        <ShareSplashCard/>
+                        <ShareSplashCard />
                     )}
 
                     {/* Player tag and profile link */}
                     {(playerTag !== "Global") && (
                         <div className="flex justify-center">
                             <p className="text-sm text-gray-400 mx-2">{playerTag}</p>
-                            <LinkCopyIndicator url={`brawlbolt.com/?tag=${playerTag}`} title="Copy profile link"/>
+                            <LinkCopyIndicator url={`brawlbolt.com/?tag=${playerTag}`} title="Copy profile link" />
                         </div>
                     )}
 
@@ -73,14 +86,37 @@ export const PlayerCard = ({ playerTag }: { playerTag: string }) => {
 
                     {playerTag === "Global" ? (
                         //Global Items
-                        <Carousel className="w-full" opts={{ loop: false }}>
+                        <Carousel className="w-full" opts={{ loop: false, watchDrag: false }} setApi={setApi}>
                             <CarouselContent>
                                 <CarouselItem key="brawlerTable">
-                                    <BrawlerDataTable columns={columns} playerTag={playerTag} onBrawlerClick={() => { }} />
+                                    <BrawlerDataTable
+                                        columns={columns}
+                                        playerTag={playerTag}
+                                        mode={mode}
+                                        setMode={setMode}
+                                        rankedVsRegularToggleValue={rankedVsRegularToggleValue}
+                                        setRankedVsRegularToggleValue={updateRankedVsRegularToggleValue}
+                                        onBrawlerClick={(clickedBrawler: string) => {
+                                            setBrawler(clickedBrawler);
+                                            if (api !== null) {
+                                                api?.scrollNext();
+                                                trigger(rankedVsRegularToggleValue + mode + clickedBrawler);
+                                            }
+                                        }}
+                                    />
                                 </CarouselItem>
 
                                 <CarouselItem key="brawlerOverTimeChart">
-                                    <BrawlerOverTimeChart />
+                                    <BrawlerOverTimeChart
+                                        mode={mode}
+                                        setMode={setMode}
+                                        rankedVsRegularToggleValue={rankedVsRegularToggleValue}
+                                        setRankedVsRegularToggleValue={updateRankedVsRegularToggleValue}
+                                        brawler={brawler}
+                                        setBrawler={setBrawler}
+                                        carouselApi={api}
+                                        setTrigger={setTrigger}
+                                    />
                                 </CarouselItem>
                             </CarouselContent>
                         </Carousel>
@@ -88,7 +124,7 @@ export const PlayerCard = ({ playerTag }: { playerTag: string }) => {
 
                         // Normal Items:
                         <div>
-                            <Carousel className="w-full" opts={{ loop: true }}>
+                            <Carousel className="w-full" opts={{ loop: true, watchDrag: (window.innerWidth > 650) }} setApi={setApi}>
                                 <CarouselContent>
 
                                     <CarouselItem key="modeMapChart">
@@ -96,7 +132,15 @@ export const PlayerCard = ({ playerTag }: { playerTag: string }) => {
                                     </CarouselItem>
 
                                     <CarouselItem key="brawlerTable">
-                                        <BrawlerDataTable columns={columns} playerTag={playerTag} onBrawlerClick={() => { }} />
+                                        <BrawlerDataTable
+                                            columns={columns}
+                                            playerTag={playerTag}
+                                            onBrawlerClick={() => { }}
+                                            rankedVsRegularToggleValue={rankedVsRegularToggleValue}
+                                            setRankedVsRegularToggleValue={updateRankedVsRegularToggleValue}
+                                            mode={mode}
+                                            setMode={setMode}
+                                        />
                                     </CarouselItem>
 
                                     <CarouselItem key="durationChart">
@@ -125,23 +169,31 @@ export const PlayerCard = ({ playerTag }: { playerTag: string }) => {
 
                                 </CarouselContent>
 
-                                {/* Only show arrows on wide devices (not phones) */}
-                                {
-                                    window.innerWidth >= 400 ? (
-                                        <div>
-                                            <CarouselPrevious className="absolute top-1/2 transform -translate-y-1/2 z-10" />
-                                            <CarouselNext className="absolute top-1/2 transform -translate-y-1/2 z-10" />
+                                {window.innerWidth > 650 ? (
+                                    <CardFooter className="justify-center text-sm text-gray-500">
+                                        Swipe to view more charts
+                                        <ArrowRight />
+                                    </CardFooter>
+                                ) : (
+                                    <div className="flex justify-center pt-2">
+                                        <div className="flex items-center justify-center w-10 h-10 border rounded-full cursor-pointer" onClick={() => { api?.scrollPrev() }}>
+                                            <ArrowLeft />
                                         </div>
-                                    ) : (<div></div>)
-                                }
-                            </Carousel>
-                        </div>
+                                        <CardFooter className="justify-center text-sm text-gray-500">
+                                            View more charts
+                                        </CardFooter>
+                                        <div className="flex items-center justify-center w-10 h-10 border rounded-full cursor-pointer" onClick={() => { api?.scrollNext() }}>
+                                            <ArrowRight />
+                                        </div>
+                                    </div>
+                                )}
 
+
+
+                            </Carousel>
+
+                        </div>
                     )}
-                    <CardFooter className="justify-center text-sm text-gray-500">
-                        Swipe to view more charts
-                        <ArrowRight/>
-                        </CardFooter>
                 </div>
             ) : (
                 //Loading:

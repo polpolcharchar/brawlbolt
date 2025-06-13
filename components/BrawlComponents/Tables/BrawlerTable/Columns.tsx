@@ -1,11 +1,11 @@
 "use client"
 
-import { ColumnDef } from "@tanstack/react-table"
-import { BrawlerData } from "./BrawlerTable"
 import { Button } from "@/components/ui/button"
+import { calculateProportionConfidenceInterval } from "@/lib/StatisticalCalculator"
+import { ColumnDef } from "@tanstack/react-table"
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react"
 import { useState } from "react"
-import { calculateProportionConfidenceInterval } from "@/lib/StatisticalCalculator"
+import { BrawlerData } from "./BrawlerTable"
 
 interface SortingHeaderProps {
     column: any;
@@ -68,10 +68,10 @@ function ConfidenceIntervalCell<T extends Record<string, any>>({
         <div
             onMouseEnter={() => {
                 // if (!confidenceInterval) {
-                    const sampleSize: number = row[sampleSizeName];
-                    const winProportion: number = winrate * sampleSize;
-                    const interval = calculateProportionConfidenceInterval(winProportion, sampleSize, confidenceLevel);
-                    setConfidenceInterval(interval);
+                const sampleSize: number = row[sampleSizeName];
+                const winProportion: number = winrate * sampleSize;
+                const interval = calculateProportionConfidenceInterval(winProportion, sampleSize, confidenceLevel);
+                setConfidenceInterval(interval);
                 // }
                 setIsHovered(true);
             }}
@@ -88,6 +88,24 @@ export const columns: ColumnDef<BrawlerData>[] = [
     {
         accessorKey: "name",
         header: ({ column }) => <SortingHeader column={column} label="Name" />,
+        cell: ({ row }) => {
+            const [isHovered, setIsHovered] = useState(false);
+
+            return (
+                <div
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                    className="flex items-center"
+                >
+
+                    <p className="text-sm">{row.getValue("name")}</p>
+
+                    {/* {isHovered && (
+                        <p className="text-xs text-gray-300 ml-2">{"Click!"}</p>
+                    )} */}
+                </div>
+            );
+        },
     },
     {
         accessorKey: "winrate",

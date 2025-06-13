@@ -89,11 +89,6 @@ const Page = () => {
                             Other Brawl Stars sites currently have this, but it will be much more detailed on BrawlBolt.
                         </p>
                     </section>
-
-                    {/* Footer */}
-                    {/* <footer className="text-sm text-gray-500">
-                        Tracked games may be used for global statistics in the future. Stay tuned for updates!
-                    </footer> */}
                 </div>
             </Card>
         </div>
