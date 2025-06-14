@@ -133,16 +133,16 @@ export const columns: ColumnDef<BrawlerData>[] = [
             />
         )
     },
-    {
-        accessorKey: "drawRate",
-        header: ({ column }) => <SortingHeader column={column} label="Draw Rate" defaultSortDirection="desc" />,
-        cell: ({ row }) => {
-            const amount = parseFloat(row.getValue("drawRate")) * 100;
-            const roundedAmount = amount.toFixed(2); // Round to 2 decimal places
+    // {
+    //     accessorKey: "drawRate",
+    //     header: ({ column }) => <SortingHeader column={column} label="Draw Rate" defaultSortDirection="desc" />,
+    //     cell: ({ row }) => {
+    //         const amount = parseFloat(row.getValue("drawRate")) * 100;
+    //         const roundedAmount = amount.toFixed(2); // Round to 2 decimal places
 
-            return roundedAmount;
-        },
-    },
+    //         return roundedAmount;
+    //     },
+    // },
     {
         accessorKey: "numGames",
         header: ({ column }) => <SortingHeader column={column} label="# Games" defaultSortDirection="desc" />,

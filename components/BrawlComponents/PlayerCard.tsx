@@ -1,6 +1,6 @@
 import { rankedModeLabelMap, rankedModeLabels } from "@/lib/BrawlUtility/BrawlConstants";
 import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
-import { AlertTriangle, ArrowLeft, ArrowRight } from "lucide-react";
+import { AlertTriangle, ArrowLeft, ArrowRight, LucideAnnoyed, LucideBot, LucideFrown } from "lucide-react";
 import { useState } from "react";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 import { Carousel, CarouselApi, CarouselContent, CarouselItem, CarouselPrevious } from "../ui/carousel";
@@ -23,7 +23,7 @@ export const PlayerCard = ({ playerTag }: { playerTag: string }) => {
 
     const [api, setApi] = useState<CarouselApi | null>(null);
 
-    const [mode, setMode] = useState("brawlBall");
+    const [mode, setMode] = useState(playerTag === "Global" ? "brawlArena" : "");
     const [rankedVsRegularToggleValue, setRankedVsRegularToggleValue] = useState("regular");
     const updateRankedVsRegularToggleValue = (newValue: string) => {
         if (newValue == "ranked" && rankedModeLabelMap[mode as keyof typeof rankedModeLabelMap] == undefined) {
@@ -119,6 +119,10 @@ export const PlayerCard = ({ playerTag }: { playerTag: string }) => {
                                     />
                                 </CarouselItem>
                             </CarouselContent>
+
+
+
+
                         </Carousel>
                     ) : (
 
@@ -193,6 +197,14 @@ export const PlayerCard = ({ playerTag }: { playerTag: string }) => {
                             </Carousel>
 
                         </div>
+                    )}
+
+                    {window.innerWidth <= 650 && (
+                        <CardFooter className="justify-center text-sm text-gray-500">
+                            <LucideFrown />
+                            {"BrawlBolt works better on desktop, sorry"}
+                            <LucideFrown />
+                        </CardFooter>
                     )}
                 </div>
             ) : (

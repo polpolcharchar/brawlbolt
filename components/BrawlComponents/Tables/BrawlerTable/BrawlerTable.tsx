@@ -146,7 +146,7 @@ export function BrawlerDataTable<TData, TValue>({
                                     ).toLocaleString("en-US", dateFormat)}{" "}
                                     to {new Date(playerData[playerTag]["datetime"]).toLocaleString("en-US", dateFormat)}
                                 </p>
-                                <p><u><b>Click</b></u> rows to access historical data</p>
+                                <p><u><b>Click rows to access historical data</b></u></p>
                             </>
                         )}
 
@@ -165,7 +165,7 @@ export function BrawlerDataTable<TData, TValue>({
 
                 </CardHeader>
                 <CardContent>
-                    <div className="h-[600px] overflow-auto border">
+                    <div className="h-[500px] overflow-auto border">
                         <Table>
                             <TableHeader>
                                 {table.getHeaderGroups().map((headerGroup) => (

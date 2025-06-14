@@ -2,12 +2,13 @@ import { boltColors, brawlerLabels, modeLabelMap } from "@/lib/BrawlUtility/Braw
 import { RecursiveCompiledStats, usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
 import { useState } from "react";
 import { Bar, BarChart, CartesianGrid, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from "recharts";
-import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../../ui/card";
 import { ChartTooltip } from "../../ui/chart";
 import { BrawlerSelector } from "../Selectors/BrawlerSelector";
 import { ModeSelector } from "../Selectors/ModeSelector";
 import { RegularRankedToggle } from "../Selectors/RegularRankedToggle";
 import { StatTypeSelector } from "../Selectors/StatTypeSelector";
+import { LucideFrown } from "lucide-react";
 
 function getChartDataForChildrenStats(stats: RecursiveCompiledStats) {
     if (!stats) {
@@ -79,7 +80,7 @@ export const RecursiveStatisticChart = ({ playerTag }: { playerTag: string }) =>
     const [rankedVsRegularToggleValue, setRankedVsRegularToggleValue] = useState("regular");
 
     const smallTickFont = {
-        fontSize: 6
+        fontSize: 12
     }
 
     //Ensures that ranked is not selected when trophy-related statistics are also selected
@@ -91,7 +92,7 @@ export const RecursiveStatisticChart = ({ playerTag }: { playerTag: string }) =>
     }
 
     //Get Chart Data:
-    const chartData = !playerTag ? [] : getChartDataForChildrenStats(
+    let chartData = !playerTag ? [] : getChartDataForChildrenStats(
         (rankedVsRegularToggleValue === "regular") ? (
             (brawler === "" && mode === "") ?
                 playerData[playerTag].playerStats.regularModeMapBrawler
@@ -118,6 +119,9 @@ export const RecursiveStatisticChart = ({ playerTag }: { playerTag: string }) =>
     chartData.sort((a, b) => {
         return b.numGames - a.numGames;
     });
+    if (window.innerWidth <= 650) {
+        chartData = chartData.slice(0, 12);
+    }
 
     return (
         <div>
@@ -181,7 +185,7 @@ export const RecursiveStatisticChart = ({ playerTag }: { playerTag: string }) =>
                                 </Command>
                             </PopoverContent>
                         </Popover> */}
-                        <BrawlerSelector brawler={brawler} setBrawler={setBrawler} selectBrawlerLabels={sortedBrawlers}/>
+                        <BrawlerSelector brawler={brawler} setBrawler={setBrawler} selectBrawlerLabels={sortedBrawlers} />
                     </div>
                 </CardHeader>
 
@@ -190,7 +194,7 @@ export const RecursiveStatisticChart = ({ playerTag }: { playerTag: string }) =>
                         <BarChart
                             accessibilityLayer
                             data={chartData}
-                            margin={{ bottom: 80 }}
+                            margin={{ bottom: 100 }}
                         >
                             <CartesianGrid
                                 vertical={false}
@@ -200,9 +204,9 @@ export const RecursiveStatisticChart = ({ playerTag }: { playerTag: string }) =>
                             <XAxis
                                 dataKey="value"
                                 tickLine={false}
-                                tickMargin={10}
+                                tickMargin={2}
                                 axisLine={false}
-                                angle={-45}
+                                angle={window.innerWidth < 900 ? -90 : -45}
                                 textAnchor="end"
                                 tickFormatter={(tick: string) => {
                                     if (mode === "") {
@@ -210,7 +214,8 @@ export const RecursiveStatisticChart = ({ playerTag }: { playerTag: string }) =>
                                     }
                                     return tick;
                                 }}
-                                tick={window.innerWidth < 400 ? smallTickFont : {}}
+                                tick={window.innerWidth < 900 ? smallTickFont : {}}
+                            // tick={smallTickFont}
                             />
 
                             <YAxis
@@ -245,6 +250,14 @@ export const RecursiveStatisticChart = ({ playerTag }: { playerTag: string }) =>
                         </BarChart>
                     </ResponsiveContainer>
                 </CardContent>
+
+                {window.innerWidth <= 650 && chartData.length === 12 && (
+                    <CardFooter className="justify-center text-sm text-gray-500">
+                        <LucideFrown/>
+                        <p className="pl-2">{"Some entries omitted due to limited screen space"}</p>
+                    </CardFooter>
+                )}
+
             </Card>
         </div >
     );

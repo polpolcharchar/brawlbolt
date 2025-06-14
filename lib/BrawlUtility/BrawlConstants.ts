@@ -138,7 +138,7 @@ export const modeLabelMap = {
     knockout5V5: "Knockout 5v5",
     trophyThieves: "UNO",
     wipeout: "Wipeout",
-    siege: "Siege/Cleaning Duty",
+    siege: "Siege",
 }
 export const rankedModeLabelMap = {
     brawlBall: "Brawl Ball",

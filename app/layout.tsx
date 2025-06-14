@@ -80,7 +80,7 @@ export default function RootLayout({
 }>) {
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="overflow-x-hidden">
       <Head>
         <title>BrawlBolt</title>
         <meta name="description" content={metadata.description} />
@@ -100,18 +100,13 @@ export default function RootLayout({
             <div className="flex flex-col items-center p-4">
 
               {/* Title */}
-              <Card className="mb-2">
-                <div
-                  className="w-full max-w-2xl text-center shadow-md p-6"
-                >
-                  <h1 className="text-6xl sm:text-8xl font-bold mb-2 text-blue-700">
-                    <Link href="/">
-                      BrawlBolt
-                    </Link>
+              <div className="w-full overflow-hidden">
+                <Card className="mb-2 max-w-2xl text-center shadow-md p-6 mx-auto">
+                  <h1 className="text-6xl font-bold mb-2 text-blue-700">
+                    <Link href="/">BrawlBolt</Link>
                   </h1>
 
-                  <div className="flex flex-col md:flex-row gap-4">
-
+                  <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
                     {/* Icon */}
                     <div className="flex items-center justify-center">
                       <div className="w-20 h-20 relative">
@@ -126,33 +121,28 @@ export default function RootLayout({
                     </div>
 
                     {/* Text */}
-                    <div className="flex-2">
-                      <p className="text-2xl sm:text-3xl text-blue-700">Lightning Fast Statistics</p>
-
-                      {/* <p className="text-xl text-cyan-300">
-                        <Link href="/track">
-                          Click <i>here</i> to start tracking
-                        </Link>
-                      </p> */}
+                    <div className="flex flex-col sm:justify-center sm:items-start">
+                      <p className="text-2xl sm:text-3xl text-blue-700">
+                        Lightning Fast Statistics
+                      </p>
                     </div>
-
                   </div>
+                </Card>
 
-                </div>
-              </Card>
             </div>
+          </div>
 
-            {children}
+          {children}
 
-            <Toaster />
+          <Toaster />
 
-            <AboutBrawlBoltPage />
+          <AboutBrawlBoltPage />
 
 
 
-          </PlayerDataProvider>
-        </ThemeProvider>
-      </body>
-    </html>
+        </PlayerDataProvider>
+      </ThemeProvider>
+    </body>
+    </html >
   );
 }
