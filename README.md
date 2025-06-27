@@ -1,36 +1,15 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BrawlBolt
 
-## Getting Started
+A Brawl Stars statistic-tracking and global statistic website. This repository is the web application that utilizes Next.js, tailwindcss, and ShadCN. BrawlBolt provides unique detailed statistics using every piece of game data possible. The options for personalized data analysis are unrivaled compared to other Brawl Stars tracking sites. Normal account statistics like trophies, level, and club exist on any Brawl website; they are not prioritized here.
 
-First, run the development server:
+## Account Tracking
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Player games are passively tracked and compiled as needed. The Brawl Stars API provides access to a player's most recent 25 games. Every 60 minutes, BrawlBolt accesses these and saves any unsaved matches for every account that has been active on this site in the past 30 days. To ensure your account is continually tracked, access your account's statistics at least once a month. If a player plays more than 25 games in a 60 minute period, there is a chance that BrawlBolt will be unable to save some of the games. BrawlBolt saves raw API data in a database.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Statistic Compilation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+To prevent scanning thousands of games to access a single statistic, BrawlBolt implements stat caching. When games are saved, they are marked as uncached. Every few days, a program loads a player's currently cached stats along with that player's uncached games. It analyzes these games, marking them as cached and adding their results to the cached statistics. Because of this process, when a user requests their account statistics, the time it takes is always the same; all that needs to be done is retrieving the cached stats.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Global Statistics
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+BrawlBolt displays global Brawl Stars statistics. It calculates specific statsitics down to individual brawlers and brawlers per mode.
