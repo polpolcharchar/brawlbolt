@@ -64,7 +64,7 @@ export const BrawlerOverTimeChart = ({
 
     const [chartData, setChartData] = useState<Stat[]>([]);
 
-    const [chartType, setChartType] = useState<"linear" | "natural">("natural");
+    const [chartType, setChartType] = useState<"linear" | "natural">("linear");
 
     const changeBrawler = (newBrawler: string) => {
         if (newBrawler !== "") setBrawler(newBrawler);
