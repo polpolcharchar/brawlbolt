@@ -1,5 +1,6 @@
 export const brawlerLabels = [
     { "value": "8-BIT", "label": "8-Bit" },
+    { "value": "ALLI", "label": "Alli" },
     { "value": "AMBER", "label": "Amber" },
     { "value": "ANGELO", "label": "Angelo" },
     { "value": "ASH", "label": "Ash" },
