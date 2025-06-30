@@ -103,7 +103,7 @@ export const RecursiveStatisticChart = ({ playerTag }: { playerTag: string }) =>
                     (mode === "") ?
                         playerData[playerTag].playerStats.regularBrawlerModeMap.stat_map[brawler]
                         :
-                        playerData[playerTag].playerStats.regularBrawlerModeMap.stat_map[brawler].stat_map[mode])
+                        playerData[playerTag].playerStats.regularBrawlerModeMap.stat_map[brawler]?.stat_map?.[mode])
             : (
                 (brawler === "" && mode === "") ?
                     playerData[playerTag].playerStats.rankedModeMapBrawler
@@ -114,7 +114,7 @@ export const RecursiveStatisticChart = ({ playerTag }: { playerTag: string }) =>
                         (mode === "") ?
                             playerData[playerTag].playerStats.rankedBrawlerModeMap.stat_map[brawler]
                             :
-                            playerData[playerTag].playerStats.rankedBrawlerModeMap.stat_map[brawler].stat_map[mode])
+                            playerData[playerTag].playerStats.rankedBrawlerModeMap.stat_map[brawler]?.stat_map?.[mode])
     );
     chartData.sort((a, b) => {
         return b.numGames - a.numGames;
