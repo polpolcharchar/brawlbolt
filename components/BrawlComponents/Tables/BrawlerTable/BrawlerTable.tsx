@@ -9,7 +9,6 @@ import {
 } from "@tanstack/react-table"
 import * as React from "react"
 
-import { ScrollArea } from "@/components/ui/scroll-area"
 import {
     Table,
     TableBody,
@@ -88,8 +87,7 @@ export function BrawlerDataTable<TData, TValue>({
     const dateFormat: any = {
         month: "numeric",
         day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
+        hour: "numeric",
         hour12: true
     }
 
