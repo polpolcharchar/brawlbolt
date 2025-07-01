@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Button } from "../ui/button"
 import { Card } from "../ui/card"
+import GithubIconLink from "../ui/GithubIconLink"
 
 
 export const AboutBrawlBoltPage = () => {
@@ -19,13 +20,6 @@ export const AboutBrawlBoltPage = () => {
                     <Card className="w-full max-w-2xl text-center shadow-md p-6 mb-8">
                         <div className="text-gray-300">
                             <h2 className="text-3xl font-semibold mb-4">About BrawlBolt</h2>
-                            <Button className="bg-blue-500 text-white font-medium text-lg px-4 py-5 rounded-lg shadow hover:bg-blue-600 transition mb-4">
-                                <Link href={"/moreInfo"}>Click here to learn more</Link>
-                            </Button>
-                            {/* <div className="flex items-start justify-between text-gray-300">
-                                <div>
-                                </div>
-                            </div> */}
 
                             {/* Overview Section */}
                             <section className="mb-6">
@@ -57,6 +51,17 @@ export const AboutBrawlBoltPage = () => {
                                     Recursive data analysis allows for extremely detailed results.
                                 </p>
                             </section>
+
+                            <section className="">
+                                <h3 className="text-xl font-semibold text-gray-200 mb-2">To learn more, visit these GitHub repositories:</h3>
+                                <div className="flex justify-center items-center w-full">
+                                    <div className="flex w-full justify-center gap-8">
+                                        <GithubIconLink repoURL="https://github.com/polpolcharchar/brawlboltbackend" displayText="Main GitHub" />
+                                        <GithubIconLink repoURL="https://github.com/polpolcharchar/brawlbolt" displayText="Website GitHub" />
+                                    </div>
+                                </div>
+                            </section>
+
                         </div>
                     </Card>
 
