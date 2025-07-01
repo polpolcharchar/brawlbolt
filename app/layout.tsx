@@ -23,9 +23,11 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "BrawlBolt",
-  description: "Brawl Stars Game Tracker and Data Analyzer",
-  keywords: ["Brawl Stars",
-    "stats", "leaderboard",
+  description: "Brawl Stars Personalized Tracker and Statistical Analysis",
+  keywords: [
+    "Brawl Stars",
+    "stats",
+    "leaderboard",
     "tracking",
     "player profiles",
     "data",
@@ -85,7 +87,6 @@ export default function RootLayout({
         <title>BrawlBolt</title>
         <meta name="description" content={metadata.description} />
         <meta name="keywords" content={metadata.keywords.join(", ")} />
-        {/* <link rel="icon" type="image/png" href="/favicon.png" /> */}
       </Head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Analytics />

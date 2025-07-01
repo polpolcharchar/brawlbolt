@@ -25,9 +25,8 @@ export const AboutBrawlBoltPage = () => {
                             <section className="mb-6">
                                 <h3 className="text-xl font-semibold text-gray-200 mb-2">Overview</h3>
                                 <p className="text-gray-400">
-                                    BrawlBolt provides unique detailed statistics using every piece of game data possible.
+                                    BrawlBolt tracks your games and provides personalized detailed statistics using every piece of game data possible.
                                     The options for personalized data analysis are unrivaled compared to other Brawl Stars tracking sites.
-                                    Normal account statistics like trophies, level, and club exist on any Brawl website; they are not prioritized here.{" "}
                                     Search your account to get started for <b>FREE</b>!
                                 </p>
                             </section>
