@@ -55,7 +55,7 @@ export const fetchGlobalStats = async (setIsLoading: (value: boolean) => void, u
     if(requestResult){
         const mockData = {
             playerInfo: {
-                name: "Global Statistics (NEW!)"
+                name: "Global Statistics"
             },
             playerStats: JSON.parse(requestResult)
         }

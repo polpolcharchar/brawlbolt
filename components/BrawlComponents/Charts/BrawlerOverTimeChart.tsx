@@ -31,6 +31,7 @@ interface Stat {
     date: string | number;
     winrate: number;
     starRate: number;
+    resultPotentialTotal: number;
 }
 
 export const BrawlerOverTimeChart = ({
@@ -52,7 +53,7 @@ export const BrawlerOverTimeChart = ({
     carouselApi: CarouselApi | null | undefined,
     setTrigger: (value: () => void) => void
 }) => {
-    
+
 
     const [brawlerTimeData, setBrawlerTimeData] = useState<Record<string, any>>({});
     const updateBrawlerTimeData = (key: string, value: any) => {
@@ -123,10 +124,11 @@ export const BrawlerOverTimeChart = ({
         brawlerTimeData[statTypeString] = "temp";
 
         const stats: Stat[] = await fetchStatOverTime(statTypeString) || [];
-        stats.sort((a: { date: string | number }, b: { date: string | number }) =>
+        const filteredStats = stats.filter(item => item.resultPotentialTotal > 100);
+        filteredStats.sort((a: { date: string | number }, b: { date: string | number }) =>
             new Date(a.date).getTime() - new Date(b.date).getTime()
         );
-        const numericalDates = stats.map(item => ({
+        const numericalDates = filteredStats.map(item => ({
             ...item,
             date: new Date(item.date).getTime(),
         }));
