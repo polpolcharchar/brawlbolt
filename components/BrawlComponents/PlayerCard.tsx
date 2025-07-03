@@ -23,7 +23,7 @@ export const PlayerCard = ({ playerTag }: { playerTag: string }) => {
 
     const [api, setApi] = useState<CarouselApi | null>(null);
 
-    const [mode, setMode] = useState(playerTag === "Global" ? "brawlArena" : "");
+    const [mode, setMode] = useState(playerTag === "Global" ? "" : "");
     const [rankedVsRegularToggleValue, setRankedVsRegularToggleValue] = useState("regular");
     const updateRankedVsRegularToggleValue = (newValue: string) => {
         if (newValue == "ranked" && rankedModeLabelMap[mode as keyof typeof rankedModeLabelMap] == undefined) {
