@@ -91,6 +91,7 @@ export const brawlerLabels = [
     { "value": "SURGE", "label": "Surge" },
     { "value": "TARA", "label": "Tara" },
     { "value": "TICK", "label": "Tick" },
+    { "value": "TRUNK", "label": "Trunk" },
     { "value": "WILLOW", "label": "Willow" }
 ];
 
@@ -112,6 +113,7 @@ export const modeLabels = [
     { "value": "trophyThieves", "label": "UNO" },
     { "value": "wipeout", "label": "Wipeout" },
     { "value": "siege", "label": "Siege" },
+    { "value": "volleyBrawl", "label": "Volley Brawl" },
 ]
 export const rankedModeLabels = [
     { "value": "brawlBall", "label": "Brawl Ball" },
@@ -140,6 +142,7 @@ export const modeLabelMap = {
     trophyThieves: "UNO",
     wipeout: "Wipeout",
     siege: "Siege",
+    volleyBrawl: "Volley Brawl"
 }
 export const rankedModeLabelMap = {
     brawlBall: "Brawl Ball",
