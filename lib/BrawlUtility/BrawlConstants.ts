@@ -118,6 +118,8 @@ export const modeLabels = [
     { "value": "basketBrawl", "label": "Basket Brawl" },
     { "value": "wipeout5V5", "label": "Wipeout 5v5" },
     { "value": "botDrop", "label": "Bot Drop" },
+    { "value": "brawlHockey5V5", "label": "Brawl Hockey 5v5" },
+    { "value": "brawlHockey", "label": "Brawl Hockey" },
 ]
 export const rankedModeLabels = [
     { "value": "brawlBall", "label": "Brawl Ball" },
@@ -150,7 +152,9 @@ export const modeLabelMap = {
     dodgeBrawl: "Dodge Brawl",
     basketBrawl: "Basket Brawl",
     wipeout5V5: "Wipeout 5v5",
-    botDrop: "Bot Drop"
+    botDrop: "Bot Drop",
+    brawlHockey5V5: "Brawl Hockey 5v5",
+    brawlHockey: "Brawl Hockey"
 }
 export const rankedModeLabelMap = {
     brawlBall: "Brawl Ball",
