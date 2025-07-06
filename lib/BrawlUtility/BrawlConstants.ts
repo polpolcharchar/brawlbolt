@@ -110,10 +110,14 @@ export const modeLabels = [
     { "value": "gemGrab5V5", "label": "Gem Grab 5v5" },
     { "value": "brawlBall5V5", "label": "Brawl Ball 5v5" },
     { "value": "knockout5V5", "label": "Knockout 5v5" },
-    { "value": "trophyThieves", "label": "UNO" },
+    { "value": "trophyThieves", "label": "Trophy Thieves" },
     { "value": "wipeout", "label": "Wipeout" },
     { "value": "siege", "label": "Siege" },
     { "value": "volleyBrawl", "label": "Volley Brawl" },
+    { "value": "dodgeBrawl", "label": "Dodge Brawl" },
+    { "value": "basketBrawl", "label": "Basket Brawl" },
+    { "value": "wipeout5V5", "label": "Wipeout 5v5" },
+    { "value": "botDrop", "label": "Bot Drop" },
 ]
 export const rankedModeLabels = [
     { "value": "brawlBall", "label": "Brawl Ball" },
@@ -139,10 +143,14 @@ export const modeLabelMap = {
     gemGrab5V5: "Gem Grab 5v5",
     brawlBall5V5: "Brawl Ball 5v5",
     knockout5V5: "Knockout 5v5",
-    trophyThieves: "UNO",
+    trophyThieves: "Trophy Thieves",
     wipeout: "Wipeout",
     siege: "Siege",
-    volleyBrawl: "Volley Brawl"
+    volleyBrawl: "Volley Brawl",
+    dodgeBrawl: "Dodge Brawl",
+    basketBrawl: "Basket Brawl",
+    wipeout5V5: "Wipeout 5v5",
+    botDrop: "Bot Drop"
 }
 export const rankedModeLabelMap = {
     brawlBall: "Brawl Ball",
