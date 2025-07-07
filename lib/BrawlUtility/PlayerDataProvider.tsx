@@ -141,6 +141,18 @@ export class OverallPlayerData {
   }
 }
 
+export class ShallowInitialStatMap {
+  stat_map: Record<string, RecursiveCompiledStats>
+  sortIndex: number;
+
+  constructor(data: any, sortIndex: number){
+    this.sortIndex = sortIndex;
+    this.stat_map = {};
+    Object.entries(data['stat_map'] || {}).forEach(([key, value]) => {
+      this.stat_map[key] = new RecursiveCompiledStats(value);
+    })
+  }
+}
 
 const PlayerDataContext = createContext<any>(null);
 
@@ -150,22 +162,26 @@ export const PlayerDataProvider = ({ children }: { children: React.ReactNode }) 
 
   const updatePlayerData = (playerTag: string, playerD: any) => {
 
-    if (typeof playerD !== "string") {
-
-      const test = new OverallPlayerData(playerD, playerTag === "Global" ? -1 : index);
-      setIndex(index + 1);
-
-      setPlayerData((prevData) => ({
-        ...prevData,
-        [playerTag]: test,
-      }));
-    } else {
+    if(typeof playerD === "string"){
       setPlayerData((prevData) => ({
         ...prevData,
         [playerTag]: playerD as any,
       }));
-    }
+    }else if("initialRegularModeMapBrawler" in playerD){
+      setPlayerData((prevData) => ({
+        ...prevData,
+        [playerTag]: new ShallowInitialStatMap(playerD["initialRegularModeMapBrawler"]["regularModeMapBrawler"], index) as any,
+      }));
+      setIndex(index + 1);
+    }else{
+      const newDataObject = new OverallPlayerData(playerD, playerTag === "Global" ? -1 : index);
+      setIndex(index + 1);
 
+      setPlayerData((prevData) => ({
+        ...prevData,
+        [playerTag]: newDataObject,
+      }));
+    }
   };
 
   return (

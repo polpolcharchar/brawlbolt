@@ -36,6 +36,16 @@ export const handlePlayerSearch = async (tagToHandle: string, setIsLoading: (val
     //Add loading card
     updatePlayerData(tagToHandle, "Loading...");
 
+    //Get initial data:
+    const initialRequestBody = JSON.stringify({ type: "getBaseRegularModeMapBrawler", playerTag: tagToHandle});
+    const initialRequestResult = await requestServer(initialRequestBody, setIsLoading);
+    if(initialRequestResult){
+        const playerData = {"initialRegularModeMapBrawler": JSON.parse(initialRequestResult)}
+        updatePlayerData(tagToHandle, playerData);
+    }else{
+        console.log("No initial");
+    }
+
     //Request and update
     const body = JSON.stringify({ type: "getPlayerData", playerTag: tagToHandle });
     const requestResult = await requestServer(body, setIsLoading);

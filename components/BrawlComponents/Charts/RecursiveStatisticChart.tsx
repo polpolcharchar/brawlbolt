@@ -1,5 +1,5 @@
 import { boltColors, brawlerLabels, modeLabelMap } from "@/lib/BrawlUtility/BrawlConstants";
-import { RecursiveCompiledStats, usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
+import { RecursiveCompiledStats, ShallowInitialStatMap, usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
 import { useState } from "react";
 import { Bar, BarChart, CartesianGrid, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../../ui/card";
@@ -53,7 +53,7 @@ export const RecursiveStatisticChart = ({ playerTag }: { playerTag: string }) =>
     } = usePlayerData();
 
     //Sort brawlers based off player usage
-    const sortedBrawlers = !playerTag ? [] : brawlerLabels.slice().sort((a, b) => {
+    const sortedBrawlers = (!playerTag || playerData[playerTag] instanceof ShallowInitialStatMap) ? brawlerLabels : brawlerLabels.slice().sort((a, b) => {
         // let brawlerA = playerData[playerTag].playerStats.regularBrawlerModeMap['stat_map'][a.value];
         // let brawlerB = playerData[playerTag].playerStats.regularBrawlerModeMap['stat_map'][b.value];
 
@@ -93,30 +93,31 @@ export const RecursiveStatisticChart = ({ playerTag }: { playerTag: string }) =>
 
     //Get Chart Data:
     let chartData = !playerTag ? [] : getChartDataForChildrenStats(
-        (rankedVsRegularToggleValue === "regular") ? (
-            (brawler === "" && mode === "") ?
-                playerData[playerTag].playerStats.regularModeMapBrawler
-                :
-                (brawler === "") ?
-                    playerData[playerTag].playerStats.regularModeMapBrawler.stat_map[mode]
-                    :
-                    (mode === "") ?
-                        playerData[playerTag].playerStats.regularBrawlerModeMap.stat_map[brawler]
-                        :
-                        playerData[playerTag].playerStats.regularBrawlerModeMap.stat_map[brawler]?.stat_map?.[mode])
-            : (
+        playerData[playerTag] instanceof ShallowInitialStatMap ? playerData[playerTag] :
+            (rankedVsRegularToggleValue === "regular") ? (
                 (brawler === "" && mode === "") ?
-                    playerData[playerTag].playerStats.rankedModeMapBrawler
+                    playerData[playerTag].playerStats.regularModeMapBrawler
                     :
                     (brawler === "") ?
-                        playerData[playerTag].playerStats.rankedModeMapBrawler.stat_map[mode]
+                        playerData[playerTag].playerStats.regularModeMapBrawler.stat_map[mode]
                         :
                         (mode === "") ?
-                            playerData[playerTag].playerStats.rankedBrawlerModeMap.stat_map[brawler]
+                            playerData[playerTag].playerStats.regularBrawlerModeMap.stat_map[brawler]
                             :
-                            playerData[playerTag].playerStats.rankedBrawlerModeMap.stat_map[brawler]?.stat_map?.[mode])
+                            playerData[playerTag].playerStats.regularBrawlerModeMap.stat_map[brawler]?.stat_map?.[mode])
+                : (
+                    (brawler === "" && mode === "") ?
+                        playerData[playerTag].playerStats.rankedModeMapBrawler
+                        :
+                        (brawler === "") ?
+                            playerData[playerTag].playerStats.rankedModeMapBrawler.stat_map[mode]
+                            :
+                            (mode === "") ?
+                                playerData[playerTag].playerStats.rankedBrawlerModeMap.stat_map[brawler]
+                                :
+                                playerData[playerTag].playerStats.rankedBrawlerModeMap.stat_map[brawler]?.stat_map?.[mode])
     );
-    chartData.sort((a, b) => {
+    chartData.sort((a: any, b: any) => {
         return b.numGames - a.numGames;
     });
     if (window.innerWidth <= 650) {
@@ -235,7 +236,7 @@ export const RecursiveStatisticChart = ({ playerTag }: { playerTag: string }) =>
                             />
 
                             <ReferenceLine
-                                y={Math.max(...chartData.map(item => {
+                                y={Math.max(...chartData.map((item: { [x: string]: any; }) => {
 
                                     const x = item[statType as keyof typeof item];
 
@@ -253,7 +254,7 @@ export const RecursiveStatisticChart = ({ playerTag }: { playerTag: string }) =>
 
                 {window.innerWidth <= 650 && chartData.length === 12 && (
                     <CardFooter className="justify-center text-sm text-gray-500">
-                        <LucideFrown/>
+                        <LucideFrown />
                         <p className="pl-2">{"Some entries omitted due to limited screen space"}</p>
                     </CardFooter>
                 )}

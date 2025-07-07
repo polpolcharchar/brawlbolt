@@ -1,5 +1,5 @@
 import { rankedModeLabelMap, rankedModeLabels } from "@/lib/BrawlUtility/BrawlConstants";
-import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
+import { OverallPlayerData, OverallPlayerStats, ShallowInitialStatMap, usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
 import { AlertTriangle, ArrowLeft, ArrowRight, LucideAnnoyed, LucideBot, LucideFrown } from "lucide-react";
 import { useState } from "react";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
@@ -13,7 +13,6 @@ import { ShareSplashCard } from "./InfoCards/ShareSplashCard";
 import { LinkCopyIndicator } from "./Selectors/LinkCopyIndicator";
 import { BrawlerDataTable } from "./Tables/BrawlerTable/BrawlerTable";
 import { columns } from "./Tables/BrawlerTable/Columns";
-
 
 export const PlayerCard = ({ playerTag }: { playerTag: string }) => {
 
@@ -37,8 +36,8 @@ export const PlayerCard = ({ playerTag }: { playerTag: string }) => {
 
     return (
         <Card className="w-full max-w-5xl mb-8 border-blue-700 border-2">
-
-            {(typeof playerData[playerTag] !== "string") ? (
+            {/* {(typeof playerData[playerTag] !== "string") ? ( */}
+            {(playerData[playerTag] instanceof OverallPlayerData) ? (
                 <div className="text-center">
                     <CardHeader className="text-4xl font-bold">
                         {playerData[playerTag].playerInfo['name']}
@@ -58,7 +57,7 @@ export const PlayerCard = ({ playerTag }: { playerTag: string }) => {
                     )}
 
                     {/* Minimal Games Warning */}
-                    {(playerTag !== "Global" && playerData[playerTag].playerStats.regularModeMapBrawler.overallResults.playerResultData.potentialTotal < 100) && (
+                    {(playerTag !== "Global" && playerData[playerTag].playerStats.regularModeMapBrawler && playerData[playerTag].playerStats.regularModeMapBrawler.overallResults.playerResultData.potentialTotal < 100) && (
                         <div className="flex flex-col items-center">
                             <Card className="bg-yellow-100 border-yellow-400 shadow-md p-4 rounded-2xl flex items-center w-fit max-w-lg m-2 text-center">
                                 <AlertTriangle className="text-yellow-600 w-6 h-6 mr-3" />
@@ -129,50 +128,59 @@ export const PlayerCard = ({ playerTag }: { playerTag: string }) => {
                         // Normal Items:
                         <div>
                             <Carousel className="w-full" opts={{ loop: true, watchDrag: (window.innerWidth > 650) }} setApi={setApi}>
-                                <CarouselContent>
 
-                                    <CarouselItem key="modeMapChart">
-                                        <RecursiveStatisticChart playerTag={playerTag} />
-                                    </CarouselItem>
+                                {playerData[playerTag] instanceof ShallowInitialStatMap ? (
+                                    <CarouselContent>
 
-                                    <CarouselItem key="brawlerTable">
-                                        <BrawlerDataTable
-                                            columns={columns}
-                                            playerTag={playerTag}
-                                            onBrawlerClick={() => { }}
-                                            rankedVsRegularToggleValue={rankedVsRegularToggleValue}
-                                            setRankedVsRegularToggleValue={updateRankedVsRegularToggleValue}
-                                            mode={mode}
-                                            setMode={setMode}
-                                        />
-                                    </CarouselItem>
+                                        <CarouselItem key="modeMapChart">
+                                            <RecursiveStatisticChart playerTag={playerTag} />
+                                        </CarouselItem>
+                                    </CarouselContent>
 
-                                    <CarouselItem key="durationChart">
-                                        <DurationChart playerTag={playerTag} />
-                                    </CarouselItem>
+                                ) : (
+                                    <CarouselContent>
 
-                                    <CarouselItem key="showdownChart">
-                                        <ShowdownRankChart playerTag={playerTag} />
-                                    </CarouselItem>
+                                        <CarouselItem key="modeMapChart">
+                                            <RecursiveStatisticChart playerTag={playerTag} />
+                                        </CarouselItem>
 
-                                    <CarouselItem key="rawData">
-                                        <Card className="border-none w-full h-full flex items-center justify-center shadow-lg rounded-lg">
-                                            <h2 className="text-2xl font-semibold">
-                                                Coming Soon: Raw Data Viewer
-                                            </h2>
-                                        </Card>
-                                    </CarouselItem>
+                                        <CarouselItem key="brawlerTable">
+                                            <BrawlerDataTable
+                                                columns={columns}
+                                                playerTag={playerTag}
+                                                onBrawlerClick={() => { }}
+                                                rankedVsRegularToggleValue={rankedVsRegularToggleValue}
+                                                setRankedVsRegularToggleValue={updateRankedVsRegularToggleValue}
+                                                mode={mode}
+                                                setMode={setMode}
+                                            />
+                                        </CarouselItem>
 
-                                    <CarouselItem key="matchHistory">
-                                        <Card className="border-none w-full h-full flex items-center justify-center shadow-lg rounded-lg">
-                                            <h2 className="text-2xl font-semibold">
-                                                Coming Soon: Match History
-                                            </h2>
-                                        </Card>
-                                    </CarouselItem>
+                                        <CarouselItem key="durationChart">
+                                            <DurationChart playerTag={playerTag} />
+                                        </CarouselItem>
 
-                                </CarouselContent>
+                                        <CarouselItem key="showdownChart">
+                                            <ShowdownRankChart playerTag={playerTag} />
+                                        </CarouselItem>
 
+                                        <CarouselItem key="rawData">
+                                            <Card className="border-none w-full h-full flex items-center justify-center shadow-lg rounded-lg">
+                                                <h2 className="text-2xl font-semibold">
+                                                    Coming Soon: Raw Data Viewer
+                                                </h2>
+                                            </Card>
+                                        </CarouselItem>
+
+                                        <CarouselItem key="matchHistory">
+                                            <Card className="border-none w-full h-full flex items-center justify-center shadow-lg rounded-lg">
+                                                <h2 className="text-2xl font-semibold">
+                                                    Coming Soon: Match History
+                                                </h2>
+                                            </Card>
+                                        </CarouselItem>
+                                    </CarouselContent>
+                                )}
                                 {window.innerWidth > 650 ? (
                                     <CardFooter className="justify-center text-sm text-gray-500">
                                         Swipe to view more charts
