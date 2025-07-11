@@ -13,6 +13,7 @@ import { ShareSplashCard } from "./InfoCards/ShareSplashCard";
 import { LinkCopyIndicator } from "./Selectors/LinkCopyIndicator";
 import { BrawlerDataTable } from "./Tables/BrawlerTable/BrawlerTable";
 import { columns } from "./Tables/BrawlerTable/Columns";
+import { TrieExplorerChart } from "./Charts/TrieExplorerChart";
 
 export const PlayerCard = ({ playerTag }: { playerTag: string }) => {
 
@@ -129,58 +130,11 @@ export const PlayerCard = ({ playerTag }: { playerTag: string }) => {
                         <div>
                             <Carousel className="w-full" opts={{ loop: true, watchDrag: (window.innerWidth > 650) }} setApi={setApi}>
 
-                                {playerData[playerTag] instanceof ShallowInitialStatMap ? (
-                                    <CarouselContent>
+                                <CarouselItem key="item1">
+                                    <TrieExplorerChart playerTag={playerTag}/>
+                                </CarouselItem>
 
-                                        <CarouselItem key="modeMapChart">
-                                            <RecursiveStatisticChart playerTag={playerTag} />
-                                        </CarouselItem>
-                                    </CarouselContent>
-
-                                ) : (
-                                    <CarouselContent>
-
-                                        <CarouselItem key="modeMapChart">
-                                            <RecursiveStatisticChart playerTag={playerTag} />
-                                        </CarouselItem>
-
-                                        <CarouselItem key="brawlerTable">
-                                            <BrawlerDataTable
-                                                columns={columns}
-                                                playerTag={playerTag}
-                                                onBrawlerClick={() => { }}
-                                                rankedVsRegularToggleValue={rankedVsRegularToggleValue}
-                                                setRankedVsRegularToggleValue={updateRankedVsRegularToggleValue}
-                                                mode={mode}
-                                                setMode={setMode}
-                                            />
-                                        </CarouselItem>
-
-                                        <CarouselItem key="durationChart">
-                                            <DurationChart playerTag={playerTag} />
-                                        </CarouselItem>
-
-                                        <CarouselItem key="showdownChart">
-                                            <ShowdownRankChart playerTag={playerTag} />
-                                        </CarouselItem>
-
-                                        <CarouselItem key="rawData">
-                                            <Card className="border-none w-full h-full flex items-center justify-center shadow-lg rounded-lg">
-                                                <h2 className="text-2xl font-semibold">
-                                                    Coming Soon: Raw Data Viewer
-                                                </h2>
-                                            </Card>
-                                        </CarouselItem>
-
-                                        <CarouselItem key="matchHistory">
-                                            <Card className="border-none w-full h-full flex items-center justify-center shadow-lg rounded-lg">
-                                                <h2 className="text-2xl font-semibold">
-                                                    Coming Soon: Match History
-                                                </h2>
-                                            </Card>
-                                        </CarouselItem>
-                                    </CarouselContent>
-                                )}
+                                
                                 {window.innerWidth > 650 ? (
                                     <CardFooter className="justify-center text-sm text-gray-500">
                                         Swipe to view more charts

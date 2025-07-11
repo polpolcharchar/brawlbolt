@@ -17,7 +17,7 @@ export const PlayerTagInput = () => {
 
     //Handle Initial Global Stats:
     useEffect(() => {
-        fetchGlobalStats(setIsLoading, updatePlayerData);
+        // fetchGlobalStats(setIsLoading, updatePlayerData);
     }, [])
 
     //Submit
@@ -109,7 +109,7 @@ export const PlayerTagInput = () => {
                             disabled={isLoading}
                             className="bg-blue-600 hover:bg-blue-700 text-white animated-button"
                             onClick={() => {
-                                handlePlayerSearch("GJCLVRQLG", setIsLoading, updatePlayerData);
+                                handlePlayerSearch("9CUCYLQP", setIsLoading, updatePlayerData);
                             }}
                         >
                             Load Example Profile

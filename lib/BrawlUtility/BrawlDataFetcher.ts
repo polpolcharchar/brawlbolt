@@ -4,23 +4,23 @@ const requestServer = async (body: string, setIsLoading: (value: boolean) => voi
 
     setIsLoading(true);
 
-    try{
+    try {
         const response = await fetch("https://hfdejn2qu3.execute-api.us-west-1.amazonaws.com/default/BrawlTrackerHandlerPython", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body,
         });
 
-        if(response.ok){
+        if (response.ok) {
             const result = await response.text();
             return result;
-        }else{
+        } else {
             return false;
         }
 
-    }catch (error) {
+    } catch (error) {
         return false;
-    }finally {
+    } finally {
         setIsLoading(false);
     }
 }
@@ -32,37 +32,72 @@ export const handlePlayerSearch = async (tagToHandle: string, setIsLoading: (val
     if (tagToHandle.substring(0, 1) == "#") {
         tagToHandle = tagToHandle.substring(1);
     }
-    
+
     //Add loading card
     updatePlayerData(tagToHandle, "Loading...");
 
     //Get initial data:
-    const initialRequestBody = JSON.stringify({ type: "getBaseRegularModeMapBrawler", playerTag: tagToHandle});
+    const initialRequestBody = JSON.stringify({ type: "getBaseRegularModeMapBrawler", playerTag: tagToHandle });
     const initialRequestResult = await requestServer(initialRequestBody, setIsLoading);
-    if(initialRequestResult){
-        const playerData = {"initialRegularModeMapBrawler": JSON.parse(initialRequestResult)}
+    if (initialRequestResult) {
+        const playerData = { "initialRegularModeMapBrawler": JSON.parse(initialRequestResult) }
         updatePlayerData(tagToHandle, playerData);
-    }else{
+    } else {
         console.log("No initial");
     }
 
     //Request and update
     const body = JSON.stringify({ type: "getPlayerData", playerTag: tagToHandle });
     const requestResult = await requestServer(body, setIsLoading);
-    if(requestResult){
+    if (requestResult) {
         updatePlayerData(tagToHandle, JSON.parse(requestResult));
-    }else{
+    } else {
         updatePlayerData(tagToHandle, "Player not found");
     }
 };
 
+export const fetchTrieData = async (
+    requestType: string,
+    requestMode: string,
+    requestMap: string,
+    requestBrawler: string,
+    targetAttribute: string,
+    playerTag: string,
+    filterID: string,
+    setIsLoading: (value: boolean) => void
+) => {
+
+    let requestBody: any = {
+        type: "getTrieData",
+        playerTag,
+        filterID,
+        targetAttribute
+    }
+    if(requestType != ""){
+        requestBody["requestType"] = requestType;
+    }
+    if(requestMode != ""){
+        requestBody["requestMode"] = requestMode;
+    }
+    if(requestMap != ""){
+        requestBody["requestMap"] = requestMap;
+    }
+    if(requestBrawler != ""){
+        requestBody["requestBrawler"] = requestBrawler;
+    }
+
+    const requestResult = await requestServer(JSON.stringify(requestBody), setIsLoading);
+    return requestResult;
+
+}
+
 export const fetchGlobalStats = async (setIsLoading: (value: boolean) => void, updatePlayerData: (playerTag: string, playerD: any) => void) => {
 
     updatePlayerData("Global", "Loading...");
-    
-    const body = JSON.stringify({type: "getGlobalStats"});
+
+    const body = JSON.stringify({ type: "getGlobalStats" });
     const requestResult = await requestServer(body, setIsLoading);
-    if(requestResult){
+    if (requestResult) {
         const mockData = {
             playerInfo: {
                 name: "Global Statistics"
@@ -70,7 +105,7 @@ export const fetchGlobalStats = async (setIsLoading: (value: boolean) => void, u
             playerStats: JSON.parse(requestResult)
         }
         updatePlayerData("Global", mockData);
-    }else{
+    } else {
         updatePlayerData("Global", "Error fetching global data.");
     }
 }
