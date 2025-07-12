@@ -12,28 +12,34 @@ type LabelChoice = {
     label: string
 }
 
+type CustomSelectorProps = {
+    value: string,
+    setValue: (value: string) => void,
+    labels: LabelChoice[],
+    noChoiceLabel: string,
+    searchPlaceholder: string,
+    emptySearch: string,
+    disabled?: boolean,
+    canBeEmpty?: boolean
+}
+
 export const CustomSelector = ({
     value,
     setValue,
     labels,
     noChoiceLabel,
     searchPlaceholder,
-    emptySearch
-}: {
-    value: string,
-    setValue: (value: string) => void,
-    labels: LabelChoice[],
-    noChoiceLabel: string,
-    searchPlaceholder: string,
-    emptySearch: string
-}) => {
+    emptySearch,
+    disabled = false,
+    canBeEmpty = true
+}: CustomSelectorProps) => {
 
     const [open, setOpen] = useState(false);
 
     const sortedLabels = value
         ? [
-            labels.find((label) => label.value === value)!,
-            ...labels.filter((label) => label.value !== value)
+            ...labels.filter(label => label.value === value),
+            ...labels.filter(label => label.value !== value)
         ]
         : labels;
 
@@ -45,6 +51,7 @@ export const CustomSelector = ({
                     role="combobox"
                     aria-expanded={open}
                     className="max-w-[200px] w-full justify-between"
+                    disabled={disabled}
                 >
                     {value
                         ? labels.find((labelChoice) => labelChoice.value === value)?.label
@@ -54,7 +61,7 @@ export const CustomSelector = ({
             </PopoverTrigger>
             <PopoverContent className="w-[200px] p-0" side="bottom" align="start">
                 <Command>
-                    <CommandInput placeholder={searchPlaceholder} />
+                    <CommandInput placeholder={searchPlaceholder} disabled={disabled} />
                     <CommandList>
                         <CommandEmpty>{emptySearch}</CommandEmpty>
                         <CommandGroup>
@@ -63,9 +70,19 @@ export const CustomSelector = ({
                                     key={labelChoice.value}
                                     value={labelChoice.value}
                                     onSelect={(currentValue: string) => {
-                                        setValue(currentValue === value ? "" : currentValue)
-                                        setOpen(false)
+                                        if (!disabled) {
+                                            if (currentValue === value) {
+                                                if (canBeEmpty) {
+                                                    setValue("");
+                                                }
+                                                // If canBeEmpty is false, do nothing
+                                            } else {
+                                                setValue(currentValue);
+                                            }
+                                            setOpen(false);
+                                        }
                                     }}
+                                    disabled={disabled}
                                 >
                                     <Check
                                         className={clsx(
@@ -82,5 +99,4 @@ export const CustomSelector = ({
             </PopoverContent>
         </Popover>
     )
-
 }
