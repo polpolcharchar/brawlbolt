@@ -6,6 +6,8 @@ import { fetchTrieData } from "@/lib/BrawlUtility/BrawlDataFetcher";
 import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { CustomSelector } from "../Selectors/CustomSelector";
+import { Checkbox } from "@/components/ui/checkbox";
+import { LockIcon } from "lucide-react";
 
 const CustomPlayerTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -50,6 +52,17 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
         if (rankedVsRegularToggleValue === "ranked" && (value === "trophyChange" || value === "trophyChangePerGame")) {
             setRankedVsRegularToggleValue("regular");
         }
+
+        if(sortByStatType){
+
+            if(value === "winrateMinusStarRate") {
+                setSortingStatType("winrate");
+            }else{
+                setSortingStatType(value);
+            }
+
+        }
+
         _setStatType(value);
     }
 
@@ -83,17 +96,16 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
 
     const [mapLabels, setMapLabels] = useState<{ value: string; label: string }[]>([]);
 
+    const [sortingStatType, setSortingStatType] = useState("winrate");
+    const [sortByStatType, setSortByStatType] = useState(true);
+
     const [chartData, setChartData] = useState<
         { value: string; winrate: number }[]
     >([]);
     const sortChartData = () => {
         setChartData((prevData) => {
             return [...prevData].sort((a: any, b: any) => {
-                if (statType === "winrateMinusStarRate") {
-                    return b["winrate"] - a["winrate"];
-                } else {
-                    return b[statType] - a[statType];
-                }
+                return b[sortingStatType] - a[sortingStatType];
             });
         });
     }
@@ -174,7 +186,7 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
     }, [chartData]);
     useEffect(() => {
         sortChartData();
-    }, [statType]);
+    }, [statType, sortingStatType]);
 
     return (
         <div>
@@ -205,7 +217,8 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
                                     noChoiceLabel="Select Mode..."
                                     searchPlaceholder="Search Modes..."
                                     emptySearch="No Mode Found"
-                                    disabled={targetAttribute == "mode"} />
+                                    disabled={targetAttribute == "mode"}
+                                    canBeEmpty={targetAttribute != "map"} />
                             </div>
                             <div>
                                 <CustomSelector
@@ -253,6 +266,7 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
                                         { value: "trophyChange", label: "Trophy Change" },
                                         { value: "trophyChangePerGame", label: "Trophy Change / Game" },
                                         { value: "averageDuration", label: "Average Duration" },
+                                        { value: "numGames", label: "Games Played" },
                                     ]}
                                     noChoiceLabel="Select Stat Type..."
                                     searchPlaceholder="Search Stat Types..."
@@ -261,11 +275,54 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
                                     searchEnabled={false}
                                 />
                             </div>
+                            <div>
+                                <label className="block text-sm font-medium mb-1">Sorting:</label>
+                                <CustomSelector
+                                    value={sortingStatType}
+                                    setValue={setSortingStatType}
+                                    labels={[
+                                        { value: "winrate", label: "Winrate" },
+                                        { value: "trophyChange", label: "Trophy Change" },
+                                        { value: "trophyChangePerGame", label: "Trophy Change / Game" },
+                                        { value: "averageDuration", label: "Average Duration" },
+                                        { value: "numGames", label: "Games Played" },
+                                    ]}
+                                    noChoiceLabel="Select Sorting Type..."
+                                    searchPlaceholder="Search Sorting Types..."
+                                    emptySearch="No Sorting Type Found"
+                                    canBeEmpty={false}
+                                    searchEnabled={false}
+                                    disabled={sortByStatType}
+                                />
+                                <div className="flex items-center gap-2 pt-2">
+                                    <Checkbox
+                                        id="sortByStatType"
+                                        checked={sortByStatType}
+                                        onCheckedChange={() => {
+                                            setSortByStatType(prev => !prev);
+
+                                            // When toggling on, set sortingStatType to the current statType
+                                            if(!sortByStatType) {
+                                                setSortingStatType(statType === "winrateMinusStarRate" ? "winrate" : statType);
+                                            }
+                                        }}
+                                        className="cursor-pointer"
+                                    />
+                                    <label
+                                        htmlFor="sortByStatType"
+                                        className="flex items-center gap-1 cursor-pointer"
+                                        title="Lock sorting type to y-axis value"
+                                    >
+                                        <LockIcon size={16} className="text-muted-foreground" />
+                                        <span className="text-xs text-muted-foreground">Lock to y-axis value</span>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </CardHeader>
 
-                <CardContent className="h-[60vh]">
+                <CardContent className="h-[40vh]">
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart
                             accessibilityLayer
