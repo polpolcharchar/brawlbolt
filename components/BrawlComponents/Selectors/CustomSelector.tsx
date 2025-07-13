@@ -20,7 +20,8 @@ type CustomSelectorProps = {
     searchPlaceholder: string,
     emptySearch: string,
     disabled?: boolean,
-    canBeEmpty?: boolean
+    canBeEmpty?: boolean,
+    searchEnabled?: boolean
 }
 
 export const CustomSelector = ({
@@ -31,7 +32,8 @@ export const CustomSelector = ({
     searchPlaceholder,
     emptySearch,
     disabled = false,
-    canBeEmpty = true
+    canBeEmpty = true,
+    searchEnabled = true
 }: CustomSelectorProps) => {
 
     const [open, setOpen] = useState(false);
@@ -61,7 +63,7 @@ export const CustomSelector = ({
             </PopoverTrigger>
             <PopoverContent className="w-[200px] p-0" side="bottom" align="start">
                 <Command>
-                    <CommandInput placeholder={searchPlaceholder} disabled={disabled} />
+                    {searchEnabled && <CommandInput placeholder={searchPlaceholder} disabled={disabled} />}
                     <CommandList>
                         <CommandEmpty>{emptySearch}</CommandEmpty>
                         <CommandGroup>

@@ -1,13 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartTooltip } from "@/components/ui/chart";
-import { boltColors, brawlerLabels, modeLabelMap, modeLabels } from "@/lib/BrawlUtility/BrawlConstants";
+import { brawlerLabels, modeLabelMap, modeLabels } from "@/lib/BrawlUtility/BrawlConstants";
 import { fetchTrieData } from "@/lib/BrawlUtility/BrawlDataFetcher";
 import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { CustomSelector } from "../Selectors/CustomSelector";
-import { RegularRankedToggle } from "../Selectors/RegularRankedToggle";
-import { StatTypeSelector } from "../Selectors/StatTypeSelector";
 
 const CustomPlayerTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -20,6 +18,7 @@ const CustomPlayerTooltip = ({ active, payload }: any) => {
                 <p>Star Rate: {(data.starRate * 100).toFixed(1)}%</p>
                 <p>Trophy Change: {data.trophyChange}</p>
                 <p>Trophy Change / Game: {data.trophyChangePerGame.toFixed(2)}</p>
+                <p>Average Duration: {data.averageDuration.toFixed(0)} seconds</p>
                 <p>Games: {data.numGames}</p>
             </div>
         );
@@ -33,7 +32,7 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
     const [mode, setMode] = useState("");
     const setModeAndUpdateMap = (value: string): void => {
         //If mode is set to nothing, set map to nothing as well
-        if (value === "") {
+        if (value === "" || targetAttribute === "type") {
             setMap("");
         }
         setMode(value);
@@ -46,7 +45,7 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
         { value: "ranked", label: "Ranked" }
     ]);
 
-    const [statType, _setStatType] = useState("winrate");
+    const [statType, _setStatType] = useState("winrateMinusStarRate");
     const setStatTypeAndUpdateOverallToggle = (value: string): void => {
         if (rankedVsRegularToggleValue === "ranked" && (value === "trophyChange" || value === "trophyChangePerGame")) {
             setRankedVsRegularToggleValue("regular");
@@ -61,17 +60,17 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
             setModeAndUpdateMap("brawlBall");
         }
 
-        if(value != "type" && rankedVsRegularToggleValue == ""){
+        if (value != "type" && rankedVsRegularToggleValue == "") {
             setRankedVsRegularToggleValue("regular");
         }
 
-        if(value == "map"){
+        if (value == "map") {
             setMap("");
-        }else if(value == "brawler"){
+        } else if (value == "brawler") {
             setBrawler("");
-        }else if(value == "mode"){
+        } else if (value == "mode") {
             setMode("");
-        }else if(value == "type"){
+        } else if (value == "type") {
             setRankedVsRegularToggleValue("");
         }
     }
@@ -90,10 +89,10 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
     const sortChartData = () => {
         setChartData((prevData) => {
             return [...prevData].sort((a: any, b: any) => {
-                if (statType === "winrate" || statType === "starRate") {
-                    return b[statType] - a[statType];
+                if (statType === "winrateMinusStarRate") {
+                    return b["winrate"] - a["winrate"];
                 } else {
-                    return Math.abs(b[statType]) - Math.abs(a[statType]);
+                    return b[statType] - a[statType];
                 }
             });
         });
@@ -117,21 +116,32 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
                     label: map
                 }))
             );
-        } else {
+        } else if (map == "") {
             setMapLabels([]);
         }
 
         const trieData = jsonData['trieData'] || [];
 
         const mapped = trieData.map((item: any) => {
-            const value = item.pathID.split('$').pop() || '';
+            const value = targetAttribute === "type" ? item.pathID.split('$')[2] : item.pathID.split('$').pop() || '';
             const winrate = (item.resultCompiler.player_result_data.wins / item.resultCompiler.player_result_data.potential_total);
-            const starRate = (
+            const starRate = item.resultCompiler.player_star_data.potential_total == 0 ? 0 : (
                 (item.resultCompiler.player_star_data.wins + item.resultCompiler.player_star_data.losses + item.resultCompiler.player_star_data.draws)
                 / item.resultCompiler.player_star_data.potential_total
             );
             const numGames = item.resultCompiler.player_result_data.potential_total;
             const trophyChange = item.resultCompiler.player_trophy_change;
+            const frequencies = item.resultCompiler.duration_frequencies?.frequencies || {};
+
+            // Calculate average duration from frequencies
+            const totalOccurrences: any = Object.values(frequencies).reduce((sum: any, count: any) => sum + count, 0);
+            const averageDuration =
+                totalOccurrences === 0
+                    ? 0
+                    : Object.entries(frequencies).reduce(
+                        (sum, [duration, count]) => sum + Number(duration) * Number(count),
+                        0
+                    ) / totalOccurrences * 30; // Convert to seconds
 
             return {
                 value: value,
@@ -139,7 +149,9 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
                 starRate: starRate,
                 numGames: numGames,
                 trophyChange: trophyChange,
-                trophyChangePerGame: numGames > 0 ? (trophyChange / numGames) : 0
+                trophyChangePerGame: numGames > 0 ? (trophyChange / numGames) : 0,
+                winrateMinusStarRate: winrate - starRate,
+                averageDuration: averageDuration
             };
         });
 
@@ -148,17 +160,17 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
         sortChartData();
     }
 
-    const [currentPage, setCurrentPage] = useState(0);
+    const [pageStartingIndex, setPageStartingIndex] = useState(0);
     const pageSize = 10;
 
-    const totalPages = Math.ceil(chartData.length / pageSize);
-    const paginatedData = chartData.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+    const totalPages = Math.max(1, Math.ceil(chartData.length / pageSize));
+    const paginatedData = chartData.slice(pageStartingIndex, pageStartingIndex + pageSize);
 
     useEffect(() => {
         fetchAndSetChartData();
     }, [brawler, mode, rankedVsRegularToggleValue, map, targetAttribute]);
     useEffect(() => {
-        setCurrentPage(0);
+        setPageStartingIndex(0);
     }, [chartData]);
     useEffect(() => {
         sortChartData();
@@ -175,11 +187,6 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
                         <div className="flex flex-col gap-3 py-2 max-w-[200px] w-full">
                             <div className="font-semibold text-lg mb-2">Trie Query</div>
                             <div>
-                                {/* <RegularRankedToggle
-                                    rankedVsRegularToggleValue={rankedVsRegularToggleValue}
-                                    setRankedVsRegularToggleValue={setRankedVsRegularToggleValue}
-                                    statType={statType}
-                                /> */}
                                 <CustomSelector
                                     value={rankedVsRegularToggleValue}
                                     setValue={setRankedVsRegularToggleValue}
@@ -187,7 +194,8 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
                                     noChoiceLabel="Select Type..."
                                     searchPlaceholder="Search Types..."
                                     emptySearch="No Type Found"
-                                    disabled={targetAttribute == "type"} />
+                                    disabled={targetAttribute == "type"}
+                                    searchEnabled={false} />
                             </div>
                             <div>
                                 <CustomSelector
@@ -222,7 +230,7 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
                         </div>
                         {/* Second column: Target Attribute, Stat Type */}
                         <div className="flex flex-col gap-3 py-2 max-w-[200px] w-full">
-                            <div className="font-semibold text-lg mb-2">What to graph</div>
+                            <div className="font-semibold text-lg mb-2">Graph Settings</div>
                             <div>
                                 <label className="block text-sm font-medium mb-1">X-Axis:</label>
                                 <CustomSelector
@@ -232,16 +240,30 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
                                     noChoiceLabel="Select Target Attribute..."
                                     searchPlaceholder="Search Attributes..."
                                     emptySearch="No Attribute Found"
-                                    canBeEmpty={false} />
+                                    canBeEmpty={false}
+                                    searchEnabled={false} />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium mb-1">Y-Axis:</label>
-                                <StatTypeSelector statType={statType} setStatType={setStatTypeAndUpdateOverallToggle} />
+                                <CustomSelector
+                                    value={statType}
+                                    setValue={setStatTypeAndUpdateOverallToggle}
+                                    labels={[
+                                        { value: "winrateMinusStarRate", label: "Winrate" },
+                                        { value: "trophyChange", label: "Trophy Change" },
+                                        { value: "trophyChangePerGame", label: "Trophy Change / Game" },
+                                        { value: "averageDuration", label: "Average Duration" },
+                                    ]}
+                                    noChoiceLabel="Select Stat Type..."
+                                    searchPlaceholder="Search Stat Types..."
+                                    emptySearch="No Stat Type Found"
+                                    canBeEmpty={false}
+                                    searchEnabled={false}
+                                />
                             </div>
                         </div>
                     </div>
                 </CardHeader>
-
 
                 <CardContent className="h-[60vh]">
                     <ResponsiveContainer width="100%" height="100%">
@@ -263,14 +285,21 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
                                 angle={window.innerWidth < 900 ? -90 : -45}
                                 textAnchor="end"
                                 tickFormatter={(tick: string) => {
-                                    return modeLabelMap[tick as keyof typeof modeLabelMap] ?? tick;
+
+                                    return modeLabelMap[tick as keyof typeof modeLabelMap]
+                                        ?? tick//Title Case
+                                            .toLowerCase()
+                                            .split(' ')
+                                            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                                            .join(' ');;
                                 }}
                                 tick={window.innerWidth < 900 ? { fontSize: 12 } : {}}
                             />
 
                             <YAxis
                                 type="number"
-                                tickFormatter={(tick) => Math.abs(tick) > 1 || tick === 0 ? tick : tick.toFixed(2)} // Formats labels (e.g., "0.50")
+                                // tickFormatter={(tick) => Math.abs(tick) > 1 || tick === 0 ? tick : tick.toFixed(2)} // Formats labels (e.g., "0.50")
+                                domain={statType == "winrateMinusStarRate" ? [0, 1] : undefined}
                             />
 
                             <ChartTooltip
@@ -278,10 +307,18 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
                                 content={<CustomPlayerTooltip />}
                             />
 
+                            {statType === "winrateMinusStarRate" && (
+                                <Bar
+                                    dataKey={"starRate"}
+                                    fill={"var(--chart-2)"}
+                                    stackId={"a"}
+                                />
+                            )}
                             <Bar
                                 dataKey={statType}
                                 radius={[8, 8, 0, 0]}
-                                fill={boltColors.blue700}
+                                fill={"var(--chart-1)"}
+                                stackId={"a"}
                             />
 
                             <ReferenceLine
@@ -301,27 +338,45 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
                     </ResponsiveContainer>
                 </CardContent>
 
-                {/* {window.innerWidth <= 650 && chartData.length === 12 && (
-                    <CardFooter className="justify-center text-sm text-gray-500">
-                        <LucideFrown />
-                        <p className="pl-2">{"Some entries omitted due to limited screen space"}</p>
-                    </CardFooter>
-                )} */}
                 <CardFooter className="flex justify-center gap-4">
                     <Button
                         variant="outline"
-                        disabled={currentPage === 0}
-                        onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
+                        disabled={pageStartingIndex === 0}
+                        onClick={() => {
+                            let count = 0;
+                            const interval = setInterval(() => {
+                                setPageStartingIndex(prev => {
+                                    const next = Math.max(0, prev - 1);
+                                    return next;
+                                });
+                                count++;
+                                if (count >= pageSize) {
+                                    clearInterval(interval);
+                                }
+                            }, 20);
+                        }}
                     >
                         Previous
                     </Button>
                     <div className="text-sm text-muted-foreground self-center">
-                        Page {currentPage + 1} of {totalPages}
+                        Page {Math.floor(pageStartingIndex / pageSize + 1)} of {totalPages}
                     </div>
                     <Button
                         variant="outline"
-                        disabled={(currentPage + 1) >= totalPages}
-                        onClick={() => setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))}
+                        disabled={(pageStartingIndex / pageSize + 1) >= totalPages}
+                        onClick={() => {
+                            let count = 0;
+                            const interval = setInterval(() => {
+                                setPageStartingIndex(prev => {
+                                    const next = Math.min(totalPages * pageSize - 1, prev + 1);
+                                    return next;
+                                });
+                                count++;
+                                if (count >= pageSize) {
+                                    clearInterval(interval);
+                                }
+                            }, 20);
+                        }}
                     >
                         Next
                     </Button>
