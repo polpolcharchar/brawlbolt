@@ -34,26 +34,26 @@ export const handlePlayerSearch = async (tagToHandle: string, setIsLoading: (val
     }
 
     //Add loading card
-    updatePlayerData(tagToHandle, "Loading...");
+    updatePlayerData(tagToHandle, tagToHandle);
 
     //Get initial data:
-    const initialRequestBody = JSON.stringify({ type: "getBaseRegularModeMapBrawler", playerTag: tagToHandle });
-    const initialRequestResult = await requestServer(initialRequestBody, setIsLoading);
-    if (initialRequestResult) {
-        const playerData = { "initialRegularModeMapBrawler": JSON.parse(initialRequestResult) }
-        updatePlayerData(tagToHandle, playerData);
-    } else {
-        console.log("No initial");
-    }
+    // const initialRequestBody = JSON.stringify({ type: "getBaseRegularModeMapBrawler", playerTag: tagToHandle });
+    // const initialRequestResult = await requestServer(initialRequestBody, setIsLoading);
+    // if (initialRequestResult) {
+    //     const playerData = { "initialRegularModeMapBrawler": JSON.parse(initialRequestResult) }
+    //     updatePlayerData(tagToHandle, playerData);
+    // } else {
+    //     console.log("No initial");
+    // }
 
-    //Request and update
-    const body = JSON.stringify({ type: "getPlayerData", playerTag: tagToHandle });
-    const requestResult = await requestServer(body, setIsLoading);
-    if (requestResult) {
-        updatePlayerData(tagToHandle, JSON.parse(requestResult));
-    } else {
-        updatePlayerData(tagToHandle, "Player not found");
-    }
+    // //Request and update
+    // const body = JSON.stringify({ type: "getPlayerData", playerTag: tagToHandle });
+    // const requestResult = await requestServer(body, setIsLoading);
+    // if (requestResult) {
+    //     updatePlayerData(tagToHandle, JSON.parse(requestResult));
+    // } else {
+    //     updatePlayerData(tagToHandle, "Player not found");
+    // }
 };
 
 export const fetchTrieData = async (
@@ -64,6 +64,7 @@ export const fetchTrieData = async (
     targetAttribute: string,
     playerTag: string,
     filterID: string,
+    isGlobal: boolean,
     setIsLoading: (value: boolean) => void
 ) => {
 
@@ -71,7 +72,8 @@ export const fetchTrieData = async (
         type: "getTrieData",
         playerTag,
         filterID,
-        targetAttribute
+        targetAttribute,
+        isGlobal,
     }
     if(requestType != ""){
         requestBody["requestType"] = requestType;
@@ -95,14 +97,24 @@ export const fetchGlobalStats = async (setIsLoading: (value: boolean) => void, u
 
     updatePlayerData("Global", "Loading...");
 
-    const body = JSON.stringify({ type: "getGlobalStats" });
-    const requestResult = await requestServer(body, setIsLoading);
+    let requestBody: any = {
+        "type": "getRecentTrieData",
+        "playerTag": "global",
+        "numItems": 1,
+        "isGlobal": true,
+        "requestType": "regular",
+        "requestMode": "brawlBall",
+        "targetAttribute": "brawler",
+    }
+
+    const requestResult = await requestServer(JSON.stringify(requestBody), setIsLoading);
+
     if (requestResult) {
         const mockData = {
             playerInfo: {
                 name: "Global Statistics"
             },
-            playerStats: JSON.parse(requestResult)
+            playerStats: JSON.parse(requestResult)[0]
         }
         updatePlayerData("Global", mockData);
     } else {

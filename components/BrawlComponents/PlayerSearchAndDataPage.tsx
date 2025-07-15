@@ -1,6 +1,6 @@
 "use client"
 
-import { PlayerCard } from "@/components/BrawlComponents/PlayerCard";
+import { StatisticCard } from "@/components/BrawlComponents/MainCards/StatisticCard";
 import { PlayerTagInput } from "@/components/BrawlComponents/PlayerTagInput";
 import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
 import { useSearchParams } from "next/navigation";
@@ -20,41 +20,10 @@ export const PlayerSearchAndDataPage = () => {
 
   //Load Default
   useEffect(() => {
-    const fetchData = async () => {
-      if (tagParameter) {
-        try {
-
-          updatePlayerData(tagParameter, "Loading...");
-
-          const response = await fetch(
-            "https://hfdejn2qu3.execute-api.us-west-1.amazonaws.com/default/BrawlTrackerHandlerPython",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ type: "getPlayerData", "playerTag": tagParameter }),
-            }
-          );
-
-          if (response.status === 502) {
-            console.error("Server error: 502 Bad Gateway");
-            updatePlayerData(tagParameter, "Player not found, initiate tracking above");
-          } else if (response.status === 200) {
-            const body = await response.text();
-            updatePlayerData(tagParameter, JSON.parse(body));
-          } else {
-            console.error(`Unexpected response status: ${response.status}`);
-            updatePlayerData(tagParameter, "Player not found, initiate tracking above");
-          }
-        } catch (error) {
-          console.error("Error fetching data:", error);
-          // Handle network errors or other exceptions
-        }
-      }
-    };
-
-    fetchData();
+    if(tagParameter){
+      updatePlayerData(tagParameter, tagParameter);
+    }
   }, [tagParameter]);
-
 
   return (
     <div className="flex flex-col items-center">
@@ -79,7 +48,7 @@ export const PlayerSearchAndDataPage = () => {
             return indexB - indexA;
           })
           .map(([playerTag, playerData]) => {
-            return <PlayerCard key={playerTag} playerTag={playerTag} />;
+            return <StatisticCard key={playerTag} playerTag={playerTag} />;
           })
       }
 

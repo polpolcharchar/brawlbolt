@@ -15,7 +15,13 @@ const CustomPlayerTooltip = ({ active, payload }: any) => {
         const modeName: string = data.value;
         return (
             <div className="bg-black p-2 border rounded-lg shadow text-sm text-white">
-                <p>{modeLabelMap[modeName as keyof typeof modeLabelMap] ?? data.value}</p>
+                <p>{modeLabelMap[modeName as keyof typeof modeLabelMap] ??
+                    data.value
+                        .toLowerCase()
+                        .split(' ')
+                        .map((word: any) => word.charAt(0).toUpperCase() + word.slice(1))
+                        .join(' ')
+                }</p>
                 <p>Winrate: {(data.winrate * 100).toFixed(1)}%</p>
                 <p>Star Rate: {(data.starRate * 100).toFixed(1)}%</p>
                 <p>Trophy Change: {data.trophyChange}</p>
@@ -53,11 +59,11 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
             setRankedVsRegularToggleValue("regular");
         }
 
-        if(sortByStatType){
+        if (sortByStatType) {
 
-            if(value === "winrateMinusStarRate") {
+            if (value === "winrateMinusStarRate") {
                 setSortingStatType("winrate");
-            }else{
+            } else {
                 setSortingStatType(value);
             }
 
@@ -66,7 +72,7 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
         _setStatType(value);
     }
 
-    const [targetAttribute, setTargetAttribute] = useState("mode");
+    const [targetAttribute, setTargetAttribute] = useState("brawler");
     const setTargetAttributeAndUpdateOtherAttributes = (value: string): void => {
         setTargetAttribute(value);
         if (value == "map" && mode === "") {
@@ -96,8 +102,8 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
 
     const [mapLabels, setMapLabels] = useState<{ value: string; label: string }[]>([]);
 
-    const [sortingStatType, setSortingStatType] = useState("winrate");
-    const [sortByStatType, setSortByStatType] = useState(true);
+    const [sortingStatType, setSortingStatType] = useState("numGames");
+    const [sortByStatType, setSortByStatType] = useState(false);
 
     const [chartData, setChartData] = useState<
         { value: string; winrate: number }[]
@@ -111,7 +117,7 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
     }
     const fetchAndSetChartData = async () => {
 
-        const rawData = await fetchTrieData(rankedVsRegularToggleValue, mode, map, brawler, targetAttribute, playerTag, "overall", () => { });
+        const rawData = await fetchTrieData(rankedVsRegularToggleValue, mode, map, brawler, targetAttribute, playerTag, "overall", false, () => { });
         if (!rawData || rawData.length === 0) {
             setChartData([]);
             return;
@@ -207,7 +213,8 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
                                     searchPlaceholder="Search Types..."
                                     emptySearch="No Type Found"
                                     disabled={targetAttribute == "type"}
-                                    searchEnabled={false} />
+                                    searchEnabled={false}
+                                    canBeEmpty={false} />
                             </div>
                             <div>
                                 <CustomSelector
@@ -228,7 +235,7 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
                                     noChoiceLabel="Select Map..."
                                     searchPlaceholder="Search Maps..."
                                     emptySearch={mode == "" ? "Choose a mode first!" : "No Map Found"}
-                                    disabled={targetAttribute == "map"} />
+                                    disabled={targetAttribute == "map" || targetAttribute == "mode"} />
                             </div>
                             <div>
                                 <CustomSelector
@@ -282,6 +289,7 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
                                     setValue={setSortingStatType}
                                     labels={[
                                         { value: "winrate", label: "Winrate" },
+                                        { value: "starRate", label: "Star Rate" },
                                         { value: "trophyChange", label: "Trophy Change" },
                                         { value: "trophyChangePerGame", label: "Trophy Change / Game" },
                                         { value: "averageDuration", label: "Average Duration" },
@@ -302,7 +310,7 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
                                             setSortByStatType(prev => !prev);
 
                                             // When toggling on, set sortingStatType to the current statType
-                                            if(!sortByStatType) {
+                                            if (!sortByStatType) {
                                                 setSortingStatType(statType === "winrateMinusStarRate" ? "winrate" : statType);
                                             }
                                         }}
@@ -348,7 +356,7 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
                                             .toLowerCase()
                                             .split(' ')
                                             .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                                            .join(' ');;
+                                            .join(' ');
                                 }}
                                 tick={window.innerWidth < 900 ? { fontSize: 12 } : {}}
                             />

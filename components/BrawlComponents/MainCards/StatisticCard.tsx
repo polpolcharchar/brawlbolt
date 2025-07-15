@@ -1,21 +1,23 @@
 import { rankedModeLabelMap, rankedModeLabels } from "@/lib/BrawlUtility/BrawlConstants";
-import { OverallPlayerData, OverallPlayerStats, ShallowInitialStatMap, usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
 import { AlertTriangle, ArrowLeft, ArrowRight, LucideAnnoyed, LucideBot, LucideFrown } from "lucide-react";
 import { useState } from "react";
-import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
-import { Carousel, CarouselApi, CarouselContent, CarouselItem, CarouselPrevious } from "../ui/carousel";
-import { Skeleton } from "../ui/skeleton";
-import { BrawlerOverTimeChart } from "./Charts/BrawlerOverTimeChart";
-import { DurationChart } from "./Charts/DurationChart";
-import { RecursiveStatisticChart } from "./Charts/RecursiveStatisticChart";
-import { ShowdownRankChart } from "./Charts/ShowdownRankChart";
-import { ShareSplashCard } from "./InfoCards/ShareSplashCard";
-import { LinkCopyIndicator } from "./Selectors/LinkCopyIndicator";
-import { BrawlerDataTable } from "./Tables/BrawlerTable/BrawlerTable";
-import { columns } from "./Tables/BrawlerTable/Columns";
-import { TrieExplorerChart } from "./Charts/TrieExplorerChart";
+import { Card, CardContent, CardFooter, CardHeader } from "../../ui/card";
+import { Carousel, CarouselApi, CarouselContent, CarouselItem, CarouselPrevious } from "../../ui/carousel";
+import { Skeleton } from "../../ui/skeleton";
+import { BrawlerOverTimeChart } from "../Charts/BrawlerOverTimeChart";
+import { DurationChart } from "../Charts/DurationChart";
+import { RecursiveStatisticChart } from "../Charts/RecursiveStatisticChart";
+import { ShowdownRankChart } from "../Charts/ShowdownRankChart";
+import { ShareSplashCard } from "../InfoCards/ShareSplashCard";
+import { LinkCopyIndicator } from "../Selectors/LinkCopyIndicator";
+import { BrawlerDataTable } from "../Tables/BrawlerTable/BrawlerTable";
+import { columns } from "../Tables/BrawlerTable/Columns";
+import { TrieExplorerChart } from "../Charts/TrieExplorerChart";
+import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
+import { GlobalCardContent } from "./GlobalCardContent";
+import { PlayerCardContent } from "./PlayerCardContent";
 
-export const PlayerCard = ({ playerTag }: { playerTag: string }) => {
+export const StatisticCard = ({ playerTag }: { playerTag: string }) => {
 
     const {
         playerData
@@ -37,19 +39,27 @@ export const PlayerCard = ({ playerTag }: { playerTag: string }) => {
 
     return (
         <Card className="w-full max-w-5xl mb-8 border-blue-700 border-2">
-            {/* {(typeof playerData[playerTag] !== "string") ? ( */}
-            {(playerData[playerTag] instanceof OverallPlayerData) ? (
+
+            
+            {/* {JSON.stringify(playerData[playerTag])} */}
+
+            {(playerTag === "Global") ? (
+                <GlobalCardContent />
+            ) : (
+                <PlayerCardContent playerTag={playerTag} />
+            )}
+
+            {/* {(typeof playerData[playerTag] !== "string") ? (
+            // {(playerData[playerTag] instanceof OverallPlayerData) ? (
                 <div className="text-center">
                     <CardHeader className="text-4xl font-bold">
                         {playerData[playerTag].playerInfo['name']}
                     </CardHeader>
 
-                    {/* Share Splash */}
                     {(playerTag === "Global") && (
                         <ShareSplashCard />
                     )}
 
-                    {/* Player tag and profile link */}
                     {(playerTag !== "Global") && (
                         <div className="flex justify-center">
                             <p className="text-sm text-gray-400 mx-2">{playerTag}</p>
@@ -57,7 +67,6 @@ export const PlayerCard = ({ playerTag }: { playerTag: string }) => {
                         </div>
                     )}
 
-                    {/* Minimal Games Warning */}
                     {(playerTag !== "Global" && playerData[playerTag].playerStats.regularModeMapBrawler && playerData[playerTag].playerStats.regularModeMapBrawler.overallResults.playerResultData.potentialTotal < 100) && (
                         <div className="flex flex-col items-center">
                             <Card className="bg-yellow-100 border-yellow-400 shadow-md p-4 rounded-2xl flex items-center w-fit max-w-lg m-2 text-center">
@@ -129,35 +138,10 @@ export const PlayerCard = ({ playerTag }: { playerTag: string }) => {
                         // Normal Items:
                         <div>
                             <Carousel className="w-full" opts={{ loop: true, watchDrag: (window.innerWidth > 650) }} setApi={setApi}>
-
                                 <CarouselItem key="item1">
                                     <TrieExplorerChart playerTag={playerTag}/>
                                 </CarouselItem>
-
-                                
-                                {window.innerWidth > 650 ? (
-                                    <CardFooter className="justify-center text-sm text-gray-500">
-                                        Swipe to view more charts
-                                        <ArrowRight />
-                                    </CardFooter>
-                                ) : (
-                                    <div className="flex justify-center pt-2">
-                                        <div className="flex items-center justify-center w-10 h-10 border rounded-full cursor-pointer" onClick={() => { api?.scrollPrev() }}>
-                                            <ArrowLeft />
-                                        </div>
-                                        <CardFooter className="justify-center text-sm text-gray-500">
-                                            View more charts
-                                        </CardFooter>
-                                        <div className="flex items-center justify-center w-10 h-10 border rounded-full cursor-pointer" onClick={() => { api?.scrollNext() }}>
-                                            <ArrowRight />
-                                        </div>
-                                    </div>
-                                )}
-
-
-
                             </Carousel>
-
                         </div>
                     )}
 
@@ -178,7 +162,7 @@ export const PlayerCard = ({ playerTag }: { playerTag: string }) => {
                         <Skeleton className="h-4 w-full" />
                     </div>
                 </div>
-            )}
+            )} */}
 
         </Card >
     )
