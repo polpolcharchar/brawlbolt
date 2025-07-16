@@ -2,12 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { fetchGlobalStats, handlePlayerSearch } from "@/lib/BrawlUtility/BrawlDataFetcher";
+import { isValidTag } from "@/lib/BrawlUtility/BrawlConstants";
+import { handlePlayerSearch } from "@/lib/BrawlUtility/BrawlDataFetcher";
 import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
-import { isValidTag } from "@/lib/BrawlUtility/BrawlConstants";
-import { Card, CardContent } from "../ui/card";
 
 export const PlayerTagInput = () => {
     const [playerTag, setPlayerTag] = useState("");
@@ -17,12 +16,12 @@ export const PlayerTagInput = () => {
 
     //Handle Initial Global Stats:
     useEffect(() => {
-        // fetchGlobalStats(setIsLoading, updatePlayerData);
+        updatePlayerData("Global", "Global");
     }, [])
 
     //Submit
-    const submitPlayerTag = async () => {
-        await handlePlayerSearch(playerTag, setIsLoading, updatePlayerData);
+    const submitPlayerTag = () => {
+        handlePlayerSearch(playerTag, setIsLoading, updatePlayerData);
         setPlayerTag("");
     }
 
@@ -109,7 +108,7 @@ export const PlayerTagInput = () => {
                             disabled={isLoading}
                             className="bg-blue-600 hover:bg-blue-700 text-white animated-button"
                             onClick={() => {
-                                handlePlayerSearch("9CUCYLQP", setIsLoading, updatePlayerData);
+                                handlePlayerSearch("GJCLVRQLG", setIsLoading, updatePlayerData);
                             }}
                         >
                             Load Example Profile

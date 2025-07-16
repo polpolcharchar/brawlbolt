@@ -1,13 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartTooltip } from "@/components/ui/chart";
+import { Checkbox } from "@/components/ui/checkbox";
 import { brawlerLabels, modeLabelMap, modeLabels } from "@/lib/BrawlUtility/BrawlConstants";
 import { fetchTrieData } from "@/lib/BrawlUtility/BrawlDataFetcher";
+import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
+import { LockIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { CustomSelector } from "../Selectors/CustomSelector";
-import { Checkbox } from "@/components/ui/checkbox";
-import { LockIcon } from "lucide-react";
 
 const CustomPlayerTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -36,6 +37,8 @@ const CustomPlayerTooltip = ({ active, payload }: any) => {
 
 export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
 
+    const {playerData} = usePlayerData();
+
     const [brawler, setBrawler] = useState("");
     const [mode, setMode] = useState("");
     const setModeAndUpdateMap = (value: string): void => {
@@ -60,13 +63,11 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
         }
 
         if (sortByStatType) {
-
             if (value === "winrateMinusStarRate") {
                 setSortingStatType("winrate");
             } else {
                 setSortingStatType(value);
             }
-
         }
 
         _setStatType(value);
@@ -186,7 +187,7 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
 
     useEffect(() => {
         fetchAndSetChartData();
-    }, [brawler, mode, rankedVsRegularToggleValue, map, targetAttribute]);
+    }, [brawler, mode, rankedVsRegularToggleValue, map, targetAttribute, playerData[playerTag].name]);
     useEffect(() => {
         setPageStartingIndex(0);
     }, [chartData]);
@@ -304,7 +305,7 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
                                 />
                                 <div className="flex items-center gap-2 pt-2">
                                     <Checkbox
-                                        id="sortByStatType"
+                                        id={"sortByStatType" + playerTag}
                                         checked={sortByStatType}
                                         onCheckedChange={() => {
                                             setSortByStatType(prev => !prev);
@@ -317,7 +318,7 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
                                         className="cursor-pointer"
                                     />
                                     <label
-                                        htmlFor="sortByStatType"
+                                        htmlFor={"sortByStatType" + playerTag}
                                         className="flex items-center gap-1 cursor-pointer"
                                         title="Lock sorting type to y-axis value"
                                     >
@@ -363,7 +364,6 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
 
                             <YAxis
                                 type="number"
-                                // tickFormatter={(tick) => Math.abs(tick) > 1 || tick === 0 ? tick : tick.toFixed(2)} // Formats labels (e.g., "0.50")
                                 domain={statType == "winrateMinusStarRate" ? [0, 1] : undefined}
                             />
 
@@ -407,18 +407,21 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
                     <Button
                         variant="outline"
                         disabled={pageStartingIndex === 0}
+                        // onClick={() => {
+                        //     let count = 0;
+                        //     const interval = setInterval(() => {
+                        //         setPageStartingIndex(prev => {
+                        //             const next = Math.max(0, prev - 1);
+                        //             return next;
+                        //         });
+                        //         count++;
+                        //         if (count >= pageSize) {
+                        //             clearInterval(interval);
+                        //         }
+                        //     }, 20);
+                        // }}
                         onClick={() => {
-                            let count = 0;
-                            const interval = setInterval(() => {
-                                setPageStartingIndex(prev => {
-                                    const next = Math.max(0, prev - 1);
-                                    return next;
-                                });
-                                count++;
-                                if (count >= pageSize) {
-                                    clearInterval(interval);
-                                }
-                            }, 20);
+                            setPageStartingIndex(prev => Math.max(0, prev - pageSize));
                         }}
                     >
                         Previous
@@ -429,18 +432,21 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
                     <Button
                         variant="outline"
                         disabled={(pageStartingIndex / pageSize + 1) >= totalPages}
+                        // onClick={() => {
+                        //     let count = 0;
+                        //     const interval = setInterval(() => {
+                        //         setPageStartingIndex(prev => {
+                        //             const next = Math.min(totalPages * pageSize - 1, prev + 1);
+                        //             return next;
+                        //         });
+                        //         count++;
+                        //         if (count >= pageSize) {
+                        //             clearInterval(interval);
+                        //         }
+                        //     }, 20);
+                        // }}
                         onClick={() => {
-                            let count = 0;
-                            const interval = setInterval(() => {
-                                setPageStartingIndex(prev => {
-                                    const next = Math.min(totalPages * pageSize - 1, prev + 1);
-                                    return next;
-                                });
-                                count++;
-                                if (count >= pageSize) {
-                                    clearInterval(interval);
-                                }
-                            }, 20);
+                            setPageStartingIndex(prev => Math.min(totalPages * pageSize - 1, prev + pageSize));
                         }}
                     >
                         Next
@@ -450,5 +456,4 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
             </Card>
         </div >
     )
-
 }

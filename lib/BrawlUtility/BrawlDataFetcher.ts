@@ -26,6 +26,7 @@ const requestServer = async (body: string, setIsLoading: (value: boolean) => voi
 }
 
 export const handlePlayerSearch = async (tagToHandle: string, setIsLoading: (value: boolean) => void, updatePlayerData: (playerTag: string, playerD: any) => void) => {
+        
     //Manage tag
     if (!isValidTag(tagToHandle)) return false;
 
@@ -33,28 +34,31 @@ export const handlePlayerSearch = async (tagToHandle: string, setIsLoading: (val
         tagToHandle = tagToHandle.substring(1);
     }
 
-    //Add loading card
     updatePlayerData(tagToHandle, tagToHandle);
 
-    //Get initial data:
-    // const initialRequestBody = JSON.stringify({ type: "getBaseRegularModeMapBrawler", playerTag: tagToHandle });
-    // const initialRequestResult = await requestServer(initialRequestBody, setIsLoading);
-    // if (initialRequestResult) {
-    //     const playerData = { "initialRegularModeMapBrawler": JSON.parse(initialRequestResult) }
-    //     updatePlayerData(tagToHandle, playerData);
-    // } else {
-    //     console.log("No initial");
-    // }
+    // Get info
+    const playerInfo = await getPlayerInfo(tagToHandle);
+    if (!playerInfo) {
+        updatePlayerData(tagToHandle, "Player not found");
+        return false;
+    }
 
-    // //Request and update
-    // const body = JSON.stringify({ type: "getPlayerData", playerTag: tagToHandle });
-    // const requestResult = await requestServer(body, setIsLoading);
-    // if (requestResult) {
-    //     updatePlayerData(tagToHandle, JSON.parse(requestResult));
-    // } else {
-    //     updatePlayerData(tagToHandle, "Player not found");
-    // }
+    //Add name:
+    updatePlayerData(tagToHandle, playerInfo['playerInfo']['name']);
 };
+
+export const getPlayerInfo = async (playerTag: string) => {
+    const requestBody = JSON.stringify({ type: "getPlayerInfo", playerTag });
+
+    const requestResult = await requestServer(requestBody, () => {});
+
+    if (requestResult) {
+        return JSON.parse(requestResult);
+    } else {
+        console.error("Failed to fetch player info");
+        return null;
+    }
+}
 
 export const fetchTrieData = async (
     requestType: string,
@@ -93,31 +97,34 @@ export const fetchTrieData = async (
 
 }
 
-export const fetchGlobalStats = async (setIsLoading: (value: boolean) => void, updatePlayerData: (playerTag: string, playerD: any) => void) => {
-
-    updatePlayerData("Global", "Loading...");
+export const fetchGlobalStats = async (numItems: number, requestType: string, requestMode: string, requestBrawler: string, targetAttribute: string) => {
 
     let requestBody: any = {
         "type": "getRecentTrieData",
         "playerTag": "global",
-        "numItems": 1,
+        "numItems": numItems,
         "isGlobal": true,
-        "requestType": "regular",
-        "requestMode": "brawlBall",
-        "targetAttribute": "brawler",
     }
 
-    const requestResult = await requestServer(JSON.stringify(requestBody), setIsLoading);
+    if (requestType != "") {
+        requestBody["requestType"] = requestType;
+    }
+    if (requestMode != "") {
+        requestBody["requestMode"] = requestMode;
+    }
+    if (requestBrawler != "") {
+        requestBody["requestBrawler"] = requestBrawler;
+    }
+    if (targetAttribute != "") {
+        requestBody["targetAttribute"] = targetAttribute;
+    }
+
+    const requestResult = await requestServer(JSON.stringify(requestBody), () => {});
 
     if (requestResult) {
-        const mockData = {
-            playerInfo: {
-                name: "Global Statistics"
-            },
-            playerStats: JSON.parse(requestResult)[0]
-        }
-        updatePlayerData("Global", mockData);
+        return requestResult;
     } else {
-        updatePlayerData("Global", "Error fetching global data.");
+        console.error("Failed to fetch global stats");
+        return null;
     }
 }

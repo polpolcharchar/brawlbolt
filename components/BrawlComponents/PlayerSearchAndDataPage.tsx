@@ -2,10 +2,10 @@
 
 import { StatisticCard } from "@/components/BrawlComponents/MainCards/StatisticCard";
 import { PlayerTagInput } from "@/components/BrawlComponents/PlayerTagInput";
+import { handlePlayerSearch } from "@/lib/BrawlUtility/BrawlDataFetcher";
 import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-import { Skeleton } from "../ui/skeleton";
 import ScarceDataAlertCard from "./InfoCards/ScarceDataAlertCard";
 
 export const PlayerSearchAndDataPage = () => {
@@ -21,7 +21,7 @@ export const PlayerSearchAndDataPage = () => {
   //Load Default
   useEffect(() => {
     if(tagParameter){
-      updatePlayerData(tagParameter, tagParameter);
+      handlePlayerSearch(tagParameter, () => {}, updatePlayerData);
     }
   }, [tagParameter]);
 
@@ -51,10 +51,7 @@ export const PlayerSearchAndDataPage = () => {
             return <StatisticCard key={playerTag} playerTag={playerTag} />;
           })
       }
-
       <ScarceDataAlertCard />
-
-
     </div>
   );
 }

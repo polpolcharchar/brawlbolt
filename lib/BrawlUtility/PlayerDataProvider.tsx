@@ -9,11 +9,18 @@ export const PlayerDataProvider = ({ children }: { children: React.ReactNode }) 
   const [index, setIndex] = useState(0);
 
   const updatePlayerData = (playerTag: string, playerD: any) => {
+
+    let indexToUse = -1;
+    if(playerTag !== "Global"){
+      indexToUse = index;
+      setIndex((prevIndex) => prevIndex + 1);
+    }
+
     setPlayerData((prevData) => ({
       ...prevData,
       [playerTag]: {
         "name": playerD,
-        "sortIndex": index,
+        "sortIndex": indexToUse,
       }
     }));
     setIndex((prevIndex) => prevIndex + 1);
@@ -23,7 +30,7 @@ export const PlayerDataProvider = ({ children }: { children: React.ReactNode }) 
     <PlayerDataContext.Provider
       value={{
         playerData,
-        updatePlayerData,
+        updatePlayerData
       }}
     >
       {children}

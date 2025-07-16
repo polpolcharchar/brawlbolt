@@ -17,8 +17,8 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { RecursiveCompiledStats, usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider"
-import { useMemo } from "react"
+import { fetchGlobalStats } from "@/lib/BrawlUtility/BrawlDataFetcher"
+import { useEffect, useState } from "react"
 import { ModeSelector } from "../../Selectors/ModeSelector"
 import { RegularRankedToggle } from "../../Selectors/RegularRankedToggle"
 
@@ -30,30 +30,36 @@ export type BrawlerData = {
     numGames: number
 }
 
-function getTableDataForChildrenStats(stats: RecursiveCompiledStats): BrawlerData[] {
-    if (!stats || !stats['stat_map']) {
-        return [];
-    }
+function getTableDataForChildrenStats(stats: any): BrawlerData[] {
 
-    const tableData = Object.entries(stats['stat_map']).map(([modeName, modeStats]) => ({
-        name: modeName, // Mapping modeName to name
-        winrate: modeStats.overallResults.playerResultData.getWinrate(),
-        drawRate: modeStats.overallResults.playerResultData.getDrawRate(),
-        starRate: modeStats.overallResults.playerStarData.getStarRate(),
-        numGames: modeStats.overallResults.playerResultData.potentialTotal,
-    }));
+    const tableData = stats.map((brawlerStatObject: any) => {
+        const player_result_data = brawlerStatObject['resultCompiler']['player_result_data'];
+        const player_star_data = brawlerStatObject['resultCompiler']['player_star_data'];
+
+        const winrate = player_result_data['wins'] / player_result_data['potential_total'];
+        const starRate = (player_star_data['wins'] + player_star_data['losses'] + player_star_data['draws']) / player_star_data['potential_total'];
+
+        return {
+            name: brawlerStatObject.pathID.substring(brawlerStatObject.pathID.lastIndexOf('$') + 1),
+            winrate,
+            starRate,
+            numGames: player_result_data['potential_total'],
+        };
+    });
+
+
 
     // Calculate the total numGames
-    const totalNumGames = tableData.reduce((total, entry) => total + entry.numGames, 0);
+    const totalNumGames = tableData.reduce((total: any, entry: any) => total + entry.numGames, 0);
 
     // Append the "Total" row
-    tableData.push({
-        name: 'Total',
-        winrate: 0,
-        drawRate: 0,
-        starRate: 0,
-        numGames: totalNumGames,
-    });
+    // tableData.push({
+    //     name: 'Total',
+    //     winrate: 0,
+    //     drawRate: 0,
+    //     starRate: 0,
+    //     numGames: totalNumGames,
+    // });
 
     return tableData;
 }
@@ -68,9 +74,8 @@ interface DataTableProps<TData, TValue> {
     setRankedVsRegularToggleValue: (value: string) => void
 }
 
-export function BrawlerDataTable<TData, TValue>({
+export function GlobalBrawlerTable<TData, TValue>({
     columns,
-    playerTag,
     onBrawlerClick,
     mode,
     setMode,
@@ -91,25 +96,27 @@ export function BrawlerDataTable<TData, TValue>({
         hour12: true
     }
 
-    const {
-        playerData
-    } = usePlayerData();
+    const [gameCollectionDatetime, setGameCollectionDatetime] = useState("");
 
-    const data = useMemo(() => {
-        if (!playerTag) return [];
+    const [data, setData] = useState<TData[]>([]);
 
-        const stats = playerData[playerTag]?.playerStats;
-        if (!stats) return [];
+    useEffect(() => {
+        const fetchData = async () => {
+            const stats = await fetchGlobalStats(1, rankedVsRegularToggleValue, mode, "", "brawler");
+            if (!stats || stats.length === 0) {
+                console.error("No data returned from fetchGlobalStats");
+                return;
+            }
 
-        const isRegular = rankedVsRegularToggleValue === "regular";
-        const mapKey = isRegular
-            ? (mode === "" ? (playerTag === "Global" ? "regularBrawler" : "regularBrawlerModeMap") : `regularModeBrawler.stat_map.${mode}`)
-            : (mode === "" ? (playerTag === "Global" ? "rankedBrawler" : "rankedBrawlerModeMap") : `rankedModeBrawler.stat_map.${mode}`);
+            const parsedStats = JSON.parse(stats);
 
-        const mapData = mapKey.split('.').reduce((acc, key) => acc?.[key], stats);
+            setGameCollectionDatetime(parsedStats[0]["datetime"]);
 
-        return getTableDataForChildrenStats(mapData) as TData[];
-    }, [playerTag, mode, rankedVsRegularToggleValue, playerData]);
+            setData(getTableDataForChildrenStats(parsedStats[0]['trieData']) as TData[]);
+        };
+
+        fetchData();
+    }, [mode, rankedVsRegularToggleValue]);
 
     const table = useReactTable({
         data,
@@ -119,8 +126,8 @@ export function BrawlerDataTable<TData, TValue>({
         getSortedRowModel: getSortedRowModel(),
         state: {
             sorting,
-        }
-    })
+        },
+    });
 
     return (
         <div>
@@ -130,19 +137,19 @@ export function BrawlerDataTable<TData, TValue>({
 
                     <div className="text-sm text-gray-300 mb-4">
 
-                        {playerData[playerTag]["numGames"] && (
+                        {gameCollectionDatetime != "" && (
                             <>
                                 <p>
                                     Calculated using{" "}
-                                    {playerData[playerTag]["numGames"]
+                                    {/* {playerData[playerTag]["numGames"]
                                         .toString()
-                                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{" "}
+                                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{" "} */}
                                     unique games from{" "}
                                     {new Date(
-                                        new Date(playerData[playerTag]["datetime"]).getTime() -
-                                        playerData[playerTag]["hourRange"] * 60 * 60 * 1000
+                                        new Date(gameCollectionDatetime).getTime() -
+                                        24 * 60 * 60 * 1000
                                     ).toLocaleString("en-US", dateFormat)}{" "}
-                                    to {new Date(playerData[playerTag]["datetime"]).toLocaleString("en-US", dateFormat)}
+                                    to {new Date(gameCollectionDatetime).toLocaleString("en-US", dateFormat)}
                                 </p>
                                 <p><u><b>Click rows to access historical data</b></u></p>
                             </>
@@ -157,7 +164,6 @@ export function BrawlerDataTable<TData, TValue>({
                             setRankedVsRegularToggleValue={setRankedVsRegularToggleValue}
                             statType=""
                         />
-
                         <ModeSelector mode={mode} setMode={setMode} />
                     </div>
 
@@ -189,7 +195,7 @@ export function BrawlerDataTable<TData, TValue>({
                                         <TableRow
                                             key={row.id}
                                             data-state={row.getIsSelected() && "selected"}
-                                            className={playerTag === "Global" ? "cursor-pointer" : ""}
+                                            className="cursor-pointer"
                                         >
                                             {row.getVisibleCells().map((cell) => (
                                                 <TableCell key={cell.id} onClick={() => onBrawlerClick(row.getValue("name"))}>
@@ -211,6 +217,5 @@ export function BrawlerDataTable<TData, TValue>({
                 </CardContent>
             </Card>
         </div>
-
     )
 }
