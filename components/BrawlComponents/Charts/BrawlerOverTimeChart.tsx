@@ -15,6 +15,7 @@ import { BrawlerSelector } from "../Selectors/BrawlerSelector";
 import { LinearNaturalChartToggle } from "../Selectors/LinearNaturalChartToggle";
 import { ModeSelector } from "../Selectors/ModeSelector";
 import { RegularRankedToggle } from "../Selectors/RegularRankedToggle";
+import { fetchGlobalStats } from "@/lib/BrawlUtility/BrawlDataFetcher";
 
 const chartConfig = {
     winrate: {
@@ -71,50 +72,8 @@ export const BrawlerOverTimeChart = ({
         if (newBrawler !== "") setBrawler(newBrawler);
     };
 
-    const getChartDataFromRawTimeData = (timeData: any) => {
-        return timeData.map((entry: any) => {
-            const date = entry.datetime;
-            const { wins, potential_total: resultPotentialTotal } = entry.stats.player_result_data;
-            const winrate = (wins / resultPotentialTotal) * 100;
-
-            const {
-                wins: starWins,
-                losses: starLosses,
-                draws: starDraws,
-                potential_total: starPotentialTotal,
-            } = entry.stats.player_star_data;
-            const starRate = ((starWins + starLosses + starDraws) / starPotentialTotal) * 100;
-
-            return { date, winrate, starRate, resultPotentialTotal };
-        });
-    };
-
-    const fetchStatOverTime = async (statType: string) => {
-
-        try {
-            const response = await fetch(
-                "https://hfdejn2qu3.execute-api.us-west-1.amazonaws.com/default/BrawlTrackerHandlerPython",
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ type: "getGlobalDataOverTime", statType }),
-                }
-            );
-
-            if (response.ok) {
-                const body = await response.text();
-                const parsed = JSON.parse(body);
-                return getChartDataFromRawTimeData(parsed);
-            }
-        } catch (error) {
-            // console.error("Error fetching stats:", error);
-            return [];
-        } finally {
-
-        }
-    };
-
     const fetchData = async (statTypeString = rankedVsRegularToggleValue + mode + brawler) => {
+
         if (brawlerTimeData[statTypeString] !== undefined) {
             if (brawlerTimeData[statTypeString] !== "temp") {
                 setChartData(brawlerTimeData[statTypeString]);
@@ -123,19 +82,53 @@ export const BrawlerOverTimeChart = ({
         }
         brawlerTimeData[statTypeString] = "temp";
 
-        const stats: Stat[] = await fetchStatOverTime(statTypeString) || [];
-        const filteredStats = stats.filter(item => item.resultPotentialTotal > 100);
-        filteredStats.sort((a: { date: string | number }, b: { date: string | number }) =>
-            new Date(a.date).getTime() - new Date(b.date).getTime()
+        const getBrawlerFromStatTypeString = (str: string) => {
+            const match = str.match(/[A-Z]/);
+            if (!match) return ""; // No capital letter found
+            const index = match.index!;
+            return str.substring(index);
+        }
+        const updatedBrawler = getBrawlerFromStatTypeString(statTypeString);
+
+        const stats = await fetchGlobalStats(
+            10,
+            rankedVsRegularToggleValue,
+            mode,
+            updatedBrawler,
+            ""
         );
-        const numericalDates = filteredStats.map(item => ({
-            ...item,
-            date: new Date(item.date).getTime(),
-        }));
-        if (stats) setChartData(numericalDates);
+
+        if (!stats) {
+            setChartData([]);
+            return;
+        }
+
+        const parsedStats: any = JSON.parse(stats);
+
+        const chartDataStats = parsedStats.map((item: any) => {
+
+            const resultCompiler = item["trieData"][0]["resultCompiler"];
+
+            const player_result_data = resultCompiler["player_result_data"];
+            const player_star_data = resultCompiler["player_star_data"];
+
+            const winrate = (player_result_data["wins"] / player_result_data["potential_total"]);
+            const starRate = ((player_star_data["wins"] + player_star_data["losses"] + player_star_data["draws"]) / player_star_data["potential_total"]);
+            
+
+            return {
+                date: new Date(item.datetime).getTime(),
+                winrate: winrate * 100,
+                starRate: starRate * 100,
+                resultPotentialTotal: player_result_data["potential_total"],
+            }
+
+        });
+
+        if (stats) setChartData(chartDataStats);
         else setChartData([]);
 
-        updateBrawlerTimeData(statTypeString, numericalDates);
+        updateBrawlerTimeData(statTypeString, chartDataStats);
     };
 
     useEffect(() => {

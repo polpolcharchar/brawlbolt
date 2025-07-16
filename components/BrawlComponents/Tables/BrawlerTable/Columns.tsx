@@ -5,7 +5,7 @@ import { calculateProportionConfidenceInterval } from "@/lib/StatisticalCalculat
 import { ColumnDef } from "@tanstack/react-table"
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react"
 import { useState } from "react"
-import { BrawlerData } from "./BrawlerTable"
+import { BrawlerData } from "./GlobalBrawlerTable"
 
 interface SortingHeaderProps {
     column: any;
@@ -99,10 +99,6 @@ export const columns: ColumnDef<BrawlerData>[] = [
                 >
 
                     <p className="text-sm">{row.getValue("name")}</p>
-
-                    {/* {isHovered && (
-                        <p className="text-xs text-gray-300 ml-2">{"Click!"}</p>
-                    )} */}
                 </div>
             );
         },
