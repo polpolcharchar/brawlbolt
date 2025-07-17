@@ -27,7 +27,7 @@ export const PlayerCardContent = ({ playerTag }: { playerTag: string }) => {
             </div>
 
             <div className="relative w-full mx-auto">
-                <TrieExplorerChart playerTag={playerTag} />
+                <TrieExplorerChart playerTag={playerTag} isGlobal={false} />
             </div>
         </div>
     )

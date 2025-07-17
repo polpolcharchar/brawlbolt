@@ -11,7 +11,7 @@ export const PlayerDataProvider = ({ children }: { children: React.ReactNode }) 
   const updatePlayerData = (playerTag: string, playerD: any) => {
 
     let indexToUse = -1;
-    if(playerTag !== "Global"){
+    if(playerTag !== "global"){
       indexToUse = index;
       setIndex((prevIndex) => prevIndex + 1);
     }

@@ -6,6 +6,7 @@ import { BrawlerOverTimeChart } from "../Charts/BrawlerOverTimeChart";
 import { ShareSplashCard } from "../InfoCards/ShareSplashCard";
 import { columns } from "../Tables/BrawlerTable/Columns";
 import { GlobalBrawlerTable } from "../Tables/BrawlerTable/GlobalBrawlerTable";
+import { TrieExplorerChart } from "../Charts/TrieExplorerChart";
 
 
 export const GlobalCardContent = () => {
@@ -22,7 +23,7 @@ export const GlobalCardContent = () => {
     }
     const [brawler, setBrawler] = useState("JACKY");
 
-    const [trigger, setTrigger] = useState<(statTypeString: string) => void>(() => { });
+    const [trigger, setTrigger] = useState<(type: string, mode: string, brawler: string) => void>(() => { });
 
     return (
         <div>
@@ -37,6 +38,13 @@ export const GlobalCardContent = () => {
             <div className="relative w-full mx-auto">
                 <Carousel className="w-full" opts={{ loop: false, watchDrag: false }} setApi={setApi}>
                     <CarouselContent>
+                        {/* <CarouselItem key="trieExplorer">
+                            <TrieExplorerChart
+                            playerTag={"global"}
+                            isGlobal={true}
+                            />
+                        </CarouselItem> */}
+
                         <CarouselItem key="brawlerTable">
                             <GlobalBrawlerTable
                                 columns={columns}
@@ -49,7 +57,7 @@ export const GlobalCardContent = () => {
                                     setBrawler(clickedBrawler);
                                     if (api !== null) {
                                         api?.scrollNext();
-                                        trigger(rankedVsRegularToggleValue + mode + clickedBrawler);
+                                        trigger(rankedVsRegularToggleValue, mode, clickedBrawler);
                                     }
                                 }}
                             />

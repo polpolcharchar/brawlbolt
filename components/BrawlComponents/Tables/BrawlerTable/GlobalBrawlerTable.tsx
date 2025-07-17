@@ -17,9 +17,10 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import { modeLabels } from "@/lib/BrawlUtility/BrawlConstants"
 import { fetchGlobalStats } from "@/lib/BrawlUtility/BrawlDataFetcher"
 import { useEffect, useState } from "react"
-import { ModeSelector } from "../../Selectors/ModeSelector"
+import { CustomSelector } from "../../Selectors/CustomSelector"
 import { RegularRankedToggle } from "../../Selectors/RegularRankedToggle"
 
 export type BrawlerData = {
@@ -164,7 +165,15 @@ export function GlobalBrawlerTable<TData, TValue>({
                             setRankedVsRegularToggleValue={setRankedVsRegularToggleValue}
                             statType=""
                         />
-                        <ModeSelector mode={mode} setMode={setMode} />
+                        <CustomSelector
+                            value={mode}
+                            setValue={setMode}
+                            labels={modeLabels}
+                            noChoiceLabel="Select Mode..."
+                            searchPlaceholder="Search Modes..."
+                            emptySearch="No Mode Found"
+                            canBeEmpty={true}
+                        />
                     </div>
 
                 </CardHeader>

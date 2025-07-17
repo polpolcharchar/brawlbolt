@@ -7,15 +7,14 @@ import {
     ChartLegendContent,
     ChartTooltip
 } from "@/components/ui/chart";
-import { modeLabels, rankedModeLabels } from "@/lib/BrawlUtility/BrawlConstants";
+import { brawlerLabels, modeLabels, rankedModeLabels } from "@/lib/BrawlUtility/BrawlConstants";
+import { fetchGlobalStats } from "@/lib/BrawlUtility/BrawlDataFetcher";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Area, AreaChart, CartesianGrid, ReferenceLine, XAxis, YAxis } from "recharts";
-import { BrawlerSelector } from "../Selectors/BrawlerSelector";
+import { CustomSelector } from "../Selectors/CustomSelector";
 import { LinearNaturalChartToggle } from "../Selectors/LinearNaturalChartToggle";
-import { ModeSelector } from "../Selectors/ModeSelector";
 import { RegularRankedToggle } from "../Selectors/RegularRankedToggle";
-import { fetchGlobalStats } from "@/lib/BrawlUtility/BrawlDataFetcher";
 
 const chartConfig = {
     winrate: {
@@ -68,11 +67,9 @@ export const BrawlerOverTimeChart = ({
 
     const [chartType, setChartType] = useState<"linear" | "natural">("linear");
 
-    const changeBrawler = (newBrawler: string) => {
-        if (newBrawler !== "") setBrawler(newBrawler);
-    };
+    const fetchData = async (rankedVsRegularToggleValue: string, mode: string, brawler: string) => {
 
-    const fetchData = async (statTypeString = rankedVsRegularToggleValue + mode + brawler) => {
+        const statTypeString = rankedVsRegularToggleValue + mode + brawler;
 
         if (brawlerTimeData[statTypeString] !== undefined) {
             if (brawlerTimeData[statTypeString] !== "temp") {
@@ -82,19 +79,11 @@ export const BrawlerOverTimeChart = ({
         }
         brawlerTimeData[statTypeString] = "temp";
 
-        const getBrawlerFromStatTypeString = (str: string) => {
-            const match = str.match(/[A-Z]/);
-            if (!match) return ""; // No capital letter found
-            const index = match.index!;
-            return str.substring(index);
-        }
-        const updatedBrawler = getBrawlerFromStatTypeString(statTypeString);
-
         const stats = await fetchGlobalStats(
             10,
             rankedVsRegularToggleValue,
             mode,
-            updatedBrawler,
+            brawler,
             ""
         );
 
@@ -114,7 +103,7 @@ export const BrawlerOverTimeChart = ({
 
             const winrate = (player_result_data["wins"] / player_result_data["potential_total"]);
             const starRate = ((player_star_data["wins"] + player_star_data["losses"] + player_star_data["draws"]) / player_star_data["potential_total"]);
-            
+
 
             return {
                 date: new Date(item.datetime).getTime(),
@@ -133,8 +122,8 @@ export const BrawlerOverTimeChart = ({
 
     useEffect(() => {
         setTrigger(() => {
-            return (statTypeString?: string) => {
-                void fetchData(statTypeString ?? rankedVsRegularToggleValue + mode + brawler);
+            return (rankedVsRegularToggleValue: string, mode: string, brawler: string) => {
+                void fetchData(rankedVsRegularToggleValue, mode, brawler);
             }
         });
 
@@ -143,7 +132,7 @@ export const BrawlerOverTimeChart = ({
     useEffect(() => {
         const scrollProgress: number | undefined = carouselApi?.scrollProgress();
         if (scrollProgress !== undefined && scrollProgress > 0.9 && scrollProgress < 1.1) {
-            fetchData();
+            fetchData(rankedVsRegularToggleValue, mode, brawler);
         }
 
     }, [mode, rankedVsRegularToggleValue, brawler]);
@@ -164,8 +153,23 @@ export const BrawlerOverTimeChart = ({
                         setRankedVsRegularToggleValue={setRankedVsRegularToggleValue}
                         statType="duration"
                     />
-                    <ModeSelector mode={mode} setMode={setMode} selectModeLabels={rankedVsRegularToggleValue == "regular" ? modeLabels : rankedModeLabels} />
-                    <BrawlerSelector brawler={brawler} setBrawler={changeBrawler} />
+                    <CustomSelector
+                        value={mode}
+                        setValue={setMode}
+                        labels={rankedVsRegularToggleValue == "regular" ? modeLabels : rankedModeLabels}
+                        noChoiceLabel="Select Mode..."
+                        searchPlaceholder="Search Modes..."
+                        emptySearch="No Mode Found"
+                    />
+                    <CustomSelector
+                        value={brawler}
+                        setValue={setBrawler}
+                        labels={brawlerLabels}
+                        noChoiceLabel="Select Brawler..."
+                        searchPlaceholder="Search Brawlers..."
+                        emptySearch="No Brawler Found"
+                        canBeEmpty={false}
+                    />
                     <LinearNaturalChartToggle type={chartType} setType={setChartType} />
 
                 </div>

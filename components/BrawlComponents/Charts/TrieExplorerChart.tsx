@@ -3,7 +3,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { ChartTooltip } from "@/components/ui/chart";
 import { Checkbox } from "@/components/ui/checkbox";
 import { brawlerLabels, modeLabelMap, modeLabels } from "@/lib/BrawlUtility/BrawlConstants";
-import { fetchTrieData } from "@/lib/BrawlUtility/BrawlDataFetcher";
+import { fetchGlobalStats, fetchTrieData } from "@/lib/BrawlUtility/BrawlDataFetcher";
 import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
 import { LockIcon } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -35,18 +35,16 @@ const CustomPlayerTooltip = ({ active, payload }: any) => {
     return null;
 };
 
-export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
+export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, isGlobal: boolean }) => {
 
-    const {playerData} = usePlayerData();
+    const { playerData } = usePlayerData();
 
     const [brawler, setBrawler] = useState("");
     const [mode, setMode] = useState("");
     const setModeAndUpdateMap = (value: string): void => {
-        //If mode is set to nothing, set map to nothing as well
-        if (value === "" || targetAttribute === "type") {
-            setMap("");
-        }
+        //If mode changes, map should always be reset
         setMode(value);
+        setMap("");
     }
     const [map, setMap] = useState("");
 
@@ -94,12 +92,14 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
             setRankedVsRegularToggleValue("");
         }
     }
-    const [targetAttributeLabels] = useState<{ value: string; label: string }[]>([
-        { value: "mode", label: "Mode" },
-        { value: "brawler", label: "Brawler" },
-        { value: "map", label: "Map" },
-        { value: "type", label: "Type" }
-    ]);
+    const [targetAttributeLabels] = useState<{ value: string; label: string }[]>(
+        [
+            { value: "mode", label: "Mode" },
+            { value: "brawler", label: "Brawler" },
+            !isGlobal ? { value: "map", label: "Map" } : null,
+            { value: "type", label: "Type" },
+        ].filter(Boolean) as { value: string; label: string }[]//Filter out the null value if isGlobal
+    );
 
     const [mapLabels, setMapLabels] = useState<{ value: string; label: string }[]>([]);
 
@@ -118,13 +118,25 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
     }
     const fetchAndSetChartData = async () => {
 
-        const rawData = await fetchTrieData(rankedVsRegularToggleValue, mode, map, brawler, targetAttribute, playerTag, "overall", false, () => { });
+        let rawData: any;
+
+        if (isGlobal) {
+            rawData = await fetchGlobalStats(1, rankedVsRegularToggleValue, mode, brawler, targetAttribute);
+        } else {
+            rawData = await fetchTrieData(rankedVsRegularToggleValue, mode, map, brawler, targetAttribute, playerTag, "overall", false, () => { });
+        }
+
         if (!rawData || rawData.length === 0) {
             setChartData([]);
             return;
         }
 
-        const jsonData = JSON.parse(rawData);
+        let jsonData = JSON.parse(rawData);
+
+        // Global function returns an array of data points over time. Only use a single one
+        if (isGlobal) {
+            jsonData = jsonData[0];
+        }
 
         // Handle maps if provided
         const potentialMaps = jsonData['potentialMaps'] || [];
@@ -180,7 +192,7 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
     }
 
     const [pageStartingIndex, setPageStartingIndex] = useState(0);
-    const pageSize = 10;
+    const pageSize = (window.innerWidth < 900 ? 8 : 10);
 
     const totalPages = Math.max(1, Math.ceil(chartData.length / pageSize));
     const paginatedData = chartData.slice(pageStartingIndex, pageStartingIndex + pageSize);
@@ -228,16 +240,18 @@ export const TrieExplorerChart = ({ playerTag }: { playerTag: string }) => {
                                     disabled={targetAttribute == "mode"}
                                     canBeEmpty={targetAttribute != "map"} />
                             </div>
-                            <div>
-                                <CustomSelector
-                                    value={map}
-                                    setValue={setMap}
-                                    labels={mapLabels}
-                                    noChoiceLabel="Select Map..."
-                                    searchPlaceholder="Search Maps..."
-                                    emptySearch={mode == "" ? "Choose a mode first!" : "No Map Found"}
-                                    disabled={targetAttribute == "map" || targetAttribute == "mode"} />
-                            </div>
+                            {!isGlobal && (
+                                <div>
+                                    <CustomSelector
+                                        value={map}
+                                        setValue={setMap}
+                                        labels={mapLabels}
+                                        noChoiceLabel="Select Map..."
+                                        searchPlaceholder="Search Maps..."
+                                        emptySearch={mode == "" ? "Choose a mode first!" : "No Map Found"}
+                                        disabled={targetAttribute == "map" || targetAttribute == "mode"} />
+                                </div>
+                            )}
                             <div>
                                 <CustomSelector
                                     value={brawler}

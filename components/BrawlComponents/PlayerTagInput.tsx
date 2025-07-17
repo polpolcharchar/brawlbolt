@@ -7,6 +7,7 @@ import { handlePlayerSearch } from "@/lib/BrawlUtility/BrawlDataFetcher";
 import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
+import { Card, CardContent } from "../ui/card";
 
 export const PlayerTagInput = () => {
     const [playerTag, setPlayerTag] = useState("");
@@ -16,7 +17,7 @@ export const PlayerTagInput = () => {
 
     //Handle Initial Global Stats:
     useEffect(() => {
-        updatePlayerData("Global", "Global");
+        updatePlayerData("global", "global");
     }, [])
 
     //Submit
@@ -42,7 +43,7 @@ export const PlayerTagInput = () => {
         // <div className="flex items-center justify-center p-2">
         //     <Card className="bg-red-100 border-red-500 text-red-800 max-w-lg">
         //         <CardContent className="text-center py-6">
-        //             <h1 className="text-2xl font-bold">Sorry, player accounts are down for maintenance.</h1>
+        //             <h1 className="text-2xl font-bold">Sorry, BrawlBolt is down for maintenance.</h1>
         //             <p className="mt-2">Check back soon.</p>
         //         </CardContent>
         //     </Card>
