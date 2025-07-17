@@ -1,12 +1,12 @@
 import { CardFooter, CardHeader } from "@/components/ui/card";
-import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import { Carousel, CarouselApi, CarouselContent, CarouselItem, CarouselNext } from "@/components/ui/carousel";
 import { rankedModeLabelMap, rankedModeLabels } from "@/lib/BrawlUtility/BrawlConstants";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BrawlerOverTimeChart } from "../Charts/BrawlerOverTimeChart";
-import { ShareSplashCard } from "../InfoCards/ShareSplashCard";
+import { TrieExplorerChart } from "../Charts/TrieExplorerChart";
 import { columns } from "../Tables/BrawlerTable/Columns";
 import { GlobalBrawlerTable } from "../Tables/BrawlerTable/GlobalBrawlerTable";
-import { TrieExplorerChart } from "../Charts/TrieExplorerChart";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 
 export const GlobalCardContent = () => {
@@ -23,7 +23,17 @@ export const GlobalCardContent = () => {
     }
     const [brawler, setBrawler] = useState("JACKY");
 
-    const [trigger, setTrigger] = useState<(type: string, mode: string, brawler: string) => void>(() => { });
+    const [activeSlide, setActiveSlide] = useState(0);
+    useEffect(() => {
+        if (!api) return;
+
+        const handleSelect = () => {
+            setActiveSlide(api.selectedScrollSnap());
+        };
+
+        api.on("select", handleSelect);
+        handleSelect(); // initialize on mount
+    }, [api]);
 
     return (
         <div>
@@ -32,18 +42,45 @@ export const GlobalCardContent = () => {
                     {"Global Statistics"}
                 </CardHeader>
 
-                <ShareSplashCard />
+                {/* <ShareSplashCard /> */}
             </div>
 
             <div className="relative w-full mx-auto">
-                <Carousel className="w-full" opts={{ loop: false, watchDrag: false }} setApi={setApi}>
+
+                {/* Custom Carousel Controls */}
+                <div className="flex justify-center items-center gap-2 mb-2">
+                    <button
+                        onClick={() => api?.scrollPrev()}
+                        className="p-2 rounded hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Previous Slide"
+                        disabled={activeSlide === 0}
+                    >
+                        <ChevronLeft
+                            className={`w-10 h-10 ${activeSlide === 0 ? "text-muted-foreground" : ""}`}
+                        />
+                    </button>
+
+                    <p className="text-md font-medium text-center">
+                        {activeSlide === 0 ? "Trie" : activeSlide === 1 ? "Brawler Table" : "Brawler History"}
+                    </p>
+
+                    <button
+                        onClick={() => api?.scrollNext()}
+                        className="p-2 rounded hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Next Slide"
+                        disabled={activeSlide === 2}
+                    >
+                        <ChevronRight
+                            className={`w-10 h-10 ${activeSlide === 2 ? "text-muted-foreground" : ""}`}
+                        />
+                    </button>
+                </div>
+
+                <Carousel className="w-full" opts={{ loop: false, watchDrag: false, startIndex: 1}} setApi={setApi}>
                     <CarouselContent>
-                        {/* <CarouselItem key="trieExplorer">
-                            <TrieExplorerChart
-                            playerTag={"global"}
-                            isGlobal={true}
-                            />
-                        </CarouselItem> */}
+                        <CarouselItem key="trieExplorer">
+                            <TrieExplorerChart playerTag={"global"} isGlobal={true} />
+                        </CarouselItem>
 
                         <CarouselItem key="brawlerTable">
                             <GlobalBrawlerTable
@@ -57,7 +94,6 @@ export const GlobalCardContent = () => {
                                     setBrawler(clickedBrawler);
                                     if (api !== null) {
                                         api?.scrollNext();
-                                        trigger(rankedVsRegularToggleValue, mode, clickedBrawler);
                                     }
                                 }}
                             />
@@ -72,7 +108,7 @@ export const GlobalCardContent = () => {
                                 brawler={brawler}
                                 setBrawler={setBrawler}
                                 carouselApi={api}
-                                setTrigger={setTrigger}
+                                isActive={activeSlide == 2}
                             />
                         </CarouselItem>
                     </CarouselContent>

@@ -42,7 +42,7 @@ export const BrawlerOverTimeChart = ({
     brawler,
     setBrawler,
     carouselApi,
-    setTrigger,
+    isActive
 }: {
     mode: string,
     setMode: (value: string) => void,
@@ -51,7 +51,7 @@ export const BrawlerOverTimeChart = ({
     brawler: string,
     setBrawler: (value: string) => void,
     carouselApi: CarouselApi | null | undefined,
-    setTrigger: (value: () => void) => void
+    isActive: boolean
 }) => {
 
 
@@ -68,6 +68,8 @@ export const BrawlerOverTimeChart = ({
     const [chartType, setChartType] = useState<"linear" | "natural">("linear");
 
     const fetchData = async (rankedVsRegularToggleValue: string, mode: string, brawler: string) => {
+
+        console.log("Fetching");
 
         const statTypeString = rankedVsRegularToggleValue + mode + brawler;
 
@@ -121,28 +123,15 @@ export const BrawlerOverTimeChart = ({
     };
 
     useEffect(() => {
-        setTrigger(() => {
-            return (rankedVsRegularToggleValue: string, mode: string, brawler: string) => {
-                void fetchData(rankedVsRegularToggleValue, mode, brawler);
-            }
-        });
-
-    }, [mode, rankedVsRegularToggleValue, brawler]);
-
-    useEffect(() => {
-        const scrollProgress: number | undefined = carouselApi?.scrollProgress();
-        if (scrollProgress !== undefined && scrollProgress > 0.9 && scrollProgress < 1.1) {
+        const snapValue = carouselApi?.selectedScrollSnap();
+        if (isActive && snapValue !== undefined && snapValue == 2) {
             fetchData(rankedVsRegularToggleValue, mode, brawler);
         }
 
-    }, [mode, rankedVsRegularToggleValue, brawler]);
+    }, [mode, rankedVsRegularToggleValue, brawler, isActive]);
 
     return (
         <Card className="border-none">
-            <div className="flex cursor-pointer text-sm text-gray-300 items-center ml-4" onClick={() => { carouselApi?.scrollPrev() }}>
-                <ArrowLeft />
-                <p>Back to table</p>
-            </div>
             <CardHeader className="block justify-between items-start">
                 <div>
                     <CardTitle className="text-2xl font-bold mb-4">Global Brawler History</CardTitle>

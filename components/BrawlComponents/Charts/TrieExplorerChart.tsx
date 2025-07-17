@@ -9,6 +9,7 @@ import { LockIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { CustomSelector } from "../Selectors/CustomSelector";
+import { Separator } from "@/components/ui/separator";
 
 const CustomPlayerTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -166,13 +167,14 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
 
             // Calculate average duration from frequencies
             const totalOccurrences: any = Object.values(frequencies).reduce((sum: any, count: any) => sum + count, 0);
+            const durationBucketSize = 30;
             const averageDuration =
                 totalOccurrences === 0
                     ? 0
                     : Object.entries(frequencies).reduce(
                         (sum, [duration, count]) => sum + Number(duration) * Number(count),
                         0
-                    ) / totalOccurrences * 30; // Convert to seconds
+                    ) / totalOccurrences * durationBucketSize + durationBucketSize / 2; // Convert to seconds
 
             return {
                 value: value,
@@ -213,11 +215,11 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
                 <CardHeader className="block justify-between items-start">
                     <CardTitle className="text-2xl font-bold mb-4">Trie Explorer</CardTitle>
 
-                    <div className="flex flex-row gap-10">
-                        {/* First column: RegularRankedToggle, Mode, Map, Brawler */}
-                        <div className="flex flex-col gap-3 py-2 max-w-[200px] w-full">
+                    <div className="flex flex-col">
+                        {/* Trie Query Row */}
+                        <div className="flex flex-col py-2">
                             <div className="font-semibold text-lg mb-2">Trie Query</div>
-                            <div>
+                            <div className="flex flex-wrap gap-3">
                                 <CustomSelector
                                     value={rankedVsRegularToggleValue}
                                     setValue={setRankedVsRegularToggleValue}
@@ -227,9 +229,8 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
                                     emptySearch="No Type Found"
                                     disabled={targetAttribute == "type"}
                                     searchEnabled={false}
-                                    canBeEmpty={false} />
-                            </div>
-                            <div>
+                                    canBeEmpty={false}
+                                />
                                 <CustomSelector
                                     value={mode}
                                     setValue={setModeAndUpdateMap}
@@ -238,10 +239,9 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
                                     searchPlaceholder="Search Modes..."
                                     emptySearch="No Mode Found"
                                     disabled={targetAttribute == "mode"}
-                                    canBeEmpty={targetAttribute != "map"} />
-                            </div>
-                            {!isGlobal && (
-                                <div>
+                                    canBeEmpty={targetAttribute != "map"}
+                                />
+                                {!isGlobal && (
                                     <CustomSelector
                                         value={map}
                                         setValue={setMap}
@@ -249,10 +249,9 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
                                         noChoiceLabel="Select Map..."
                                         searchPlaceholder="Search Maps..."
                                         emptySearch={mode == "" ? "Choose a mode first!" : "No Map Found"}
-                                        disabled={targetAttribute == "map" || targetAttribute == "mode"} />
-                                </div>
-                            )}
-                            <div>
+                                        disabled={targetAttribute == "map" || targetAttribute == "mode"}
+                                    />
+                                )}
                                 <CustomSelector
                                     value={brawler}
                                     setValue={setBrawler}
@@ -260,97 +259,101 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
                                     noChoiceLabel="Select Brawler..."
                                     searchPlaceholder="Search Brawlers..."
                                     emptySearch="No Brawler Found"
-                                    disabled={targetAttribute == "brawler"} />
+                                    disabled={targetAttribute == "brawler"}
+                                />
                             </div>
                         </div>
-                        {/* Second column: Target Attribute, Stat Type */}
-                        <div className="flex flex-col gap-3 py-2 max-w-[200px] w-full">
-                            <div className="font-semibold text-lg mb-2">Graph Settings</div>
-                            <div>
-                                <label className="block text-sm font-medium mb-1">X-Axis:</label>
-                                <CustomSelector
-                                    value={targetAttribute}
-                                    setValue={setTargetAttributeAndUpdateOtherAttributes}
-                                    labels={targetAttributeLabels}
-                                    noChoiceLabel="Select Target Attribute..."
-                                    searchPlaceholder="Search Attributes..."
-                                    emptySearch="No Attribute Found"
-                                    canBeEmpty={false}
-                                    searchEnabled={false} />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Y-Axis:</label>
-                                <CustomSelector
-                                    value={statType}
-                                    setValue={setStatTypeAndUpdateOverallToggle}
-                                    labels={[
-                                        { value: "winrateMinusStarRate", label: "Winrate" },
-                                        { value: "trophyChange", label: "Trophy Change" },
-                                        { value: "trophyChangePerGame", label: "Trophy Change / Game" },
-                                        { value: "averageDuration", label: "Average Duration" },
-                                        { value: "numGames", label: "Games Played" },
-                                    ]}
-                                    noChoiceLabel="Select Stat Type..."
-                                    searchPlaceholder="Search Stat Types..."
-                                    emptySearch="No Stat Type Found"
-                                    canBeEmpty={false}
-                                    searchEnabled={false}
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Sorting:</label>
-                                <CustomSelector
-                                    value={sortingStatType}
-                                    setValue={setSortingStatType}
-                                    labels={[
-                                        { value: "winrate", label: "Winrate" },
-                                        { value: "starRate", label: "Star Rate" },
-                                        { value: "trophyChange", label: "Trophy Change" },
-                                        { value: "trophyChangePerGame", label: "Trophy Change / Game" },
-                                        { value: "averageDuration", label: "Average Duration" },
-                                        { value: "numGames", label: "Games Played" },
-                                    ]}
-                                    noChoiceLabel="Select Sorting Type..."
-                                    searchPlaceholder="Search Sorting Types..."
-                                    emptySearch="No Sorting Type Found"
-                                    canBeEmpty={false}
-                                    searchEnabled={false}
-                                    disabled={sortByStatType}
-                                />
-                                <div className="flex items-center gap-2 pt-2">
-                                    <Checkbox
-                                        id={"sortByStatType" + playerTag}
-                                        checked={sortByStatType}
-                                        onCheckedChange={() => {
-                                            setSortByStatType(prev => !prev);
 
-                                            // When toggling on, set sortingStatType to the current statType
-                                            if (!sortByStatType) {
-                                                setSortingStatType(statType === "winrateMinusStarRate" ? "winrate" : statType);
-                                            }
-                                        }}
-                                        className="cursor-pointer"
+                        {/* Graph Settings Row */}
+                        <div className="flex flex-col py-2">
+                            <div className="font-semibold text-lg mb-2">Graph Settings</div>
+                            <div className="flex flex-wrap gap-3">
+                                <div>
+                                    <label className="block text-sm font-medium mb-1">X-Axis:</label>
+                                    <CustomSelector
+                                        value={targetAttribute}
+                                        setValue={setTargetAttributeAndUpdateOtherAttributes}
+                                        labels={targetAttributeLabels}
+                                        noChoiceLabel="Select Target Attribute..."
+                                        searchPlaceholder="Search Attributes..."
+                                        emptySearch="No Attribute Found"
+                                        canBeEmpty={false}
+                                        searchEnabled={false}
                                     />
-                                    <label
-                                        htmlFor={"sortByStatType" + playerTag}
-                                        className="flex items-center gap-1 cursor-pointer"
-                                        title="Lock sorting type to y-axis value"
-                                    >
-                                        <LockIcon size={16} className="text-muted-foreground" />
-                                        <span className="text-xs text-muted-foreground">Lock to y-axis value</span>
-                                    </label>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium mb-1">Y-Axis:</label>
+                                    <CustomSelector
+                                        value={statType}
+                                        setValue={setStatTypeAndUpdateOverallToggle}
+                                        labels={[
+                                            { value: "winrateMinusStarRate", label: "Winrate" },
+                                            { value: "trophyChange", label: "Trophy Change" },
+                                            { value: "trophyChangePerGame", label: "Trophy Change / Game" },
+                                            { value: "averageDuration", label: "Average Duration" },
+                                            { value: "numGames", label: "Games Played" },
+                                        ]}
+                                        noChoiceLabel="Select Stat Type..."
+                                        searchPlaceholder="Search Stat Types..."
+                                        emptySearch="No Stat Type Found"
+                                        canBeEmpty={false}
+                                        searchEnabled={false}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium mb-1">Sorting:</label>
+                                    <CustomSelector
+                                        value={sortingStatType}
+                                        setValue={setSortingStatType}
+                                        labels={[
+                                            { value: "winrate", label: "Winrate" },
+                                            { value: "starRate", label: "Star Rate" },
+                                            { value: "trophyChange", label: "Trophy Change" },
+                                            { value: "trophyChangePerGame", label: "Trophy Change / Game" },
+                                            { value: "averageDuration", label: "Average Duration" },
+                                            { value: "numGames", label: "Games Played" },
+                                        ]}
+                                        noChoiceLabel="Select Sorting Type..."
+                                        searchPlaceholder="Search Sorting Types..."
+                                        emptySearch="No Sorting Type Found"
+                                        canBeEmpty={false}
+                                        searchEnabled={false}
+                                        disabled={sortByStatType}
+                                    />
+                                    <div className="flex items-center gap-2 pt-2">
+                                        <Checkbox
+                                            id={"sortByStatType" + playerTag}
+                                            checked={sortByStatType}
+                                            onCheckedChange={() => {
+                                                setSortByStatType(prev => !prev);
+                                                if (!sortByStatType) {
+                                                    setSortingStatType(statType === "winrateMinusStarRate" ? "winrate" : statType);
+                                                }
+                                            }}
+                                            className="cursor-pointer"
+                                        />
+                                        <label
+                                            htmlFor={"sortByStatType" + playerTag}
+                                            className="flex items-center gap-1 cursor-pointer"
+                                            title="Lock sorting type to y-axis value"
+                                        >
+                                            <LockIcon size={16} className="text-muted-foreground" />
+                                            <span className="text-xs text-muted-foreground">Lock to y-axis value</span>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </CardHeader>
 
-                <CardContent className="h-[40vh]">
+                <CardContent className="h-[50vh]">
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart
                             accessibilityLayer
                             data={paginatedData}
-                            margin={{ bottom: 100 }}
+                            margin={{ bottom: 40 }}
                         >
                             <CartesianGrid
                                 vertical={false}
@@ -365,7 +368,6 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
                                 angle={window.innerWidth < 900 ? -90 : -45}
                                 textAnchor="end"
                                 tickFormatter={(tick: string) => {
-
                                     return modeLabelMap[tick as keyof typeof modeLabelMap]
                                         ?? tick//Title Case
                                             .toLowerCase()

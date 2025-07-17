@@ -52,7 +52,7 @@ export const CustomSelector = ({
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="max-w-[200px] w-full justify-between"
+                    className="max-w-[200px] justify-between"
                     disabled={disabled}
                 >
                     {value
@@ -61,7 +61,7 @@ export const CustomSelector = ({
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0" side="bottom" align="start">
+            <PopoverContent className="max-w-[200px] p-0" side="bottom" align="start">
                 <Command>
                     {searchEnabled && <CommandInput placeholder={searchPlaceholder} disabled={disabled} />}
                     <CommandList>

@@ -98,7 +98,16 @@ export const columns: ColumnDef<BrawlerData>[] = [
                     className="flex items-center"
                 >
 
-                    <p className="text-sm">{row.getValue("name")}</p>
+                    <p className="text-sm">{String(row.getValue("name")) // Convert to title case
+                        .toLowerCase()
+                        .split(' ') // Split by both ' ' and '-' (for Jae-Yong, R-T...)
+                        .map(word =>
+                            word
+                                .split('-')
+                                .map(subword => subword.charAt(0).toUpperCase() + subword.slice(1))
+                                .join('-')
+                        )
+                        .join(' ')}</p>
                 </div>
             );
         },
