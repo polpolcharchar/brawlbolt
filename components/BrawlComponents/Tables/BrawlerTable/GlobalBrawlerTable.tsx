@@ -17,7 +17,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { modeLabels } from "@/lib/BrawlUtility/BrawlConstants"
+import { modeLabels, rankedModeLabels } from "@/lib/BrawlUtility/BrawlConstants"
 import { fetchGlobalStats } from "@/lib/BrawlUtility/BrawlDataFetcher"
 import { useEffect, useState } from "react"
 import { CustomSelector } from "../../Selectors/CustomSelector"
@@ -168,7 +168,7 @@ export function GlobalBrawlerTable<TData, TValue>({
                         <CustomSelector
                             value={mode}
                             setValue={setMode}
-                            labels={modeLabels}
+                            labels={(rankedVsRegularToggleValue == "regular" ? modeLabels : rankedModeLabels)}
                             noChoiceLabel="Select Mode..."
                             searchPlaceholder="Search Modes..."
                             emptySearch="No Mode Found"

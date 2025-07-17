@@ -69,8 +69,6 @@ export const BrawlerOverTimeChart = ({
 
     const fetchData = async (rankedVsRegularToggleValue: string, mode: string, brawler: string) => {
 
-        console.log("Fetching");
-
         const statTypeString = rankedVsRegularToggleValue + mode + brawler;
 
         if (brawlerTimeData[statTypeString] !== undefined) {
@@ -98,6 +96,10 @@ export const BrawlerOverTimeChart = ({
 
         const chartDataStats = parsedStats.map((item: any) => {
 
+            if(item["trieData"].length == 0){
+                return undefined;
+            }
+
             const resultCompiler = item["trieData"][0]["resultCompiler"];
 
             const player_result_data = resultCompiler["player_result_data"];
@@ -114,7 +116,9 @@ export const BrawlerOverTimeChart = ({
                 resultPotentialTotal: player_result_data["potential_total"],
             }
 
-        });
+        }).filter((a: any) => a);
+
+
 
         if (stats) setChartData(chartDataStats);
         else setChartData([]);
