@@ -22,6 +22,7 @@ import { fetchGlobalStats } from "@/lib/BrawlUtility/BrawlDataFetcher"
 import { useEffect, useState } from "react"
 import { CustomSelector } from "../../Selectors/CustomSelector"
 import { RegularRankedToggle } from "../../Selectors/RegularRankedToggle"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export type BrawlerData = {
     name: string
@@ -100,10 +101,14 @@ export function GlobalBrawlerTable<TData, TValue>({
     const [gameCollectionDatetime, setGameCollectionDatetime] = useState("");
 
     const [data, setData] = useState<TData[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
+            setData([]);
             const stats = await fetchGlobalStats(1, rankedVsRegularToggleValue, mode, "", "brawler");
+            setLoading(false);
             if (!stats || stats.length === 0) {
                 console.error("No data returned from fetchGlobalStats");
                 return;
@@ -178,28 +183,34 @@ export function GlobalBrawlerTable<TData, TValue>({
 
                 </CardHeader>
                 <CardContent>
-                    <div className="h-[500px] overflow-auto border">
+                    <div className="h-[50vh] overflow-auto border">
                         <Table>
                             <TableHeader>
                                 {table.getHeaderGroups().map((headerGroup) => (
                                     <TableRow key={headerGroup.id}>
-                                        {headerGroup.headers.map((header) => {
-                                            return (
-                                                <TableHead key={header.id}>
-                                                    {header.isPlaceholder
-                                                        ? null
-                                                        : flexRender(
-                                                            header.column.columnDef.header,
-                                                            header.getContext()
-                                                        )}
-                                                </TableHead>
-                                            )
-                                        })}
+                                        {headerGroup.headers.map((header) => (
+                                            <TableHead key={header.id}>
+                                                {header.isPlaceholder
+                                                    ? null
+                                                    : flexRender(header.column.columnDef.header, header.getContext())}
+                                            </TableHead>
+                                        ))}
                                     </TableRow>
                                 ))}
                             </TableHeader>
                             <TableBody>
-                                {table.getRowModel().rows?.length ? (
+                                {loading ? (
+                                    // Render 5 skeleton rows as loading placeholders
+                                    Array.from({ length: 5 }).map((_, rowIndex) => (
+                                        <TableRow key={`skeleton-${rowIndex}`}>
+                                            {table.getVisibleFlatColumns().map((column, colIndex) => (
+                                                <TableCell key={`skeleton-cell-${colIndex}`}>
+                                                    <Skeleton className="h-4 w-full" />
+                                                </TableCell>
+                                            ))}
+                                        </TableRow>
+                                    ))
+                                ) : table.getRowModel().rows?.length ? (
                                     table.getRowModel().rows.map((row) => (
                                         <TableRow
                                             key={row.id}
@@ -207,7 +218,10 @@ export function GlobalBrawlerTable<TData, TValue>({
                                             className="cursor-pointer"
                                         >
                                             {row.getVisibleCells().map((cell) => (
-                                                <TableCell key={cell.id} onClick={() => onBrawlerClick(row.getValue("name"))}>
+                                                <TableCell
+                                                    key={cell.id}
+                                                    onClick={() => onBrawlerClick(row.getValue("name"))}
+                                                >
                                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                                 </TableCell>
                                             ))}
@@ -222,6 +236,7 @@ export function GlobalBrawlerTable<TData, TValue>({
                                 )}
                             </TableBody>
                         </Table>
+
                     </div>
                 </CardContent>
             </Card>
