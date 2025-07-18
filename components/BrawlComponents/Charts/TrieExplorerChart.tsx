@@ -6,7 +6,7 @@ import { brawlerLabels, modeLabelMap, modeLabels, rankedModeLabels } from "@/lib
 import { fetchGlobalStats, fetchTrieData } from "@/lib/BrawlUtility/BrawlDataFetcher";
 import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
 import { LockIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { CustomSelector } from "../Selectors/CustomSelector";
 
@@ -48,29 +48,6 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
     }
     const [map, setMap] = useState("");
 
-    const [rankedVsRegularToggleValue, setRankedVsRegularToggleValue] = useState("ranked");
-    const [rankedVsRegularToggleLabels] = useState<{ value: string; label: string }[]>([
-        { value: "regular", label: "Regular" },
-        { value: "ranked", label: "Ranked" }
-    ]);
-
-    const [statType, _setStatType] = useState("winrateMinusStarRate");
-    const setStatTypeAndUpdateOverallToggle = (value: string): void => {
-        if (rankedVsRegularToggleValue === "ranked" && (value === "trophyChange" || value === "trophyChangePerGame")) {
-            setRankedVsRegularToggleValue("regular");
-        }
-
-        if (sortByStatType) {
-            if (value === "winrateMinusStarRate") {
-                setSortingStatType("winrate");
-            } else {
-                setSortingStatType(value);
-            }
-        }
-
-        _setStatType(value);
-    }
-
     const [targetAttribute, setTargetAttribute] = useState("brawler");
     const setTargetAttributeAndUpdateOtherAttributes = (value: string): void => {
         setTargetAttribute(value);
@@ -79,7 +56,7 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
         }
 
         if (value != "type" && rankedVsRegularToggleValue == "") {
-            setRankedVsRegularToggleValue("regular");
+            updateRegularVsRankedToggleValueAndDependents("regular");
         }
 
         if (value == "map") {
@@ -90,7 +67,15 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
             setMode("");
             setMap("");
         } else if (value == "type") {
-            setRankedVsRegularToggleValue("");
+            updateRegularVsRankedToggleValueAndDependents("");
+        }
+
+        // Update stat type and sorting:
+        if (value == "type" && (statType == "trophyChange" || statType == "trophyChangePerGame")) {
+            setStatTypeAndUpdateDependents("winrateMinusStarRate");
+        }
+        if (value == "type" && (sortingStatType == "trophyChange" || sortingStatType == "trophyChangePerGame")) {
+            setSortingStatType("winrate");
         }
     }
     const [targetAttributeLabels] = useState<{ value: string; label: string }[]>(
@@ -102,10 +87,59 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
         ].filter(Boolean) as { value: string; label: string }[]//Filter out the null value if isGlobal
     );
 
+    const [rankedVsRegularToggleValue, setRankedVsRegularToggleValue] = useState(isGlobal ? "ranked" : "regular");
+    const updateRegularVsRankedToggleValueAndDependents = (value: string) => {
+        setRankedVsRegularToggleValue(value);
+
+        if (value == "ranked" && (statType == "trophyChange" || statType == "trophyChangePerGame")) {
+            setStatTypeAndUpdateDependents("winrateMinusStarRate");
+        }
+
+        if (value == "ranked" && (sortingStatType == "trophyChange" || sortingStatType == "trophyChangePerGame")) {
+            setSortingStatType("winrate");
+        }
+    }
+    const [rankedVsRegularToggleLabels] = useState<{ value: string; label: string }[]>([
+        { value: "regular", label: "Regular" },
+        { value: "ranked", label: "Ranked" }
+    ]);
+
+    const [statType, _setStatType] = useState("winrateMinusStarRate");
+    const setStatTypeAndUpdateDependents = (value: string): void => {
+        if (sortByStatType) {
+            if (value === "winrateMinusStarRate") {
+                setSortingStatType("winrate");
+            } else {
+                setSortingStatType(value);
+            }
+        }
+
+        _setStatType(value);
+    }
+    const statTypeLabels = useMemo(() => {
+        return [
+            { value: "winrateMinusStarRate", label: "Winrate" },
+            rankedVsRegularToggleValue === "regular" && targetAttribute != "type" ? { value: "trophyChange", label: "Trophy Change" } : null,
+            rankedVsRegularToggleValue === "regular" && targetAttribute != "type" ? { value: "trophyChangePerGame", label: "Trophy Change / Game" } : null,
+            { value: "averageDuration", label: "Average Duration" },
+            { value: "numGames", label: "Games Played" },
+        ].filter(Boolean) as { value: string; label: string }[]
+    }, [rankedVsRegularToggleValue]);
+
     const [mapLabels, setMapLabels] = useState<{ value: string; label: string }[]>([]);
 
     const [sortingStatType, setSortingStatType] = useState(isGlobal ? "winrate" : "numGames");
     const [sortByStatType, setSortByStatType] = useState(isGlobal ? true : false);
+    const sortingTypeLabels = useMemo(() => {
+        return [
+            { value: "winrate", label: "Winrate" },
+            { value: "starRate", label: "Star Rate" },
+            rankedVsRegularToggleValue == "regular" && targetAttribute != "type" ? { value: "trophyChange", label: "Trophy Change" } : null,
+            rankedVsRegularToggleValue == "regular" && targetAttribute != "type" ? { value: "trophyChangePerGame", label: "Trophy Change / Game" } : null,
+            { value: "averageDuration", label: "Average Duration" },
+            { value: "numGames", label: "Games Played" },
+        ].filter(Boolean) as { value: string; label: string }[]
+    }, [rankedVsRegularToggleValue]);
 
     const [chartData, setChartData] = useState<
         { value: string; winrate: number }[]
@@ -222,7 +256,7 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
                             <div className="flex flex-wrap gap-3">
                                 <CustomSelector
                                     value={rankedVsRegularToggleValue}
-                                    setValue={setRankedVsRegularToggleValue}
+                                    setValue={updateRegularVsRankedToggleValueAndDependents}
                                     labels={rankedVsRegularToggleLabels}
                                     noChoiceLabel="Select Type..."
                                     searchPlaceholder="Search Types..."
@@ -230,6 +264,7 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
                                     disabled={targetAttribute == "type"}
                                     searchEnabled={false}
                                     canBeEmpty={false}
+                                    hoverMessage={targetAttribute == "type" ? "Change x-axis to something other than type to modify this value!" : ""}
                                 />
                                 <CustomSelector
                                     value={mode}
@@ -240,6 +275,7 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
                                     emptySearch="No Mode Found"
                                     disabled={targetAttribute == "mode"}
                                     canBeEmpty={targetAttribute != "map"}
+                                    hoverMessage={targetAttribute == "mode" ? "Change x-axis to something other than mode to modify this value!" : ""}
                                 />
                                 {!isGlobal && (
                                     <CustomSelector
@@ -250,6 +286,7 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
                                         searchPlaceholder="Search Maps..."
                                         emptySearch={mode == "" ? "Choose a mode first!" : "No Map Found"}
                                         disabled={targetAttribute == "map" || targetAttribute == "mode"}
+                                        hoverMessage={targetAttribute == "map" || targetAttribute == "mode" ? "Change x-axis to something other than map or mode to modify this value!" : ""}
                                     />
                                 )}
                                 <CustomSelector
@@ -260,6 +297,7 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
                                     searchPlaceholder="Search Brawlers..."
                                     emptySearch="No Brawler Found"
                                     disabled={targetAttribute == "brawler"}
+                                    hoverMessage={targetAttribute == "brawler" ? "Change x-axis to something other than brawler to modify this value!" : ""}
                                 />
                             </div>
                         </div>
@@ -285,14 +323,8 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
                                     <label className="block text-sm font-medium mb-1">Y-Axis:</label>
                                     <CustomSelector
                                         value={statType}
-                                        setValue={setStatTypeAndUpdateOverallToggle}
-                                        labels={[
-                                            { value: "winrateMinusStarRate", label: "Winrate" },
-                                            { value: "trophyChange", label: "Trophy Change" },
-                                            { value: "trophyChangePerGame", label: "Trophy Change / Game" },
-                                            { value: "averageDuration", label: "Average Duration" },
-                                            { value: "numGames", label: "Games Played" },
-                                        ]}
+                                        setValue={setStatTypeAndUpdateDependents}
+                                        labels={statTypeLabels}
                                         noChoiceLabel="Select Stat Type..."
                                         searchPlaceholder="Search Stat Types..."
                                         emptySearch="No Stat Type Found"
@@ -305,14 +337,7 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
                                     <CustomSelector
                                         value={sortingStatType}
                                         setValue={setSortingStatType}
-                                        labels={[
-                                            { value: "winrate", label: "Winrate" },
-                                            { value: "starRate", label: "Star Rate" },
-                                            { value: "trophyChange", label: "Trophy Change" },
-                                            { value: "trophyChangePerGame", label: "Trophy Change / Game" },
-                                            { value: "averageDuration", label: "Average Duration" },
-                                            { value: "numGames", label: "Games Played" },
-                                        ]}
+                                        labels={sortingTypeLabels}
                                         noChoiceLabel="Select Sorting Type..."
                                         searchPlaceholder="Search Sorting Types..."
                                         emptySearch="No Sorting Type Found"

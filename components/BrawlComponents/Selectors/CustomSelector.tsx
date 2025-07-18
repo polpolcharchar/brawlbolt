@@ -1,11 +1,26 @@
-import { Button } from "@/components/ui/button"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { brawlerLabels } from "@/lib/BrawlUtility/BrawlConstants"
-import clsx from "clsx"
-import { Check, ChevronsUpDown } from "lucide-react"
 import { useState } from "react"
-
+import clsx from "clsx"
+import { Button } from "@/components/ui/button"
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from "@/components/ui/command"
+import {
+    Popover,
+    PopoverTrigger,
+    PopoverContent,
+} from "@/components/ui/popover"
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { Check, ChevronsUpDown } from "lucide-react"
 
 type LabelChoice = {
     value: string
@@ -13,15 +28,16 @@ type LabelChoice = {
 }
 
 type CustomSelectorProps = {
-    value: string,
-    setValue: (value: string) => void,
-    labels: LabelChoice[],
-    noChoiceLabel: string,
-    searchPlaceholder: string,
-    emptySearch: string,
-    disabled?: boolean,
-    canBeEmpty?: boolean,
+    value: string
+    setValue: (value: string) => void
+    labels: LabelChoice[]
+    noChoiceLabel: string
+    searchPlaceholder: string
+    emptySearch: string
+    disabled?: boolean
+    canBeEmpty?: boolean
     searchEnabled?: boolean
+    hoverMessage?: string
 }
 
 export const CustomSelector = ({
@@ -33,19 +49,19 @@ export const CustomSelector = ({
     emptySearch,
     disabled = false,
     canBeEmpty = true,
-    searchEnabled = true
+    searchEnabled = true,
+    hoverMessage = "",
 }: CustomSelectorProps) => {
-
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(false)
 
     const sortedLabels = value
         ? [
-            ...labels.filter(label => label.value === value),
-            ...labels.filter(label => label.value !== value)
+            ...labels.filter((label) => label.value === value),
+            ...labels.filter((label) => label.value !== value),
         ]
-        : labels;
+        : labels
 
-    return (
+    const SelectorPopover = (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
                 <Button
@@ -63,7 +79,12 @@ export const CustomSelector = ({
             </PopoverTrigger>
             <PopoverContent className="max-w-[200px] p-0" side="bottom" align="start">
                 <Command>
-                    {searchEnabled && <CommandInput placeholder={searchPlaceholder} disabled={disabled} />}
+                    {searchEnabled && (
+                        <CommandInput
+                            placeholder={searchPlaceholder}
+                            disabled={disabled}
+                        />
+                    )}
                     <CommandList>
                         <CommandEmpty>{emptySearch}</CommandEmpty>
                         <CommandGroup>
@@ -75,13 +96,12 @@ export const CustomSelector = ({
                                         if (!disabled) {
                                             if (currentValue === value) {
                                                 if (canBeEmpty) {
-                                                    setValue("");
+                                                    setValue("")
                                                 }
-                                                // If canBeEmpty is false, do nothing
                                             } else {
-                                                setValue(currentValue);
+                                                setValue(currentValue)
                                             }
-                                            setOpen(false);
+                                            setOpen(false)
                                         }
                                     }}
                                     disabled={disabled}
@@ -89,7 +109,9 @@ export const CustomSelector = ({
                                     <Check
                                         className={clsx(
                                             "mr-2 h-4 w-4",
-                                            value === labelChoice.value ? "opacity-100" : "opacity-0"
+                                            value === labelChoice.value
+                                                ? "opacity-100"
+                                                : "opacity-0"
                                         )}
                                     />
                                     {labelChoice.label}
@@ -100,5 +122,18 @@ export const CustomSelector = ({
                 </Command>
             </PopoverContent>
         </Popover>
+    )
+
+    return hoverMessage ? (
+        <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <span>{SelectorPopover}</span>
+                </TooltipTrigger>
+                <TooltipContent>{hoverMessage}</TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
+    ) : (
+        SelectorPopover
     )
 }
