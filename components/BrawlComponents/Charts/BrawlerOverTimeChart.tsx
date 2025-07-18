@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { CarouselApi } from "@/components/ui/carousel";
 import {
     ChartConfig,
@@ -9,12 +9,12 @@ import {
 } from "@/components/ui/chart";
 import { brawlerLabels, modeLabels, rankedModeLabels } from "@/lib/BrawlUtility/BrawlConstants";
 import { fetchGlobalStats } from "@/lib/BrawlUtility/BrawlDataFetcher";
-import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Area, AreaChart, CartesianGrid, ReferenceLine, XAxis, YAxis } from "recharts";
+import { Area, AreaChart, CartesianGrid, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { CustomSelector } from "../Selectors/CustomSelector";
 import { LinearNaturalChartToggle } from "../Selectors/LinearNaturalChartToggle";
 import { RegularRankedToggle } from "../Selectors/RegularRankedToggle";
+import { Frown } from "lucide-react";
 
 const chartConfig = {
     winrate: {
@@ -96,7 +96,7 @@ export const BrawlerOverTimeChart = ({
 
         const chartDataStats = parsedStats.map((item: any) => {
 
-            if(item["trieData"].length == 0){
+            if (item["trieData"].length == 0) {
                 return undefined;
             }
 
@@ -168,7 +168,7 @@ export const BrawlerOverTimeChart = ({
                 </div>
             </CardHeader>
             <CardContent>
-                <ChartContainer config={chartConfig}>
+                <ChartContainer config={chartConfig} className="h-[50vh] w-full">
                     <AreaChart data={chartData}>
                         <defs>
                             <linearGradient id="fillWinrate" x1="0" y1="0" x2="0" y2="1">
@@ -270,6 +270,12 @@ export const BrawlerOverTimeChart = ({
                     </AreaChart>
                 </ChartContainer>
             </CardContent>
+            <CardFooter>
+                <Frown/>
+                <p className="text-sm text-gray-400 text-center mx-2">
+                    {"Past global statistics have resently been reset due to a change in BrawlBolt formatting. This will very likely not happen again."}
+                </p>
+            </CardFooter>
         </Card>
     );
 };

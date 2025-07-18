@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartTooltip } from "@/components/ui/chart";
 import { Checkbox } from "@/components/ui/checkbox";
-import { brawlerLabels, modeLabelMap, modeLabels } from "@/lib/BrawlUtility/BrawlConstants";
+import { brawlerLabels, modeLabelMap, modeLabels, rankedModeLabels } from "@/lib/BrawlUtility/BrawlConstants";
 import { fetchGlobalStats, fetchTrieData } from "@/lib/BrawlUtility/BrawlDataFetcher";
 import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
 import { LockIcon } from "lucide-react";
@@ -234,7 +234,7 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
                                 <CustomSelector
                                     value={mode}
                                     setValue={setModeAndUpdateMap}
-                                    labels={modeLabels}
+                                    labels={rankedVsRegularToggleValue == "regular" ? modeLabels : rankedModeLabels}
                                     noChoiceLabel="Select Mode..."
                                     searchPlaceholder="Search Modes..."
                                     emptySearch="No Mode Found"

@@ -114,13 +114,6 @@ export const GlobalCardContent = () => {
                     </CarouselContent>
                 </Carousel>
             </div>
-
-            <CardFooter className="flex justify-center">
-                <p className="text-sm text-gray-400 text-center mx-2">
-                    {"Past global statistics have been reset due to a change in BrawlBolt formatting. This will very likely not happen again."}
-                </p>
-            </CardFooter>
-
         </div>
     )
 }
