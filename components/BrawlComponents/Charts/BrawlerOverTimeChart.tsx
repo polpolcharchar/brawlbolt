@@ -135,7 +135,7 @@ export const BrawlerOverTimeChart = ({
     }, [mode, rankedVsRegularToggleValue, brawler, isActive]);
 
     return (
-        <Card className="border-none">
+        <Card className="border-none shadow-none">
             <CardHeader className="block justify-between items-start">
                 <div>
                     <CardTitle className="text-2xl font-bold mb-4">Global Brawler History</CardTitle>
