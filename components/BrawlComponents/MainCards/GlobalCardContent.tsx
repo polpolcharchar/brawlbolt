@@ -1,12 +1,12 @@
-import { CardFooter, CardHeader } from "@/components/ui/card";
-import { Carousel, CarouselApi, CarouselContent, CarouselItem, CarouselNext } from "@/components/ui/carousel";
+import { CardHeader } from "@/components/ui/card";
+import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { rankedModeLabelMap, rankedModeLabels } from "@/lib/BrawlUtility/BrawlConstants";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { BrawlerOverTimeChart } from "../Charts/BrawlerOverTimeChart";
 import { TrieExplorerChart } from "../Charts/TrieExplorerChart";
 import { columns } from "../Tables/BrawlerTable/Columns";
 import { GlobalBrawlerTable } from "../Tables/BrawlerTable/GlobalBrawlerTable";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
 
 export const GlobalCardContent = () => {
@@ -14,7 +14,7 @@ export const GlobalCardContent = () => {
     const [api, setApi] = useState<CarouselApi | null>(null);
 
     const [mode, setMode] = useState("");
-    const [rankedVsRegularToggleValue, setRankedVsRegularToggleValue] = useState("regular");
+    const [rankedVsRegularToggleValue, setRankedVsRegularToggleValue] = useState("ranked");
     const updateRankedVsRegularToggleValue = (newValue: string) => {
         if (newValue == "ranked" && rankedModeLabelMap[mode as keyof typeof rankedModeLabelMap] == undefined) {
             setMode(rankedModeLabels[0]['value']);

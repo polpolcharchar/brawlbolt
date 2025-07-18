@@ -9,7 +9,6 @@ import { LockIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { CustomSelector } from "../Selectors/CustomSelector";
-import { Separator } from "@/components/ui/separator";
 
 const CustomPlayerTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -49,7 +48,7 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
     }
     const [map, setMap] = useState("");
 
-    const [rankedVsRegularToggleValue, setRankedVsRegularToggleValue] = useState("regular");
+    const [rankedVsRegularToggleValue, setRankedVsRegularToggleValue] = useState("ranked");
     const [rankedVsRegularToggleLabels] = useState<{ value: string; label: string }[]>([
         { value: "regular", label: "Regular" },
         { value: "ranked", label: "Ranked" }
@@ -104,8 +103,8 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
 
     const [mapLabels, setMapLabels] = useState<{ value: string; label: string }[]>([]);
 
-    const [sortingStatType, setSortingStatType] = useState("numGames");
-    const [sortByStatType, setSortByStatType] = useState(false);
+    const [sortingStatType, setSortingStatType] = useState(isGlobal ? "winrate" : "numGames");
+    const [sortByStatType, setSortByStatType] = useState(isGlobal ? true : false);
 
     const [chartData, setChartData] = useState<
         { value: string; winrate: number }[]
