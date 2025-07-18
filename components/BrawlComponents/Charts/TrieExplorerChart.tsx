@@ -88,6 +88,7 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
             setBrawler("");
         } else if (value == "mode") {
             setMode("");
+            setMap("");
         } else if (value == "type") {
             setRankedVsRegularToggleValue("");
         }
@@ -210,7 +211,7 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
 
     return (
         <div>
-            <Card className="border-none">
+            <Card className="border-none shadow-none">
                 <CardHeader className="block justify-between items-start">
                     <CardTitle className="text-2xl font-bold mb-4">Trie Explorer</CardTitle>
 
