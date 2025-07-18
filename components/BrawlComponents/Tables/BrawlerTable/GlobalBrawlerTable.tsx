@@ -18,7 +18,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { modeLabels, rankedModeLabels } from "@/lib/BrawlUtility/BrawlConstants"
-import { fetchGlobalStats } from "@/lib/BrawlUtility/BrawlDataFetcher"
+import { fetchGlobalScanInfo, fetchGlobalStats } from "@/lib/BrawlUtility/BrawlDataFetcher"
 import { useEffect, useState } from "react"
 import { CustomSelector } from "../../Selectors/CustomSelector"
 import { RegularRankedToggle } from "../../Selectors/RegularRankedToggle"
@@ -103,6 +103,70 @@ export function GlobalBrawlerTable<TData, TValue>({
     const [data, setData] = useState<TData[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
 
+    const [scanDatetime, setScanDatetime] = useState<string>("");
+    const [scanNumGames, setScanNumGames] = useState<number>(-1);
+    const [scanHourRange, setScanHourRange] = useState<number>(-1);
+
+    const [scanInfoMessage, setScanInfoMessage] = useState<string>("");
+    // Assign scanInfoMessage
+    useEffect(() => {
+        // If either datetime or hourRange are invalid/empty
+        if (!scanDatetime || scanHourRange <= 0) {
+            if (scanNumGames === -1) {
+                setScanInfoMessage("Calculated using unique games.");
+            } else {
+                console.log(scanNumGames);
+                setScanInfoMessage(`Calculated using ${scanNumGames.toLocaleString()} unique games.`);
+            }
+            return;
+        }
+
+        const startDate = new Date(scanDatetime);
+        const endDate = new Date(startDate.getTime() + scanHourRange * 60 * 60 * 1000);
+
+        const formatDate = (d: Date) => {
+            const month = d.getMonth() + 1; // Months are 0-indexed
+            const day = d.getDate();
+            const hour = d.getHours();
+            const ampmHour = hour % 12 === 0 ? 12 : hour % 12;
+            const ampm = hour >= 12 ? "PM" : "AM";
+            return `${month}/${day}, ${ampmHour} ${ampm}`;
+        };
+
+        const startStr = formatDate(startDate);
+        const endStr = formatDate(endDate);
+
+        if (scanNumGames === -1) {
+            setScanInfoMessage(`Calculated using unique games from ${startStr} to ${endStr}.`);
+        } else {
+            setScanInfoMessage(`Calculated using ${scanNumGames.toLocaleString()} unique games from ${startStr} to ${endStr}.`);
+        }
+    }, [scanDatetime, scanNumGames, scanHourRange]);
+
+    // Load Global Scan Info Data
+    useEffect(() => {
+
+        const fetchScanInfo = async () => {
+            const scanInfo: any = await fetchGlobalScanInfo();
+
+            if (scanInfo) {
+                const parsedScanInfo = JSON.parse(scanInfo);
+
+                setScanNumGames(parsedScanInfo["numGames"]);
+                setScanDatetime(parsedScanInfo["filterID"]);
+                setScanHourRange(parsedScanInfo["hourRange"]);
+            }
+
+        }
+
+        if(scanInfoMessage == ""){
+            setScanInfoMessage("Loading global scan info...");
+            fetchScanInfo();
+        }
+
+    }, []);
+
+    // Fetch Chart Data
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
@@ -142,26 +206,9 @@ export function GlobalBrawlerTable<TData, TValue>({
                     <CardTitle className="text-2xl font-bold mb-0">Brawler Table</CardTitle>
 
                     <div className="text-sm text-gray-300 mb-4">
-
-                        {gameCollectionDatetime != "" && (
-                            <>
-                                <p>
-                                    Calculated using{" "}
-                                    {/* {playerData[playerTag]["numGames"]
-                                        .toString()
-                                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{" "} */}
-                                    unique games from{" "}
-                                    {new Date(
-                                        new Date(gameCollectionDatetime).getTime() -
-                                        24 * 60 * 60 * 1000
-                                    ).toLocaleString("en-US", dateFormat)}{" "}
-                                    to {new Date(gameCollectionDatetime).toLocaleString("en-US", dateFormat)}
-                                </p>
-                                <p><u><b>Click rows to access historical data</b></u></p>
-                            </>
-                        )}
-
-                        <p>Hover values for 95% confidence interval (may not be applicable)</p>
+                        <p>{scanInfoMessage}</p>
+                        <p><u><b>Click rows to access historical data.</b></u></p>
+                        <p>Hover values for 95% confidence interval (may not be applicable).</p>
                     </div>
 
                     <div className="flex flex-wrap gap-4">

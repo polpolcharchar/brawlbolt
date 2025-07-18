@@ -128,3 +128,18 @@ export const fetchGlobalStats = async (numItems: number, requestType: string, re
         return null;
     }
 }
+
+export const fetchGlobalScanInfo = async () => {
+    const requestBody = {
+        "type": "getRecentGlobalScanInfo"
+    }
+
+    const requestResult = await requestServer(JSON.stringify(requestBody), () => {});
+
+    if(requestResult){
+        return requestResult;
+    }else{
+        return null;
+    }
+
+}
