@@ -1,3 +1,5 @@
+"use client"
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartTooltip } from "@/components/ui/chart";
@@ -228,14 +230,15 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
     }
 
     const [pageStartingIndex, setPageStartingIndex] = useState(0);
-    const pageSize = (window.innerWidth < 900 ? 8 : 10);
+    // const pageSize = (window ? window.innerWidth : 1000 < 900 ? 8 : 10);
+    const pageSize = 10;
 
     const totalPages = Math.max(1, Math.ceil(chartData.length / pageSize));
     const paginatedData = chartData.slice(pageStartingIndex, pageStartingIndex + pageSize);
 
     useEffect(() => {
         fetchAndSetChartData();
-    }, [brawler, mode, rankedVsRegularToggleValue, map, targetAttribute, playerData[playerTag].name]);
+    }, [brawler, mode, rankedVsRegularToggleValue, map, targetAttribute, playerData[playerTag]?.name]);
     useEffect(() => {
         setPageStartingIndex(0);
     }, [chartData]);
@@ -244,257 +247,228 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
     }, [statType, sortingStatType]);
 
     return (
-        <div>
-            <Card className="border-none shadow-none">
-                <CardHeader className="block justify-between items-start">
-                    <CardTitle className="text-3xl font-bold mb-4" style={{ textShadow: "0 4px 16px var(--chart-1), 0 2px 8px var(--chart-1)" }}>BoltGraph</CardTitle>
+        <Card className="border-none rounded-none shadow-none h-[calc(100svh-var(--header-height))]! bg-(--secondary)">
+            <CardHeader className="block justify-between items-start">
+                <CardTitle className="text-3xl font-bold mb-4" style={{ textShadow: "0 4px 16px var(--chart-1), 0 2px 8px var(--chart-1)" }}>BoltGraph</CardTitle>
 
-                    <div className="flex flex-col">
-                        {/* Trie Query Row */}
-                        <div className="flex flex-col py-2">
-                            <div className="font-semibold text-lg mb-2">Query</div>
-                            <div className="flex flex-wrap gap-3">
+                <div className="flex flex-col">
+                    <div className="flex flex-col py-2">
+                        <div className="font-semibold text-lg mb-2">Query</div>
+                        <div className="flex flex-wrap gap-3">
+                            <CustomSelector
+                                value={rankedVsRegularToggleValue}
+                                setValue={updateRegularVsRankedToggleValueAndDependents}
+                                labels={rankedVsRegularToggleLabels}
+                                noChoiceLabel="Select Type..."
+                                searchPlaceholder="Search Types..."
+                                emptySearch="No Type Found"
+                                disabled={targetAttribute == "type"}
+                                searchEnabled={false}
+                                canBeEmpty={false}
+                                hoverMessage={targetAttribute == "type" ? "Change x-axis to something other than type to modify this value!" : ""}
+                            />
+                            <CustomSelector
+                                value={mode}
+                                setValue={setModeAndUpdateMap}
+                                labels={rankedVsRegularToggleValue == "regular" ? modeLabels : rankedModeLabels}
+                                noChoiceLabel="Select Mode..."
+                                searchPlaceholder="Search Modes..."
+                                emptySearch="No Mode Found"
+                                disabled={targetAttribute == "mode"}
+                                canBeEmpty={targetAttribute != "map"}
+                                hoverMessage={targetAttribute == "mode" ? "Change x-axis to something other than mode to modify this value!" : ""}
+                            />
+                            {!isGlobal && (
                                 <CustomSelector
-                                    value={rankedVsRegularToggleValue}
-                                    setValue={updateRegularVsRankedToggleValueAndDependents}
-                                    labels={rankedVsRegularToggleLabels}
-                                    noChoiceLabel="Select Type..."
-                                    searchPlaceholder="Search Types..."
-                                    emptySearch="No Type Found"
-                                    disabled={targetAttribute == "type"}
-                                    searchEnabled={false}
-                                    canBeEmpty={false}
-                                    hoverMessage={targetAttribute == "type" ? "Change x-axis to something other than type to modify this value!" : ""}
-                                />
-                                <CustomSelector
-                                    value={mode}
-                                    setValue={setModeAndUpdateMap}
-                                    labels={rankedVsRegularToggleValue == "regular" ? modeLabels : rankedModeLabels}
-                                    noChoiceLabel="Select Mode..."
-                                    searchPlaceholder="Search Modes..."
-                                    emptySearch="No Mode Found"
-                                    disabled={targetAttribute == "mode"}
-                                    canBeEmpty={targetAttribute != "map"}
-                                    hoverMessage={targetAttribute == "mode" ? "Change x-axis to something other than mode to modify this value!" : ""}
-                                />
-                                {!isGlobal && (
-                                    <CustomSelector
-                                        value={map}
-                                        setValue={setMap}
-                                        labels={mapLabels}
-                                        noChoiceLabel="Select Map..."
-                                        searchPlaceholder="Search Maps..."
-                                        emptySearch={mode == "" ? "Choose a mode first!" : "No Map Found"}
-                                        disabled={targetAttribute == "map" || targetAttribute == "mode"}
-                                        hoverMessage={targetAttribute == "map" || targetAttribute == "mode" ? "Change x-axis to something other than map or mode to modify this value!" : ""}
-                                    />
-                                )}
-                                <CustomSelector
-                                    value={brawler}
-                                    setValue={setBrawler}
-                                    labels={brawlerLabels}
-                                    noChoiceLabel="Select Brawler..."
-                                    searchPlaceholder="Search Brawlers..."
-                                    emptySearch="No Brawler Found"
-                                    disabled={targetAttribute == "brawler"}
-                                    hoverMessage={targetAttribute == "brawler" ? "Change x-axis to something other than brawler to modify this value!" : ""}
-                                />
-                            </div>
-                        </div>
-
-                        {/* Graph Settings Row */}
-                        <div className="flex flex-col py-2">
-                            <div className="font-semibold text-lg mb-2">Graph Settings</div>
-                            <div className="flex flex-wrap gap-3">
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">X-Axis:</label>
-                                    <CustomSelector
-                                        value={targetAttribute}
-                                        setValue={setTargetAttributeAndUpdateOtherAttributes}
-                                        labels={targetAttributeLabels}
-                                        noChoiceLabel="Select Target Attribute..."
-                                        searchPlaceholder="Search Attributes..."
-                                        emptySearch="No Attribute Found"
-                                        canBeEmpty={false}
-                                        searchEnabled={false}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">Y-Axis:</label>
-                                    <CustomSelector
-                                        value={statType}
-                                        setValue={setStatTypeAndUpdateDependents}
-                                        labels={statTypeLabels}
-                                        noChoiceLabel="Select Stat Type..."
-                                        searchPlaceholder="Search Stat Types..."
-                                        emptySearch="No Stat Type Found"
-                                        canBeEmpty={false}
-                                        searchEnabled={false}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">Sorting:</label>
-                                    <CustomSelector
-                                        value={sortingStatType}
-                                        setValue={setSortingStatType}
-                                        labels={sortingTypeLabels}
-                                        noChoiceLabel="Select Sorting Type..."
-                                        searchPlaceholder="Search Sorting Types..."
-                                        emptySearch="No Sorting Type Found"
-                                        canBeEmpty={false}
-                                        searchEnabled={false}
-                                        disabled={sortByStatType}
-                                    />
-                                    <div className="flex items-center gap-2 pt-2">
-                                        <Checkbox
-                                            id={"sortByStatType" + playerTag}
-                                            checked={sortByStatType}
-                                            onCheckedChange={() => {
-                                                setSortByStatType(prev => !prev);
-                                                if (!sortByStatType) {
-                                                    setSortingStatType(statType === "winrateMinusStarRate" ? "winrate" : statType);
-                                                }
-                                            }}
-                                            className="cursor-pointer"
-                                        />
-                                        <label
-                                            htmlFor={"sortByStatType" + playerTag}
-                                            className="flex items-center gap-1 cursor-pointer"
-                                            title="Lock sorting type to y-axis value"
-                                        >
-                                            <LockIcon size={16} className="text-muted-foreground" />
-                                            <span className="text-xs text-muted-foreground">Lock to y-axis value</span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </CardHeader>
-
-                <CardContent className="h-[50vh]">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <BarChart
-                            accessibilityLayer
-                            data={paginatedData}
-                            margin={{ bottom: 40 }}
-                        >
-                            <CartesianGrid
-                                vertical={false}
-                                strokeWidth={0.1}
-                            />
-
-                            <XAxis
-                                dataKey="value"
-                                tickLine={false}
-                                tickMargin={2}
-                                axisLine={false}
-                                angle={window.innerWidth < 900 ? -90 : -45}
-                                textAnchor="end"
-                                tickFormatter={(tick: string) => {
-                                    return modeLabelMap[tick as keyof typeof modeLabelMap]
-                                        ?? tick//Title Case
-                                            .toLowerCase()
-                                            .split(' ')
-                                            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                                            .join(' ');
-                                }}
-                                tick={window.innerWidth < 900 ? { fontSize: 12 } : {}}
-                            />
-
-                            <YAxis
-                                type="number"
-                                domain={statType == "winrateMinusStarRate" ? [0, 1] : undefined}
-                            />
-
-                            <ChartTooltip
-                                cursor={false}
-                                content={<CustomPlayerTooltip />}
-                            />
-
-                            {statType === "winrateMinusStarRate" && (
-                                <Bar
-                                    dataKey={"starRate"}
-                                    fill={"var(--chart-2)"}
-                                    stackId={"a"}
+                                    value={map}
+                                    setValue={setMap}
+                                    labels={mapLabels}
+                                    noChoiceLabel="Select Map..."
+                                    searchPlaceholder="Search Maps..."
+                                    emptySearch={mode == "" ? "Choose a mode first!" : "No Map Found"}
+                                    disabled={targetAttribute == "map" || targetAttribute == "mode"}
+                                    hoverMessage={targetAttribute == "map" || targetAttribute == "mode" ? "Change x-axis to something other than map or mode to modify this value!" : ""}
                                 />
                             )}
+                            <CustomSelector
+                                value={brawler}
+                                setValue={setBrawler}
+                                labels={brawlerLabels}
+                                noChoiceLabel="Select Brawler..."
+                                searchPlaceholder="Search Brawlers..."
+                                emptySearch="No Brawler Found"
+                                disabled={targetAttribute == "brawler"}
+                                hoverMessage={targetAttribute == "brawler" ? "Change x-axis to something other than brawler to modify this value!" : ""}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col py-2">
+                        <div className="font-semibold text-lg mb-2">Graph Settings</div>
+                        <div className="flex flex-wrap gap-3">
+                            <div>
+                                <label className="block text-sm font-medium mb-1">X-Axis:</label>
+                                <CustomSelector
+                                    value={targetAttribute}
+                                    setValue={setTargetAttributeAndUpdateOtherAttributes}
+                                    labels={targetAttributeLabels}
+                                    noChoiceLabel="Select Target Attribute..."
+                                    searchPlaceholder="Search Attributes..."
+                                    emptySearch="No Attribute Found"
+                                    canBeEmpty={false}
+                                    searchEnabled={false}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium mb-1">Y-Axis:</label>
+                                <CustomSelector
+                                    value={statType}
+                                    setValue={setStatTypeAndUpdateDependents}
+                                    labels={statTypeLabels}
+                                    noChoiceLabel="Select Stat Type..."
+                                    searchPlaceholder="Search Stat Types..."
+                                    emptySearch="No Stat Type Found"
+                                    canBeEmpty={false}
+                                    searchEnabled={false}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium mb-1">Sorting:</label>
+                                <CustomSelector
+                                    value={sortingStatType}
+                                    setValue={setSortingStatType}
+                                    labels={sortingTypeLabels}
+                                    noChoiceLabel="Select Sorting Type..."
+                                    searchPlaceholder="Search Sorting Types..."
+                                    emptySearch="No Sorting Type Found"
+                                    canBeEmpty={false}
+                                    searchEnabled={false}
+                                    disabled={sortByStatType}
+                                />
+                                <div className="flex items-center gap-2 pt-2">
+                                    <Checkbox
+                                        id={"sortByStatType" + playerTag}
+                                        checked={sortByStatType}
+                                        onCheckedChange={() => {
+                                            setSortByStatType(prev => !prev);
+                                            if (!sortByStatType) {
+                                                setSortingStatType(statType === "winrateMinusStarRate" ? "winrate" : statType);
+                                            }
+                                        }}
+                                        className="cursor-pointer"
+                                    />
+                                    <label
+                                        htmlFor={"sortByStatType" + playerTag}
+                                        className="flex items-center gap-1 cursor-pointer"
+                                        title="Lock sorting type to y-axis value"
+                                    >
+                                        <LockIcon size={16} className="text-muted-foreground" />
+                                        <span className="text-xs text-muted-foreground">Lock to y-axis value</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </CardHeader>
+
+            <CardContent className="h-full">
+                <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                        accessibilityLayer
+                        data={paginatedData}
+                        margin={{ bottom: 40 }}
+                    >
+                        <CartesianGrid
+                            vertical={false}
+                            strokeWidth={0.1}
+                        />
+
+                        <XAxis
+                            dataKey="value"
+                            tickLine={false}
+                            tickMargin={2}
+                            axisLine={false}
+                            // angle={window.innerWidth < 900 ? -90 : -45}
+                            angle={-45}
+                            textAnchor="end"
+                            tickFormatter={(tick: string) => {
+                                return modeLabelMap[tick as keyof typeof modeLabelMap]
+                                    ?? tick//Title Case
+                                        .toLowerCase()
+                                        .split(' ')
+                                        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                                        .join(' ');
+                            }}
+                            // tick={window.innerWidth < 900 ? { fontSize: 12 } : {}}
+                        />
+
+                        <YAxis
+                            type="number"
+                            domain={statType == "winrateMinusStarRate" ? [0, 1] : undefined}
+                        />
+
+                        <ChartTooltip
+                            cursor={false}
+                            content={<CustomPlayerTooltip />}
+                        />
+
+                        {statType === "winrateMinusStarRate" && (
                             <Bar
-                                dataKey={statType}
-                                radius={[8, 8, 0, 0]}
-                                fill={"var(--chart-1)"}
+                                dataKey={"starRate"}
+                                fill={"var(--chart-2)"}
                                 stackId={"a"}
                             />
+                        )}
+                        <Bar
+                            dataKey={statType}
+                            radius={[8, 8, 0, 0]}
+                            fill={"var(--chart-1)"}
+                            stackId={"a"}
+                        />
 
-                            <ReferenceLine
-                                y={Math.max(...paginatedData.map((item: { [x: string]: any; }) => {
+                        <ReferenceLine
+                            y={Math.max(...paginatedData.map((item: { [x: string]: any; }) => {
 
-                                    const x = item[statType as keyof typeof item];
+                                const x = item[statType as keyof typeof item];
 
-                                    if (x) {
-                                        return Number(x);
-                                    }
-                                    return 0;
-                                })) * 0.7}
-                                label="brawlbolt.com"
-                                strokeWidth={0}
-                            />
-                        </BarChart>
-                    </ResponsiveContainer>
-                </CardContent>
+                                if (x) {
+                                    return Number(x);
+                                }
+                                return 0;
+                            })) * 0.7}
+                            label="brawlbolt.com"
+                            strokeWidth={0}
+                        />
+                    </BarChart>
+                </ResponsiveContainer>
+            </CardContent>
 
-                <CardFooter className="flex justify-center gap-4">
-                    <Button
-                        variant="outline"
-                        disabled={pageStartingIndex === 0}
-                        // onClick={() => {
-                        //     let count = 0;
-                        //     const interval = setInterval(() => {
-                        //         setPageStartingIndex(prev => {
-                        //             const next = Math.max(0, prev - 1);
-                        //             return next;
-                        //         });
-                        //         count++;
-                        //         if (count >= pageSize) {
-                        //             clearInterval(interval);
-                        //         }
-                        //     }, 20);
-                        // }}
-                        onClick={() => {
-                            setPageStartingIndex(prev => Math.max(0, prev - pageSize));
-                        }}
-                    >
-                        Previous
-                    </Button>
-                    <div className="text-sm text-muted-foreground self-center">
-                        Page {Math.floor(pageStartingIndex / pageSize + 1)} of {totalPages}
-                    </div>
-                    <Button
-                        variant="outline"
-                        disabled={(pageStartingIndex / pageSize + 1) >= totalPages}
-                        // onClick={() => {
-                        //     let count = 0;
-                        //     const interval = setInterval(() => {
-                        //         setPageStartingIndex(prev => {
-                        //             const next = Math.min(totalPages * pageSize - 1, prev + 1);
-                        //             return next;
-                        //         });
-                        //         count++;
-                        //         if (count >= pageSize) {
-                        //             clearInterval(interval);
-                        //         }
-                        //     }, 20);
-                        // }}
-                        onClick={() => {
-                            setPageStartingIndex(prev => Math.min(totalPages * pageSize - 1, prev + pageSize));
-                        }}
-                    >
-                        Next
-                    </Button>
-                </CardFooter>
+            <CardFooter className="flex justify-center gap-4">
+                <Button
+                    variant="outline"
+                    disabled={pageStartingIndex === 0}
+                    onClick={() => {
+                        setPageStartingIndex(prev => Math.max(0, prev - pageSize));
+                    }}
+                >
+                    Previous
+                </Button>
+                <div className="text-sm text-muted-foreground self-center">
+                    Page {Math.floor(pageStartingIndex / pageSize + 1)} of {totalPages}
+                </div>
+                <Button
+                    variant="outline"
+                    disabled={(pageStartingIndex / pageSize + 1) >= totalPages}
+                    onClick={() => {
+                        setPageStartingIndex(prev => Math.min(totalPages * pageSize - 1, prev + pageSize));
+                    }}
+                >
+                    Next
+                </Button>
+            </CardFooter>
 
-            </Card>
-        </div >
+        </Card>
     )
 }

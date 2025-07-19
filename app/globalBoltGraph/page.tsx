@@ -1,4 +1,7 @@
+import { TrieExplorerChart } from "@/components/BrawlComponents/Charts/TrieExplorerChart";
 
 export default function UserPage() {
-  return <div>Global BoltGraph</div>;
+  return (
+    <TrieExplorerChart playerTag="global" isGlobal={true} />
+  );
 }

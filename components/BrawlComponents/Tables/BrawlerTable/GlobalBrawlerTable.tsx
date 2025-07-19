@@ -159,7 +159,7 @@ export function GlobalBrawlerTable<TData, TValue>({
 
         }
 
-        if(scanInfoMessage == ""){
+        if (scanInfoMessage == "") {
             setScanInfoMessage("Loading global scan info...");
             fetchScanInfo();
         }
@@ -200,93 +200,88 @@ export function GlobalBrawlerTable<TData, TValue>({
     });
 
     return (
-        <div>
-            <Card className="border-none p-0">
-                <CardHeader className="block justify-between items-start">
-                    <CardTitle className="text-2xl font-bold mb-0">Brawler Table</CardTitle>
+        <Card className="border-none rounded-none shadow-none h-[calc(99.9svh-var(--header-height))]! bg-(--secondary)">
+            <CardHeader className="block justify-between items-start">
+                <CardTitle className="text-2xl font-bold mb-0">Brawler Table</CardTitle>
 
-                    <div className="text-sm text-gray-300 mb-4">
-                        <p>{scanInfoMessage}</p>
-                        <p><u><b>Click rows to access historical data.</b></u></p>
-                        <p>Hover values for 95% confidence interval (may not be applicable).</p>
-                    </div>
+                <div className="text-sm text-gray-300 mb-4">
+                    <p>{scanInfoMessage}</p>
+                    <p><u><b>Click rows to access historical data.</b></u></p>
+                    <p>Hover values for 95% confidence interval (may not be applicable).</p>
+                </div>
 
-                    <div className="flex flex-wrap gap-4">
-                        <RegularRankedToggle
-                            rankedVsRegularToggleValue={rankedVsRegularToggleValue}
-                            setRankedVsRegularToggleValue={setRankedVsRegularToggleValue}
-                            statType=""
-                        />
-                        <CustomSelector
-                            value={mode}
-                            setValue={setMode}
-                            labels={(rankedVsRegularToggleValue == "regular" ? modeLabels : rankedModeLabels)}
-                            noChoiceLabel="Select Mode..."
-                            searchPlaceholder="Search Modes..."
-                            emptySearch="No Mode Found"
-                            canBeEmpty={true}
-                        />
-                    </div>
+                <div className="flex flex-wrap gap-4">
+                    <RegularRankedToggle
+                        rankedVsRegularToggleValue={rankedVsRegularToggleValue}
+                        setRankedVsRegularToggleValue={setRankedVsRegularToggleValue}
+                        statType=""
+                    />
+                    <CustomSelector
+                        value={mode}
+                        setValue={setMode}
+                        labels={(rankedVsRegularToggleValue == "regular" ? modeLabels : rankedModeLabels)}
+                        noChoiceLabel="Select Mode..."
+                        searchPlaceholder="Search Modes..."
+                        emptySearch="No Mode Found"
+                        canBeEmpty={true}
+                    />
+                </div>
 
-                </CardHeader>
-                <CardContent>
-                    <div className="h-[50vh] overflow-auto border">
-                        <Table>
-                            <TableHeader>
-                                {table.getHeaderGroups().map((headerGroup) => (
-                                    <TableRow key={headerGroup.id}>
-                                        {headerGroup.headers.map((header) => (
-                                            <TableHead key={header.id}>
-                                                {header.isPlaceholder
-                                                    ? null
-                                                    : flexRender(header.column.columnDef.header, header.getContext())}
-                                            </TableHead>
-                                        ))}
-                                    </TableRow>
+            </CardHeader>
+            <CardContent className="overflow-auto">
+                <Table>
+                    <TableHeader>
+                        {table.getHeaderGroups().map((headerGroup) => (
+                            <TableRow key={headerGroup.id}>
+                                {headerGroup.headers.map((header) => (
+                                    <TableHead key={header.id}>
+                                        {header.isPlaceholder
+                                            ? null
+                                            : flexRender(header.column.columnDef.header, header.getContext())}
+                                    </TableHead>
                                 ))}
-                            </TableHeader>
-                            <TableBody>
-                                {loading ? (
-                                    // Render 5 skeleton rows as loading placeholders
-                                    Array.from({ length: 5 }).map((_, rowIndex) => (
-                                        <TableRow key={`skeleton-${rowIndex}`}>
-                                            {table.getVisibleFlatColumns().map((column, colIndex) => (
-                                                <TableCell key={`skeleton-cell-${colIndex}`}>
-                                                    <Skeleton className="h-4 w-full" />
-                                                </TableCell>
-                                            ))}
-                                        </TableRow>
-                                    ))
-                                ) : table.getRowModel().rows?.length ? (
-                                    table.getRowModel().rows.map((row) => (
-                                        <TableRow
-                                            key={row.id}
-                                            data-state={row.getIsSelected() && "selected"}
-                                            className="cursor-pointer"
-                                        >
-                                            {row.getVisibleCells().map((cell) => (
-                                                <TableCell
-                                                    key={cell.id}
-                                                    onClick={() => onBrawlerClick(row.getValue("name"))}
-                                                >
-                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                                </TableCell>
-                                            ))}
-                                        </TableRow>
-                                    ))
-                                ) : (
-                                    <TableRow>
-                                        <TableCell colSpan={columns.length} className="h-24 text-center">
-                                            No results.
+                            </TableRow>
+                        ))}
+                    </TableHeader>
+                    <TableBody>
+                        {loading ? (
+                            // Render 5 skeleton rows as loading placeholders
+                            Array.from({ length: 5 }).map((_, rowIndex) => (
+                                <TableRow key={`skeleton-${rowIndex}`}>
+                                    {table.getVisibleFlatColumns().map((column, colIndex) => (
+                                        <TableCell key={`skeleton-cell-${colIndex}`}>
+                                            <Skeleton className="h-4 w-full bg-(--primary-foreground)" />
                                         </TableCell>
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-
-                    </div>
-                </CardContent>
-            </Card>
-        </div>
+                                    ))}
+                                </TableRow>
+                            ))
+                        ) : table.getRowModel().rows?.length ? (
+                            table.getRowModel().rows.map((row) => (
+                                <TableRow
+                                    key={row.id}
+                                    data-state={row.getIsSelected() && "selected"}
+                                    className="cursor-pointer"
+                                >
+                                    {row.getVisibleCells().map((cell) => (
+                                        <TableCell
+                                            key={cell.id}
+                                            onClick={() => onBrawlerClick(row.getValue("name"))}
+                                        >
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell colSpan={columns.length} className="h-24 text-center">
+                                    No results.
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </CardContent>
+        </Card>
     )
 }

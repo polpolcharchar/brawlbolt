@@ -23,13 +23,13 @@ const data = {
 //   },
   navMain: [
     {
-      title: "Player Data",
+      title: "Player Data *",
       url: "/player",
       icon: User,
-    //   isActive: true,
+      isActive: true,
       items: [
         {
-          title: "Account Search",
+          title: "Account Search *",
           url: "/player",
         },
         {
@@ -37,16 +37,16 @@ const data = {
           url: "/boltGraph",
         },
         {
-          title: "Match History",
+          title: "Match History *",
           url: "/matchHistory",
         },
       ],
     },
     {
-      title: "Global Statistics",
+      title: "Global Statistics *",
       url: "/globalBrawlerChart",
       icon: Bot,
-    //   isActive: true,
+      isActive: true,
       items: [
         {
           title: "BoltGraph",
@@ -57,27 +57,27 @@ const data = {
           url: "/globalBrawlerChart",
         },
         {
-          title: "Brawler History",
+          title: "Brawler History *",
           url: "/brawlerHistory",
         },
       ],
     },
     {
-      title: "More",
+      title: "More *",
       url: "#",
       icon: BookOpen,
-    //   isActive: true,
+      isActive: true,
       items: [
         {
-          title: "About BrawlBolt",
+          title: "About BrawlBolt *",
           url: "/about",
         },
         {
-          title: "GitHub",
+          title: "GitHub *",
           url: "/github",
         },
         {
-          title: "More Info",
+          title: "More Info *",
           url: "/info",
         }
       ],
