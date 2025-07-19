@@ -273,7 +273,7 @@ export const BrawlerOverTimeChart = ({
             <CardFooter>
                 <Frown/>
                 <p className="text-sm text-gray-400 text-center mx-2">
-                    {"Past global statistics have resently been reset due to a change in BrawlBolt formatting. This will very likely not happen again."}
+                    {"Past global statistics have recently been reset due to a change in BrawlBolt formatting to allow for larger data sets. This will very likely not happen again."}
                 </p>
             </CardFooter>
         </Card>
