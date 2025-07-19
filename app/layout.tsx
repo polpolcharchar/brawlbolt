@@ -10,6 +10,9 @@ import Image from "next/image";
 import Link from "next/link";
 import "./globals.css";
 import Head from "next/head";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { SiteHeader } from "@/components/BrawlComponents/SidebarComponents/siteHeader";
+import { BrawlSidebar } from "@/components/BrawlComponents/SidebarComponents/BrawlSidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -98,52 +101,33 @@ export default function RootLayout({
           disableTransitionOnChange>
           <PlayerDataProvider>
 
-            <div className="flex flex-col items-center p-4">
-
-              {/* Title */}
-              <div className="w-full overflow-hidden">
-                <Card className="mb-2 max-w-2xl text-center shadow-md p-6 mx-auto">
-                  <h1 className="text-6xl font-bold mb-2 text-blue-700">
-                    <Link href="/">BrawlBolt</Link>
-                  </h1>
-
-                  <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
-                    {/* Icon */}
-                    <div className="flex items-center justify-center">
-                      <div className="w-20 h-20 relative">
-                        <Image
-                          src="/logo.png"
-                          alt="Circular Logo"
-                          className="rounded-full"
-                          width={999}
-                          height={999}
-                        />
+            <div className="[--header-height:calc(--spacing(14))]">
+              <SidebarProvider className="flex flex-col">
+                <SiteHeader />
+                <div className="flex flex-1">
+                  <BrawlSidebar />
+                  <SidebarInset>
+                    {/* <div className="flex flex-1 flex-col gap-4 p-4">
+                      <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+                        <div className="bg-muted/50 aspect-video rounded-xl" />
+                        <div className="bg-muted/50 aspect-video rounded-xl" />
+                        <div className="bg-muted/50 aspect-video rounded-xl" />
                       </div>
-                    </div>
-
-                    {/* Text */}
-                    <div className="flex flex-col sm:justify-center sm:items-start">
-                      <p className="text-2xl sm:text-3xl text-blue-700">
-                        Lightning Fast Statistics
-                      </p>
-                    </div>
-                  </div>
-                </Card>
-
+                      <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min" />
+                    </div> */}
+                    {children}
+                  </SidebarInset>
+                </div>
+              </SidebarProvider>
             </div>
-          </div>
 
-          {children}
-
-          <Toaster />
-
-          <AboutBrawlBoltPage />
+            {children}
 
 
 
-        </PlayerDataProvider>
-      </ThemeProvider>
-    </body>
+          </PlayerDataProvider>
+        </ThemeProvider>
+      </body>
     </html >
   );
 }
