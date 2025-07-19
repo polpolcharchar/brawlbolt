@@ -247,12 +247,12 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
         <div>
             <Card className="border-none shadow-none">
                 <CardHeader className="block justify-between items-start">
-                    <CardTitle className="text-2xl font-bold mb-4">Trie Explorer</CardTitle>
+                    <CardTitle className="text-3xl font-bold mb-4" style={{ textShadow: "0 4px 16px var(--chart-1), 0 2px 8px var(--chart-1)" }}>BoltGraph</CardTitle>
 
                     <div className="flex flex-col">
                         {/* Trie Query Row */}
                         <div className="flex flex-col py-2">
-                            <div className="font-semibold text-lg mb-2">Trie Query</div>
+                            <div className="font-semibold text-lg mb-2">Query</div>
                             <div className="flex flex-wrap gap-3">
                                 <CustomSelector
                                     value={rankedVsRegularToggleValue}

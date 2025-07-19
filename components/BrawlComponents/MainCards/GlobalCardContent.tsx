@@ -40,7 +40,7 @@ export const GlobalCardContent = () => {
         <div className="relative w-full mx-auto">
 
             {/* Custom Carousel Controls */}
-            <div className="flex justify-center items-center gap-2 mb-2 relative min-h-[80px]">
+            <div className="flex justify-center gap-2 mb-2 relative min-h-[140px]">
                 {/* Left button with label */}
                 <div className="absolute left-0 flex items-center h-full">
                     <button
@@ -56,10 +56,9 @@ export const GlobalCardContent = () => {
                             className={`w-10 h-10 ${activeSlide === 0 ? 'text-muted-foreground' : ''}`}
                         />
                         <span className="text-md font-medium text-center truncate pointer-events-none select-none text-left">
-                            {activeSlide === 0 ? '' : activeSlide === 1 ? 'Trie' : 'Brawler Table'}
+                            {activeSlide === 0 ? '' : activeSlide === 1 ? 'BoltGraph' : 'Brawler Table'}
                         </span>
                     </button>
-
                 </div>
 
                 {/* Center label, always centered */}
@@ -85,7 +84,6 @@ export const GlobalCardContent = () => {
                             className={`w-10 h-10 ${activeSlide === 2 ? 'text-muted-foreground' : ''}`}
                         />
                     </button>
-
                 </div>
             </div>
 
