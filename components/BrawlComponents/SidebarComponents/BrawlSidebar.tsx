@@ -1,32 +1,19 @@
 "use client"
 
-import * as React from "react"
+import {
+  Sidebar,
+  SidebarContent
+} from "@/components/ui/sidebar"
 import {
   BookOpen,
   Bot,
-  Command,
-  Frame,
   LifeBuoy,
-  Map,
-  PieChart,
   Send,
-  Settings2,
-  SquareTerminal,
-  User,
+  User
 } from "lucide-react"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar"
+import * as React from "react"
 import { NavMain } from "./navMain"
 import { NavSecondary } from "./navSecondary"
-import { NavProjects } from "./navProjects"
-import { NavUser } from "./navUser"
 
 const data = {
 //   user: {
@@ -42,36 +29,36 @@ const data = {
     //   isActive: true,
       items: [
         {
-          title: "Account Page",
+          title: "Account Search",
           url: "/player",
         },
         {
           title: "BoltGraph",
-          url: "/player/boltGraph",
+          url: "/boltGraph",
         },
         {
           title: "Match History",
-          url: "/player/matchHistory",
+          url: "/matchHistory",
         },
       ],
     },
     {
       title: "Global Statistics",
-      url: "/global/brawlerChart",
+      url: "/globalBrawlerChart",
       icon: Bot,
     //   isActive: true,
       items: [
         {
           title: "BoltGraph",
-          url: "/global/boltGraph",
+          url: "/globalBoltGraph",
         },
         {
           title: "Brawler Chart",
-          url: "/global/brawlerChart",
+          url: "/globalBrawlerChart",
         },
         {
           title: "Brawler History",
-          url: "/global/brawlerHistory",
+          url: "/brawlerHistory",
         },
       ],
     },
