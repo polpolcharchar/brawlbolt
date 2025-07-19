@@ -112,9 +112,6 @@
   --sidebar-ring: oklch(0.552 0.016 285.938);
 }
 
-
-
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -122,4 +119,53 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@keyframes horizontalWiggle {
+  0%, 100% {
+    transform: translateX(-3px);
+  }
+  50% {
+    transform: translateX(3px);
+  }
+}
+.horizontalWiggle {
+  animation: horizontalWiggle 1s ease-in-out infinite;
+}
+
+@keyframes subtleRotateWiggle {
+  0%, 94%, 100% {
+    transform: rotate(0deg);
+    background-color: inherit; /* no override */
+  }
+
+  95% {
+    transform: rotate(-5deg);
+    background-color: var(--chart-1);
+  }
+
+  96% {
+    transform: rotate(5deg);
+    background-color: var(--chart-1);
+  }
+
+  97% {
+    transform: rotate(-3deg);
+    background-color: var(--chart-1);
+  }
+
+  98% {
+    transform: rotate(3deg);
+    background-color: var(--chart-1);
+  }
+
+  99% {
+    transform: rotate(0deg);
+    background-color: var(--chart-1);
+  }
+}
+.subtleRotateWiggle {
+  animation: subtleRotateWiggle 30s ease-in-out infinite;
+  transform-origin: center;
+  transition: background-color 0.3s ease;
 }
