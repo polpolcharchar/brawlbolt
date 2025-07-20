@@ -2,7 +2,13 @@
 
 import {
   Sidebar,
-  SidebarContent
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem
 } from "@/components/ui/sidebar"
 import {
   BookOpen,
@@ -14,13 +20,15 @@ import {
 import * as React from "react"
 import { NavMain } from "./navMain"
 import { NavSecondary } from "./navSecondary"
+import { PlayerSelector } from "../Selectors/PlayerSelector"
+import { Command } from "@/components/ui/command"
 
 const data = {
-//   user: {
-//     name: "shadcn",
-//     email: "m@example.com",
-//     avatar: "/avatars/shadcn.jpg",
-//   },
+  //   user: {
+  //     name: "shadcn",
+  //     email: "m@example.com",
+  //     avatar: "/avatars/shadcn.jpg",
+  //   },
   navMain: [
     {
       title: "Player Data *",
@@ -28,10 +36,6 @@ const data = {
       icon: User,
       isActive: true,
       items: [
-        {
-          title: "Account Search *",
-          url: "/player",
-        },
         {
           title: "BoltGraph",
           url: "/boltGraph",
@@ -95,23 +99,6 @@ const data = {
       icon: Send,
     },
   ],
-//   projects: [
-//     {
-//       name: "Design Engineering",
-//       url: "#",
-//       icon: Frame,
-//     },
-//     {
-//       name: "Sales & Marketing",
-//       url: "#",
-//       icon: PieChart,
-//     },
-//     {
-//       name: "Travel",
-//       url: "#",
-//       icon: Map,
-//     },
-//   ],
 }
 
 export function BrawlSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -120,31 +107,10 @@ export function BrawlSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
       className="top-(--header-height) h-[calc(100svh-var(--header-height))]!"
       {...props}
     >
-      {/* <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="#">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Command className="size-4" />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">Acme Inc</span>
-                  <span className="truncate text-xs">Enterprise</span>
-                </div>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader> */}
       <SidebarContent>
         <NavMain items={data.navMain} />
-        {/* <NavProjects projects={data.projects} /> */}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
-      {/* <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter> */}
     </Sidebar>
   )
 }

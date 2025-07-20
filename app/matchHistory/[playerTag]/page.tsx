@@ -8,7 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { fetchMatches } from '@/lib/BrawlUtility/BrawlDataFetcher';
 import { CalendarSearch, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function UserPage() {
   const params = useParams();
@@ -82,6 +82,10 @@ export default function UserPage() {
     setForwardDisabled(false);
     setBackwardDisabled(false);
   };
+
+  useEffect(() => {
+    jumpToGameDate(new Date().toISOString());
+  }, []);
 
   return (
     <Card className='border-none rounded-none'>

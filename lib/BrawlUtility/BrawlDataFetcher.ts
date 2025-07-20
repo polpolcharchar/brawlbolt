@@ -26,7 +26,7 @@ const requestServer = async (body: string, setIsLoading: (value: boolean) => voi
 }
 
 export const handlePlayerSearch = async (tagToHandle: string, setIsLoading: (value: boolean) => void, updatePlayerData: (playerTag: string, playerD: any) => void) => {
-        
+
     //Manage tag
     if (!isValidTag(tagToHandle)) return false;
 
@@ -45,12 +45,14 @@ export const handlePlayerSearch = async (tagToHandle: string, setIsLoading: (val
 
     //Add name:
     updatePlayerData(tagToHandle, playerInfo['playerInfo']['name']);
+
+    return true;
 };
 
 export const getPlayerInfo = async (playerTag: string) => {
     const requestBody = JSON.stringify({ type: "getPlayerInfo", playerTag });
 
-    const requestResult = await requestServer(requestBody, () => {});
+    const requestResult = await requestServer(requestBody, () => { });
 
     if (requestResult) {
         return JSON.parse(requestResult);
@@ -79,16 +81,16 @@ export const fetchTrieData = async (
         targetAttribute,
         isGlobal,
     }
-    if(requestType != ""){
+    if (requestType != "") {
         requestBody["requestType"] = requestType;
     }
-    if(requestMode != ""){
+    if (requestMode != "") {
         requestBody["requestMode"] = requestMode;
     }
-    if(requestMap != ""){
+    if (requestMap != "") {
         requestBody["requestMap"] = requestMap;
     }
-    if(requestBrawler != ""){
+    if (requestBrawler != "") {
         requestBody["requestBrawler"] = requestBrawler;
     }
 
@@ -119,7 +121,7 @@ export const fetchGlobalStats = async (numItems: number, requestType: string, re
         requestBody["targetAttribute"] = targetAttribute;
     }
 
-    const requestResult = await requestServer(JSON.stringify(requestBody), () => {});
+    const requestResult = await requestServer(JSON.stringify(requestBody), () => { });
 
     if (requestResult) {
         return requestResult;
@@ -134,11 +136,11 @@ export const fetchGlobalScanInfo = async () => {
         "type": "getRecentGlobalScanInfo"
     }
 
-    const requestResult = await requestServer(JSON.stringify(requestBody), () => {});
+    const requestResult = await requestServer(JSON.stringify(requestBody), () => { });
 
-    if(requestResult){
+    if (requestResult) {
         return requestResult;
-    }else{
+    } else {
         return null;
     }
 
@@ -154,11 +156,11 @@ export const fetchMatches = async (playerTag: string, datetime: string, numBefor
         "numAfter": numAfter
     }
 
-    const requestResult = await requestServer(JSON.stringify(requestBody), () => {});
+    const requestResult = await requestServer(JSON.stringify(requestBody), () => { });
 
-    if(requestResult){
+    if (requestResult) {
         return requestResult;
-    }else{
+    } else {
         return null;
     }
 

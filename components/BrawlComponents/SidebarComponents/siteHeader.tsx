@@ -1,21 +1,15 @@
 "use client"
 
 import { Grip } from "lucide-react"
-
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { useSidebar } from "@/components/ui/sidebar"
+import { PlayerSelector } from "../Selectors/PlayerSelector"
 
 export function SiteHeader() {
   const { toggleSidebar } = useSidebar()
+  const router = useRouter()
 
   return (
     <header className="bg-background sticky top-0 z-50 flex w-full items-center border-b relative">
@@ -29,25 +23,16 @@ export function SiteHeader() {
           <Grip />
         </Button>
         <Separator orientation="vertical" className="mr-2 h-4" />
-        <Breadcrumb className="hidden sm:block">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="#">
-                BrawlBolt
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
+        <PlayerSelector/>
       </div>
-      <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-lg font-semibold pointer-events-none select-none">
-        <p className="text-3xl font-semibold">
-          BrawlBolt
-        </p>
-      </span>
+
+      {/* Clickable Header Text */}
+      <button
+        onClick={() => router.push("/")}
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl font-semibold cursor-pointer select-none"
+      >
+        BrawlBolt
+      </button>
     </header>
   )
 }

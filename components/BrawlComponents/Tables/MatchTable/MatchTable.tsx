@@ -38,7 +38,7 @@ export const MatchTable = ({ matchesJSON, playerTag }: { matchesJSON: any[], pla
     const [currentBattle, setCurrentBattle] = useState<any | null>(null);
 
     return (
-        <Card className="p-2 rounded-none border-none">
+        <Card className="p-2 rounded-none border-none shadow-none">
             <MatchInfoDialog battleData={currentBattle} setCurrentBattle={setCurrentBattle}></MatchInfoDialog>
 
             <Table className="w-full table-fixed">
