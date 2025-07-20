@@ -67,6 +67,8 @@ export const BrawlerOverTimeChart = ({
 
     const fetchData = async (rankedVsRegularToggleValue: string, mode: string, brawler: string) => {
 
+        if(brawler == "")return;
+
         const statTypeString = rankedVsRegularToggleValue + mode + brawler;
 
         if (brawlerTimeData[statTypeString] !== undefined) {
@@ -132,7 +134,7 @@ export const BrawlerOverTimeChart = ({
     }, [mode, rankedVsRegularToggleValue, brawler, isActive]);
 
     return (
-        <Card className="">
+        <Card className="border-none">
             <CardHeader className="block justify-between items-start">
                 <div>
                     <CardTitle className="text-2xl font-bold mb-4">Global Brawler History</CardTitle>
@@ -165,7 +167,7 @@ export const BrawlerOverTimeChart = ({
                 </div>
             </CardHeader>
             <CardContent> {/* adjust 72px based on header height */}
-                <ChartContainer config={chartConfig} className="h-full w-full">
+                <ChartContainer config={chartConfig} className="h-full max-w-[800px]">
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={chartData}>
                             <defs>

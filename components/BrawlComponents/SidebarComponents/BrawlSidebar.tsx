@@ -37,7 +37,7 @@ const data = {
           url: "/boltGraph",
         },
         {
-          title: "Match History *",
+          title: "Match History",
           url: "/matchHistory",
         },
       ],
@@ -57,7 +57,7 @@ const data = {
           url: "/globalBrawlerChart",
         },
         {
-          title: "Brawler History *",
+          title: "Brawler History",
           url: "/brawlerHistory",
         },
       ],

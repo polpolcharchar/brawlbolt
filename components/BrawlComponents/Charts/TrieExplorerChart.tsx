@@ -417,7 +417,7 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
                         {statType === "winrateMinusStarRate" && (
                             <Bar
                                 dataKey={"starRate"}
-                                fill={"var(--chart-2)"}
+                                fill={"var(--chart-3)"}
                                 stackId={"a"}
                             />
                         )}
