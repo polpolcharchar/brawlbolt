@@ -165,10 +165,6 @@ export const rankedModeLabelMap = {
     knockout: "Knockout",
 }
 
-export const boltColors = {
-    blue700: "rgb(29 78 216)",
-}
-
 export function isValidTag(tag: string): boolean {
     // Define the set of valid characters
     const validChars = new Set(['P', 'Y', 'L', 'Q', 'G', 'R', 'J', 'C', 'U', 'V', '0', '2', '8', '9', '#']);
@@ -186,4 +182,60 @@ export function isValidTag(tag: string): boolean {
     }
 
     return true;
+}
+
+const _mapToModeOverrides: Record<string, string> = {
+    "Moonbark Meadow": "dodgeBrawl",
+    "Rebound Ring": "dodgeBrawl",
+    "Hug or Hurl": "dodgeBrawl",
+    "Side Hustle": "dodgeBrawl",
+    "Squish Court": "dodgeBrawl",
+    "Wispwillow Ward": "dodgeBrawl",
+
+    "Arena of Glory": "brawlArena",
+    "Mirage Arena": "brawlArena",
+    "Knockout Grounds": "brawlArena",
+    "The Smackdome": "brawlArena",
+
+    "Super Center": "brawlHockey",
+    "Slippery Slap": "brawlHockey",
+    "Bouncy Bowl": "brawlHockey",
+    "Below Zero": "brawlHockey",
+    "Cool Box": "brawlHockey",
+    "Starr Garden": "brawlHockey",
+
+    "Snowcone Square": "brawlHockey5V5",
+    "Massive Meltdown": "brawlHockey5V5",
+    "Frostbite Rink": "brawlHockey5V5",
+    "Cold Snap": "brawlHockey5V5",
+
+    "Divine Descent": "spiritWars",
+    "Final Frontier": "spiritWars",
+    "Celestial Crusade": "spiritWars",
+    "Radiant Rampage": "spiritWars",
+    "Hellish Harvest": "spiritWars",
+    "Infernal Invasion": "spiritWars",
+    "Abyssal Assault": "spiritWars",
+    "Underworld Uprising": "spiritWars",
+
+    "Foursquare Fortress": "soulCollector",
+    "Hoop Boot Hill": "soulCollector",
+    "Afterpiece Arena": "soulCollector",
+    "Paperback Pond": "soulCollector",
+    "Broiler Room": "soulCollector",
+    "Kooky Gates": "soulCollector",
+}
+export function getMode(match: any): string {
+  if (
+    match?.event?.map &&
+    _mapToModeOverrides.hasOwnProperty(match.event.map)
+  ) {
+    return _mapToModeOverrides[match.event.map];
+  } else if (match?.event?.mode && match.event.mode !== "unknown") {
+    return match.event.mode;
+  } else if (match?.battle?.mode) {
+    return match.battle.mode;
+  } else {
+    return "unknown";
+  }
 }

@@ -143,3 +143,23 @@ export const fetchGlobalScanInfo = async () => {
     }
 
 }
+
+export const fetchMatches = async (playerTag: string, datetime: string, numBefore: number, numAfter: number) => {
+
+    const requestBody = {
+        "type": "queryGames",
+        "playerTag": playerTag,
+        "datetime": datetime,
+        "numBefore": numBefore,
+        "numAfter": numAfter
+    }
+
+    const requestResult = await requestServer(JSON.stringify(requestBody), () => {});
+
+    if(requestResult){
+        return requestResult;
+    }else{
+        return null;
+    }
+
+}
