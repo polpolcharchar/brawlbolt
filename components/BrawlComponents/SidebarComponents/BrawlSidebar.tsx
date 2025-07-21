@@ -2,11 +2,16 @@
 
 import {
   Sidebar,
-  SidebarContent
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarMenu
 } from "@/components/ui/sidebar"
 import {
   BookOpen,
   Bot,
+  Github,
+  Info,
   LifeBuoy,
   Send,
   User
@@ -39,7 +44,7 @@ const data = {
       ],
     },
     {
-      title: "Global Statistics *",
+      title: "Global Statistics",
       url: "/globalBrawlerChart",
       icon: Bot,
       isActive: true,
@@ -58,37 +63,12 @@ const data = {
         },
       ],
     },
-    {
-      title: "More *",
-      url: "#",
-      icon: BookOpen,
-      isActive: true,
-      items: [
-        {
-          title: "About BrawlBolt *",
-          url: "/about",
-        },
-        {
-          title: "GitHub *",
-          url: "/github",
-        },
-        {
-          title: "More Info *",
-          url: "/info",
-        }
-      ],
-    }
   ],
   navSecondary: [
     {
-      title: "Support",
-      url: "#",
-      icon: LifeBuoy,
-    },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: Send,
+      title: "GitHub",
+      url: "/github",
+      icon: Github,
     },
   ],
 }
@@ -102,6 +82,18 @@ export function BrawlSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
       <SidebarContent>
         <NavMain items={data.navMain} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
+
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <p className="text-xs text-gray-500">
+                {"This material is unofficial and is not endorsed by Supercell. For more information see Supercell's Fan Content Policy: "}
+                <a href="https://www.supercell.com/fan-content-policy" target="blank">www.supercell.com/fan-content-policy</a>
+                {"."}
+              </p>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
     </Sidebar>
   )
