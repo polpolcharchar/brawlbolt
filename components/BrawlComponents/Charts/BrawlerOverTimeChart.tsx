@@ -134,7 +134,7 @@ export const BrawlerOverTimeChart = ({
     }, [mode, rankedVsRegularToggleValue, brawler, isActive]);
 
     return (
-        <Card className="border-none">
+        <Card className="border bg-(--background) w-fit">
             <CardHeader className="block justify-between items-start">
                 <div>
                     <CardTitle className="text-2xl font-bold mb-4">Global Brawler History</CardTitle>
@@ -167,7 +167,7 @@ export const BrawlerOverTimeChart = ({
                 </div>
             </CardHeader>
             <CardContent> {/* adjust 72px based on header height */}
-                <ChartContainer config={chartConfig} className="h-full max-w-[800px]">
+                <ChartContainer config={chartConfig} className="max-h-[60vh]">
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={chartData}>
                             <defs>

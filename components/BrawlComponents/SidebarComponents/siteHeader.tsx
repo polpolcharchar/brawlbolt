@@ -23,16 +23,29 @@ export function SiteHeader() {
           <Grip />
         </Button>
         <Separator orientation="vertical" className="mr-2 h-4" />
-        <PlayerSelector/>
+        <PlayerSelector />
       </div>
 
       {/* Clickable Header Text */}
       <button
         onClick={() => router.push("/")}
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl font-semibold cursor-pointer select-none"
+        className="
+    absolute 
+    top-1/2 
+    right-4          /* align right with some spacing on small screens */
+    sm:left-1/2      /* center horizontally on sm+ */
+    sm:right-auto    /* unset right on sm+ */
+    -translate-y-1/2 
+    sm:-translate-x-1/2
+    text-3xl 
+    font-semibold 
+    cursor-pointer 
+    select-none
+  "
       >
         BrawlBolt
       </button>
+
     </header>
   )
 }

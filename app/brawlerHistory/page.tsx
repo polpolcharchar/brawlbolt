@@ -31,7 +31,7 @@ export default function UserPage() {
   };
 
   return (
-    <Card className="border-none m-4">
+    <div className="border-none m-4">
       <BrawlerOverTimeChart
         mode={mode}
         setMode={setMode}
@@ -41,6 +41,6 @@ export default function UserPage() {
         setBrawler={setBrawler}
         isActive={true}
       />
-    </Card>
+    </div>
   );
 }
