@@ -1,42 +1,49 @@
 "use client"
 
-import { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState } from "react"
+import { useRouter, usePathname } from "next/navigation"
 
-const PlayerDataContext = createContext<any>(null);
+const PlayerDataContext = createContext<any>(null)
 
 export const PlayerDataProvider = ({ children }: { children: React.ReactNode }) => {
   const [playerData, setPlayerData] = useState<Record<string, any>>({});
-  const [index, setIndex] = useState(0);
+  const [activePlayerTag, _setActivePlayerTag] = useState<string | null>(null);
+  const [isLoadingPlayer, setIsLoadingPlayer] = useState<boolean>(false);
+
+  const router = useRouter()
+  const pathname = usePathname()
+
+  const setActivePlayerTag = (newTag: string) => {
+    if (activePlayerTag && pathname?.endsWith(activePlayerTag)) {
+      const newPath = pathname.replace(new RegExp(`${activePlayerTag}$`), newTag)
+      router.replace(newPath)
+    }
+    _setActivePlayerTag(newTag)
+  }
 
   const updatePlayerData = (playerTag: string, playerD: any) => {
-
-    let indexToUse = -1;
-    if(playerTag !== "global"){
-      indexToUse = index;
-      setIndex((prevIndex) => prevIndex + 1);
-    }
-
     setPlayerData((prevData) => ({
       ...prevData,
       [playerTag]: {
-        "name": playerD,
-        "sortIndex": indexToUse,
-      }
-    }));
-    setIndex((prevIndex) => prevIndex + 1);
-  };
+        name: playerD,
+      },
+    }))
+  }
 
   return (
     <PlayerDataContext.Provider
       value={{
         playerData,
-        updatePlayerData
+        updatePlayerData,
+        activePlayerTag,
+        setActivePlayerTag,
+        isLoadingPlayer,
+        setIsLoadingPlayer,
       }}
     >
       {children}
     </PlayerDataContext.Provider>
-  );
-};
-export const usePlayerData = () => useContext(PlayerDataContext);
+  )
+}
 
-
+export const usePlayerData = () => useContext(PlayerDataContext)

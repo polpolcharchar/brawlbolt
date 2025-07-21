@@ -4,7 +4,7 @@ import { AlertTriangle } from "lucide-react";
 
 const ScarceDataAlertCard = () => {
     return (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center m-2">
             <Card className="bg-yellow-100 border-yellow-400 shadow-md p-4 rounded-2xl flex items-center w-full max-w-xl  text-center">
                 <AlertTriangle className="text-yellow-600 w-6 h-6 mr-3" />
                 <CardContent>

@@ -1,15 +1,12 @@
-import { AboutBrawlBoltPage } from "@/components/BrawlComponents/AboutBrawlBoltPage";
-import { Card } from "@/components/ui/card";
-import { Toaster } from "@/components/ui/sonner";
+import { BrawlSidebar } from "@/components/BrawlComponents/SidebarComponents/BrawlSidebar";
 import { PlayerDataProvider } from "@/lib/BrawlUtility/PlayerDataProvider";
 import { ThemeProvider } from "@/lib/ThemeProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Image from "next/image";
-import Link from "next/link";
-import "./globals.css";
 import Head from "next/head";
+import { Suspense } from "react";
+import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -80,7 +77,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <html lang="en" suppressHydrationWarning className="overflow-x-hidden">
       <Head>
@@ -97,53 +93,14 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange>
           <PlayerDataProvider>
-
-            <div className="flex flex-col items-center p-4">
-
-              {/* Title */}
-              <div className="w-full overflow-hidden">
-                <Card className="mb-2 max-w-2xl text-center shadow-md p-6 mx-auto">
-                  <h1 className="text-6xl font-bold mb-2 text-blue-700">
-                    <Link href="/">BrawlBolt</Link>
-                  </h1>
-
-                  <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
-                    {/* Icon */}
-                    <div className="flex items-center justify-center">
-                      <div className="w-20 h-20 relative">
-                        <Image
-                          src="/logo.png"
-                          alt="Circular Logo"
-                          className="rounded-full"
-                          width={999}
-                          height={999}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Text */}
-                    <div className="flex flex-col sm:justify-center sm:items-start">
-                      <p className="text-2xl sm:text-3xl text-blue-700">
-                        Lightning Fast Statistics
-                      </p>
-                    </div>
-                  </div>
-                </Card>
-
-            </div>
-          </div>
-
-          {children}
-
-          <Toaster />
-
-          <AboutBrawlBoltPage />
-
-
-
-        </PlayerDataProvider>
-      </ThemeProvider>
-    </body>
+            <Suspense>
+              <div className="[--header-height:calc(--spacing(14))]">
+                <BrawlSidebar>{children}</BrawlSidebar>
+              </div>
+            </Suspense>
+          </PlayerDataProvider>
+        </ThemeProvider>
+      </body>
     </html >
   );
 }
