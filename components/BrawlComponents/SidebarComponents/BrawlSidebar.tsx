@@ -5,27 +5,23 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarMenu
+  SidebarInset,
+  SidebarMenu,
+  SidebarProvider,
+  SidebarRail
 } from "@/components/ui/sidebar"
 import {
-  BookOpen,
   Bot,
   Github,
-  Info,
-  LifeBuoy,
-  Send,
   User
 } from "lucide-react"
 import * as React from "react"
 import { NavMain } from "./navMain"
 import { NavSecondary } from "./navSecondary"
+import { useState } from "react"
+import { SiteHeader } from "./siteHeader"
 
 const data = {
-  //   user: {
-  //     name: "shadcn",
-  //     email: "m@example.com",
-  //     avatar: "/avatars/shadcn.jpg",
-  //   },
   navMain: [
     {
       title: "Player Data",
@@ -73,28 +69,46 @@ const data = {
   ],
 }
 
-export function BrawlSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  return (
-    <Sidebar
-      className="top-(--header-height) h-[calc(100svh-var(--header-height))]!"
-      {...props}
-    >
-      <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+export function BrawlSidebar({ children }: { children: React.ReactNode }) {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <p className="text-xs text-gray-500">
-                {"This material is unofficial and is not endorsed by Supercell. For more information see Supercell's Fan Content Policy: "}
-                <a href="https://www.supercell.com/fan-content-policy" target="blank">www.supercell.com/fan-content-policy</a>
-                {"."}
-              </p>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+  const handleSidebarItemClick = () => {
+    setSidebarOpen(false);
+  }
+
+  return (
+    <SidebarProvider
+      className="flex flex-col"
+      open={sidebarOpen}
+      onOpenChange={setSidebarOpen}
+    >
+      <SiteHeader />
+      <div className="flex flex-1">
+        <Sidebar
+          className="top-(--header-height) h-[calc(100svh-var(--header-height))]!"
+        >
+          <SidebarContent>
+            <NavMain items={data.navMain} onItemClick={handleSidebarItemClick} />
+            <NavSecondary items={data.navSecondary} className="mt-auto" onItemClick={handleSidebarItemClick} />
+
+            <SidebarGroup>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <p className="text-xs text-gray-500">
+                    {"This material is unofficial and is not endorsed by Supercell. For more information see Supercell's Fan Content Policy: "}
+                    <a href="https://www.supercell.com/fan-content-policy" target="blank">www.supercell.com/fan-content-policy</a>
+                    {"."}
+                  </p>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
+        </Sidebar>
+        <SidebarInset style={{ backgroundColor: "transparent" }}>
+          {children}
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
+
   )
 }

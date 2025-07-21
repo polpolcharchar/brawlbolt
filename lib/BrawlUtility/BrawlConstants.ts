@@ -120,6 +120,7 @@ export const modeLabels = [
     { "value": "botDrop", "label": "Bot Drop" },
     { "value": "brawlHockey5V5", "label": "Brawl Hockey 5v5" },
     { "value": "brawlHockey", "label": "Brawl Hockey" },
+    { "value": "soulCollector", "label": "Soul Collector" },
 ]
 export const rankedModeLabels = [
     { "value": "brawlBall", "label": "Brawl Ball" },

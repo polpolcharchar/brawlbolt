@@ -1,19 +1,12 @@
-import { AboutBrawlBoltPage } from "@/components/BrawlComponents/AboutBrawlBoltPage";
-import { Card } from "@/components/ui/card";
-import { Toaster } from "@/components/ui/sonner";
+import { BrawlSidebar } from "@/components/BrawlComponents/SidebarComponents/BrawlSidebar";
 import { PlayerDataProvider } from "@/lib/BrawlUtility/PlayerDataProvider";
 import { ThemeProvider } from "@/lib/ThemeProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Image from "next/image";
-import Link from "next/link";
-import "./globals.css";
 import Head from "next/head";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { SiteHeader } from "@/components/BrawlComponents/SidebarComponents/siteHeader";
-import { BrawlSidebar } from "@/components/BrawlComponents/SidebarComponents/BrawlSidebar";
 import { Suspense } from "react";
+import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -84,7 +77,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <html lang="en" suppressHydrationWarning className="overflow-x-hidden">
       <Head>
@@ -102,29 +94,9 @@ export default function RootLayout({
           disableTransitionOnChange>
           <PlayerDataProvider>
             <Suspense>
-              {/* <div
-              style={{
-                backgroundImage:
-                  "url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20fill%3D%22none%22%20stroke%3D%22%23061c4d%22%20stroke-width%3D%221%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%0A%20%20%3Cpath%20d%3D%22M13%202%20L3%2014%20h9%20l-1%208%20L21%2010%20h-9%20l1%20-8%20z%22%20%2F%3E%0A%3C%2Fsvg%3E\")",
-                backgroundRepeat: "repeat",
-                backgroundSize: "320px 320px",
-                backgroundColor: "transparent",
-              }}
-            > */}
               <div className="[--header-height:calc(--spacing(14))]">
-                <SidebarProvider className="flex flex-col">
-                  <SiteHeader />
-                  <div className="flex flex-1">
-                    <BrawlSidebar />
-
-                    <SidebarInset style={{ backgroundColor: "transparent" }}>
-                      {children}
-                    </SidebarInset>
-                  </div>
-
-                </SidebarProvider>
+                <BrawlSidebar>{children}</BrawlSidebar>
               </div>
-              {/* </div> */}
             </Suspense>
           </PlayerDataProvider>
         </ThemeProvider>
