@@ -13,6 +13,7 @@ import Head from "next/head";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { SiteHeader } from "@/components/BrawlComponents/SidebarComponents/siteHeader";
 import { BrawlSidebar } from "@/components/BrawlComponents/SidebarComponents/BrawlSidebar";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -100,8 +101,8 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange>
           <PlayerDataProvider>
-
-            {/* <div
+            <Suspense>
+              {/* <div
               style={{
                 backgroundImage:
                   "url(\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20fill%3D%22none%22%20stroke%3D%22%23061c4d%22%20stroke-width%3D%221%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%0A%20%20%3Cpath%20d%3D%22M13%202%20L3%2014%20h9%20l-1%208%20L21%2010%20h-9%20l1%20-8%20z%22%20%2F%3E%0A%3C%2Fsvg%3E\")",
@@ -123,10 +124,8 @@ export default function RootLayout({
 
                 </SidebarProvider>
               </div>
-
-
-
-            {/* </div> */}
+              {/* </div> */}
+            </Suspense>
           </PlayerDataProvider>
         </ThemeProvider>
       </body>
