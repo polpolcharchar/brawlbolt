@@ -130,7 +130,7 @@ export const CustomSelector = ({
                 <TooltipTrigger asChild>
                     <span>{SelectorPopover}</span>
                 </TooltipTrigger>
-                <TooltipContent>{hoverMessage}</TooltipContent>
+                <TooltipContent className="text-white">{hoverMessage}</TooltipContent>
             </Tooltip>
         </TooltipProvider>
     ) : (

@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartTooltip } from "@/components/ui/chart";
 import { Checkbox } from "@/components/ui/checkbox";
 import { brawlerLabels, modeLabelMap, modeLabels, rankedModeLabels } from "@/lib/BrawlUtility/BrawlConstants";
@@ -247,9 +247,16 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
     }, [statType, sortingStatType]);
 
     return (
-        <Card className="border-none rounded-none shadow-none h-[calc(100svh-var(--header-height))]! bg-(--secondary)">
+        <Card className="border-none rounded-none shadow-none h-[calc(95svh-var(--header-height))]! bg-(--background)">
             <CardHeader className="block justify-between items-start">
-                <CardTitle className="text-3xl font-bold mb-4" style={{ textShadow: "0 4px 16px var(--chart-1), 0 2px 8px var(--chart-1)" }}>BoltGraph</CardTitle>
+                <div className="flex items-center gap-2">
+                <CardTitle className="text-3xl font-bold mb-4" style={{ textShadow: "0 4px 16px var(--chart-1), 0 2px 8px var(--chart-1)" }}>
+                    {"BoltGraph"}
+                </CardTitle>
+                <CardDescription>
+                    {playerTag}
+                </CardDescription>
+                </div>
 
                 <div className="flex flex-col">
                     <div className="flex flex-col py-2">
@@ -401,7 +408,7 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
                                         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
                                         .join(' ');
                             }}
-                            // tick={window.innerWidth < 900 ? { fontSize: 12 } : {}}
+                        // tick={window.innerWidth < 900 ? { fontSize: 12 } : {}}
                         />
 
                         <YAxis
@@ -417,7 +424,7 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
                         {statType === "winrateMinusStarRate" && (
                             <Bar
                                 dataKey={"starRate"}
-                                fill={"var(--chart-3)"}
+                                fill={"var(--chart-2)"}
                                 stackId={"a"}
                             />
                         )}

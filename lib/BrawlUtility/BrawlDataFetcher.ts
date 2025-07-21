@@ -146,7 +146,7 @@ export const fetchGlobalScanInfo = async () => {
 
 }
 
-export const fetchMatches = async (playerTag: string, datetime: string, numBefore: number, numAfter: number) => {
+export const fetchMatches = async (playerTag: string, datetime: string, numBefore: number, numAfter: number, setIsLoading: (v: boolean) => void) => {
 
     const requestBody = {
         "type": "queryGames",
@@ -156,7 +156,7 @@ export const fetchMatches = async (playerTag: string, datetime: string, numBefor
         "numAfter": numAfter
     }
 
-    const requestResult = await requestServer(JSON.stringify(requestBody), () => { });
+    const requestResult = await requestServer(JSON.stringify(requestBody), setIsLoading);
 
     if (requestResult) {
         return requestResult;

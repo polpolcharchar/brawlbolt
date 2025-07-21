@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input"
 import { handlePlayerSearch } from "@/lib/BrawlUtility/BrawlDataFetcher"
 import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider"
 import { isValidTag } from "@/lib/BrawlUtility/BrawlConstants"
+import { ChevronDown } from "lucide-react"
 
 export function PlayerSelector() {
   const {
@@ -27,17 +28,22 @@ export function PlayerSelector() {
     activePlayerTag
   } = usePlayerData()
 
-  const [tagInput, setTagInput] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const [tagInput, setTagInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async () => {
-    if (!isValidTag(tagInput)) return
+  const[open, setOpen] = useState(false);
+
+  const handleSubmit = async (passedTag: string | undefined = undefined) => {
+
+    const tagToUse = passedTag ? passedTag : tagInput;
+
+    if (!isValidTag(tagToUse)) return
     setIsLoading(true)
-    const success = await handlePlayerSearch(tagInput, setIsLoading, updatePlayerData)
+    const success = await handlePlayerSearch(tagToUse, setIsLoading, updatePlayerData)
     setIsLoading(false)
 
     if (success) {
-      const normalizedTag = tagInput.startsWith("#") ? tagInput.substring(1) : tagInput
+      const normalizedTag = tagToUse.startsWith("#") ? tagToUse.substring(1) : tagToUse
       setActivePlayerTag(normalizedTag)
       setTagInput("")
     }
@@ -52,14 +58,14 @@ export function PlayerSelector() {
 
   return (
     <div className="space-y-4">
-      <Popover>
+      <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
-            className="!border-(--primary)"
+            className="!border-(--primary-foreground) !bg-(--card)"
           >            {activePlayerTag
             ? playerData[activePlayerTag]?.name || activePlayerTag
-            : "Search for Accounts..."}
+            : "Search for Accounts..."}<ChevronDown />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-80 p-4 space-y-4">
@@ -70,7 +76,10 @@ export function PlayerSelector() {
                 <Button
                   key={tag}
                   variant={tag === activePlayerTag ? "default" : "secondary"}
-                  onClick={() => setActivePlayerTag(tag)}
+                  onClick={() => {
+                    setActivePlayerTag(tag);
+                    setOpen(false);
+                  }}
                   className="justify-start text-white"
                 >
                   {data.name || tag}
@@ -95,7 +104,7 @@ export function PlayerSelector() {
                 disabled={isLoading}
               />
               <Button
-                onClick={handleSubmit}
+                onClick={() => { handleSubmit() }}
                 disabled={isLoading || !isValidTag(tagInput)}
                 className="text-white"
               >
@@ -104,7 +113,7 @@ export function PlayerSelector() {
             </div>
           </div>
 
-          {/* Info Dialog */}
+          {/* What is a tag Dialog */}
           <Dialog>
             <DialogTrigger asChild>
               <Button className="text-white bg-blue-600 hover:bg-blue-700">
@@ -133,6 +142,17 @@ export function PlayerSelector() {
               </div>
             </DialogContent>
           </Dialog>
+
+          <Button
+            className="ml-2 text-white"
+            onClick={() => {
+              handleSubmit("GJCLVRQLG");
+            }}
+            disabled={"GJCLVRQLG" in playerData}
+          >
+            Load Example Profile
+          </Button>
+
         </PopoverContent>
       </Popover>
     </div>

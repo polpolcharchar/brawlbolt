@@ -2,13 +2,7 @@
 
 import {
   Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem
+  SidebarContent
 } from "@/components/ui/sidebar"
 import {
   BookOpen,
@@ -20,8 +14,6 @@ import {
 import * as React from "react"
 import { NavMain } from "./navMain"
 import { NavSecondary } from "./navSecondary"
-import { PlayerSelector } from "../Selectors/PlayerSelector"
-import { Command } from "@/components/ui/command"
 
 const data = {
   //   user: {
@@ -31,7 +23,7 @@ const data = {
   //   },
   navMain: [
     {
-      title: "Player Data *",
+      title: "Player Data",
       url: "/player",
       icon: User,
       isActive: true,

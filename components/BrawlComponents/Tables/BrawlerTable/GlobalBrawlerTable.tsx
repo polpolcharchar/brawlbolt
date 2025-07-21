@@ -121,8 +121,8 @@ export function GlobalBrawlerTable<TData, TValue>({
             return;
         }
 
-        const startDate = new Date(scanDatetime);
-        const endDate = new Date(startDate.getTime() + scanHourRange * 60 * 60 * 1000);
+        const endDate = new Date(scanDatetime);
+        const startDate = new Date(endDate.getTime() - scanHourRange * 60 * 60 * 1000);
 
         const formatDate = (d: Date) => {
             const month = d.getMonth() + 1; // Months are 0-indexed
@@ -200,7 +200,7 @@ export function GlobalBrawlerTable<TData, TValue>({
     });
 
     return (
-        <Card className="border-none rounded-none shadow-none h-[calc(99.9svh-var(--header-height))]! bg-(--secondary)">
+        <Card className="border bg-(--background) m-2 shadow-none h-[calc(95svh-var(--header-height))]!">
             <CardHeader className="block justify-between items-start">
                 <CardTitle className="text-2xl font-bold mb-0">Brawler Table</CardTitle>
 
