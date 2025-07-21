@@ -46,6 +46,7 @@ export function PlayerSelector() {
       const normalizedTag = tagToUse.startsWith("#") ? tagToUse.substring(1) : tagToUse
       setActivePlayerTag(normalizedTag)
       setTagInput("")
+      setOpen(false);
     }
   }
 

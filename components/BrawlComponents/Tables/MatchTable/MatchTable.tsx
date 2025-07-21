@@ -41,15 +41,15 @@ export const MatchTable = ({ matchesJSON, playerTag }: { matchesJSON: any[], pla
         <Card className="p-2 rounded-none border-none shadow-none bg-(--background)">
             <MatchInfoDialog battleData={currentBattle} setCurrentBattle={setCurrentBattle}></MatchInfoDialog>
 
-            <Table className="w-full table-fixed">
+            <Table className="w-full">
                 <TableCaption>{playerTag}</TableCaption>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Mode</TableHead>
-                        <TableHead>Map</TableHead>
-                        <TableHead>Result</TableHead>
-                        <TableHead>Average Trophies</TableHead>
+                        <TableHead className="min-w-[100px]">Date</TableHead>
+                        <TableHead className="min-w-[100px]">Mode</TableHead>
+                        <TableHead className="min-w-[100px]">Map</TableHead>
+                        <TableHead className="min-w-[100px]">Result</TableHead>
+                        <TableHead className="min-w-[100px]">Average Trophies</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>

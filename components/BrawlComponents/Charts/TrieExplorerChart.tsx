@@ -247,15 +247,15 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
     }, [statType, sortingStatType]);
 
     return (
-        <Card className="border-none rounded-none shadow-none h-[calc(95svh-var(--header-height))]! bg-(--background)">
+        <Card className="border-none rounded-none shadow-none min-h-[calc(95svh-var(--header-height))] bg-[--background] flex flex-col">
             <CardHeader className="block justify-between items-start">
                 <div className="flex items-center gap-2">
-                <CardTitle className="text-3xl font-bold mb-4" style={{ textShadow: "0 4px 16px var(--chart-1), 0 2px 8px var(--chart-1)" }}>
-                    {"BoltGraph"}
-                </CardTitle>
-                <CardDescription>
-                    {playerTag}
-                </CardDescription>
+                    <CardTitle className="text-3xl font-bold mb-4" style={{ textShadow: "0 4px 16px var(--chart-1), 0 2px 8px var(--chart-1)" }}>
+                        {"BoltGraph"}
+                    </CardTitle>
+                    <CardDescription>
+                        {playerTag}
+                    </CardDescription>
                 </div>
 
                 <div className="flex flex-col">
@@ -380,76 +380,78 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
 
             </CardHeader>
 
-            <CardContent className="h-full">
-                <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                        accessibilityLayer
-                        data={paginatedData}
-                        margin={{ bottom: 40 }}
-                    >
-                        <CartesianGrid
-                            vertical={false}
-                            strokeWidth={0.1}
-                        />
+            <CardContent className="flex-1 relative min-h-[400px]">
+                <div className="absolute inset-0">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                            accessibilityLayer
+                            data={paginatedData}
+                            margin={{ bottom: 40 }}
+                        >
+                            <CartesianGrid
+                                vertical={false}
+                                strokeWidth={0.1}
+                            />
 
-                        <XAxis
-                            dataKey="value"
-                            tickLine={false}
-                            tickMargin={2}
-                            axisLine={false}
-                            // angle={window.innerWidth < 900 ? -90 : -45}
-                            angle={-45}
-                            textAnchor="end"
-                            tickFormatter={(tick: string) => {
-                                return modeLabelMap[tick as keyof typeof modeLabelMap]
-                                    ?? tick//Title Case
-                                        .toLowerCase()
-                                        .split(' ')
-                                        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                                        .join(' ');
-                            }}
-                        // tick={window.innerWidth < 900 ? { fontSize: 12 } : {}}
-                        />
+                            <XAxis
+                                dataKey="value"
+                                tickLine={false}
+                                tickMargin={2}
+                                axisLine={false}
+                                // angle={window.innerWidth < 900 ? -90 : -45}
+                                angle={-45}
+                                textAnchor="end"
+                                tickFormatter={(tick: string) => {
+                                    return modeLabelMap[tick as keyof typeof modeLabelMap]
+                                        ?? tick//Title Case
+                                            .toLowerCase()
+                                            .split(' ')
+                                            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                                            .join(' ');
+                                }}
+                            // tick={window.innerWidth < 900 ? { fontSize: 12 } : {}}
+                            />
 
-                        <YAxis
-                            type="number"
-                            domain={statType == "winrateMinusStarRate" ? [0, 1] : undefined}
-                        />
+                            <YAxis
+                                type="number"
+                                domain={statType == "winrateMinusStarRate" ? [0, 1] : undefined}
+                            />
 
-                        <ChartTooltip
-                            cursor={false}
-                            content={<CustomPlayerTooltip />}
-                        />
+                            <ChartTooltip
+                                cursor={false}
+                                content={<CustomPlayerTooltip />}
+                            />
 
-                        {statType === "winrateMinusStarRate" && (
+                            {statType === "winrateMinusStarRate" && (
+                                <Bar
+                                    dataKey={"starRate"}
+                                    fill={"var(--chart-2)"}
+                                    stackId={"a"}
+                                />
+                            )}
                             <Bar
-                                dataKey={"starRate"}
-                                fill={"var(--chart-2)"}
+                                dataKey={statType}
+                                radius={[8, 8, 0, 0]}
+                                fill={"var(--chart-1)"}
                                 stackId={"a"}
                             />
-                        )}
-                        <Bar
-                            dataKey={statType}
-                            radius={[8, 8, 0, 0]}
-                            fill={"var(--chart-1)"}
-                            stackId={"a"}
-                        />
 
-                        <ReferenceLine
-                            y={Math.max(...paginatedData.map((item: { [x: string]: any; }) => {
+                            <ReferenceLine
+                                y={Math.max(...paginatedData.map((item: { [x: string]: any; }) => {
 
-                                const x = item[statType as keyof typeof item];
+                                    const x = item[statType as keyof typeof item];
 
-                                if (x) {
-                                    return Number(x);
-                                }
-                                return 0;
-                            })) * 0.7}
-                            label="brawlbolt.com"
-                            strokeWidth={0}
-                        />
-                    </BarChart>
-                </ResponsiveContainer>
+                                    if (x) {
+                                        return Number(x);
+                                    }
+                                    return 0;
+                                })) * 0.7}
+                                label="brawlbolt.com"
+                                strokeWidth={0}
+                            />
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
             </CardContent>
 
             <CardFooter className="flex justify-center gap-4">
