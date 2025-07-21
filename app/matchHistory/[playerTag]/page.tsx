@@ -4,7 +4,7 @@ import ScarceDataAlertCard from '@/components/BrawlComponents/InfoCards/ScarceDa
 import { MatchTable } from '@/components/BrawlComponents/Tables/MatchTable/MatchTable';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { isValidTag } from '@/lib/BrawlUtility/BrawlConstants';
 import { fetchMatches, handlePlayerSearch } from '@/lib/BrawlUtility/BrawlDataFetcher';
@@ -17,17 +17,19 @@ export default function UserPage() {
   const params = useParams();
   const playerTag = params.playerTag;
 
-  const { updatePlayerData, setActivePlayerTag, playerData } = usePlayerData();
+  const { updatePlayerData, setActivePlayerTag, playerData, activePlayerTag, setIsLoadingPlayer } = usePlayerData();
   useEffect(() => {
     const playerTagString = playerTag?.toString();
     if (!playerTagString || !isValidTag(playerTagString) || playerTagString in playerData) return;
 
+    const normalizedTag = (playerTagString.startsWith("#") ? playerTagString.substring(1) : playerTagString).toUpperCase();
+
     const fetchData = async () => {
-      const success = await handlePlayerSearch(playerTagString, () => { }, updatePlayerData)
+      const success = await handlePlayerSearch(normalizedTag.toUpperCase(), setIsLoadingPlayer, updatePlayerData);
 
       if (success) {
-        const normalizedTag = playerTagString.startsWith("#") ? playerTagString.substring(1) : playerTagString
-        setActivePlayerTag(normalizedTag)
+        setActivePlayerTag(normalizedTag);
+        jumpToGameDate(new Date().toISOString(), true, normalizedTag);
       }
 
     }
@@ -50,8 +52,11 @@ export default function UserPage() {
     return iso.replace(/[-:]/g, '').replace('.000Z', '.000Z');
   }
 
-  const jumpToGameDate = async (datetime: string, firstRequest = false) => {
-    if (!playerTag || isLoading) return;
+  const jumpToGameDate = async (datetime: string, firstRequest = false, provideTag = "") => {
+
+    const tagToUse = provideTag != "" ? provideTag : activePlayerTag;
+
+    if (!tagToUse || isLoading) return;
 
     const formattedDate = datetime
       .replace(/-/g, '')
@@ -61,7 +66,7 @@ export default function UserPage() {
       .replace('Z', '.000Z');
 
     const requestResult = await fetchMatches(
-      playerTag.toString(),
+      tagToUse.toString(),
       formattedDate,
       firstRequest ? 10 : 5,
       firstRequest ? 0 : 5,
@@ -76,13 +81,13 @@ export default function UserPage() {
   }
 
   const changeGamesPage = async (goForward: boolean) => {
-    if (!playerTag || !matchesJSON || matchesJSON.length === 0 || isLoading) return;
+    if (!activePlayerTag || !matchesJSON || matchesJSON.length === 0 || isLoading) return;
 
     const lastIndex = goForward ? matchesJSON.length - 1 : 0;
     const pivotDatetime = matchesJSON[lastIndex].battleTime;
 
     const requestResult = await fetchMatches(
-      playerTag.toString(),
+      activePlayerTag.toString(),
       pivotDatetime,
       goForward ? 0 : 10, // numBefore
       goForward ? 10 : 0,  // numAfter

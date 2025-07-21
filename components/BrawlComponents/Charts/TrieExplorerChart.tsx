@@ -231,7 +231,14 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
 
     const [pageStartingIndex, setPageStartingIndex] = useState(0);
     // const pageSize = (window ? window.innerWidth : 1000 < 900 ? 8 : 10);
-    const pageSize = 10;
+    const [pageSize, setPageSize] = useState(10);
+    useEffect(() => {
+        if(window.innerWidth < 800){
+            setPageSize(8);
+        }else{
+            setPageSize(10);
+        }
+    }, []);
 
     const totalPages = Math.max(1, Math.ceil(chartData.length / pageSize));
     const paginatedData = chartData.slice(pageStartingIndex, pageStartingIndex + pageSize);
@@ -380,7 +387,7 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
 
             </CardHeader>
 
-            <CardContent className="flex-1 relative min-h-[400px]">
+            <CardContent className="flex-1 relative min-h-[400px] mr-2">
                 <div className="absolute inset-0">
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart

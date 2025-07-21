@@ -18,29 +18,30 @@ import { Input } from "@/components/ui/input"
 import { handlePlayerSearch } from "@/lib/BrawlUtility/BrawlDataFetcher"
 import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider"
 import { isValidTag } from "@/lib/BrawlUtility/BrawlConstants"
-import { ChevronDown } from "lucide-react"
+import { ChevronDown, Loader } from "lucide-react"
 
 export function PlayerSelector() {
   const {
     playerData,
     updatePlayerData,
     setActivePlayerTag,
-    activePlayerTag
+    activePlayerTag,
+    isLoadingPlayer,
+    setIsLoadingPlayer
   } = usePlayerData()
 
   const [tagInput, setTagInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
-  const[open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const handleSubmit = async (passedTag: string | undefined = undefined) => {
 
     const tagToUse = passedTag ? passedTag : tagInput;
 
     if (!isValidTag(tagToUse)) return
-    setIsLoading(true)
-    const success = await handlePlayerSearch(tagToUse, setIsLoading, updatePlayerData)
-    setIsLoading(false)
+    setIsLoadingPlayer(true)
+    const success = await handlePlayerSearch(tagToUse, setIsLoadingPlayer, updatePlayerData)
+    setIsLoadingPlayer(false)
 
     if (success) {
       const normalizedTag = tagToUse.startsWith("#") ? tagToUse.substring(1) : tagToUse
@@ -64,9 +65,13 @@ export function PlayerSelector() {
           <Button
             variant="outline"
             className="!border-(--primary-foreground) !bg-(--card)"
-          >            {activePlayerTag
-            ? playerData[activePlayerTag]?.name || activePlayerTag
-            : "Search for Accounts..."}<ChevronDown />
+          >
+            {isLoadingPlayer && <div className="flex items-center justify-center">
+              <Loader className="h-6 w-6 animate-spin text-muted-foreground" />
+            </div>}
+            {activePlayerTag
+              ? playerData[activePlayerTag]?.name || activePlayerTag
+              : "Accounts..."}<ChevronDown />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-80 p-4 space-y-4">
@@ -102,14 +107,14 @@ export function PlayerSelector() {
                 }
                 onKeyDown={handleKeyDown}
                 placeholder="Enter a player tag..."
-                disabled={isLoading}
+                disabled={isLoadingPlayer}
               />
               <Button
                 onClick={() => { handleSubmit() }}
-                disabled={isLoading || !isValidTag(tagInput)}
+                disabled={isLoadingPlayer || !isValidTag(tagInput)}
                 className="text-white"
               >
-                {isLoading ? "Loading..." : "Add"}
+                {isLoadingPlayer ? "Loading..." : "Add"}
               </Button>
             </div>
           </div>

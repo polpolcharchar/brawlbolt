@@ -13,18 +13,17 @@ export default function UserPage() {
   const params = useParams();
   const playerTag = params.playerTag;
 
-  const { updatePlayerData, setActivePlayerTag, playerData } = usePlayerData();
+  const { updatePlayerData, setActivePlayerTag, playerData, setIsLoadingPlayer } = usePlayerData();
   useEffect(() => {
     const playerTagString = playerTag?.toString();
     if (!playerTagString || !isValidTag(playerTagString) || playerTagString in playerData) return;
 
+    const normalizedTag = (playerTagString.startsWith("#") ? playerTagString.substring(1) : playerTagString).toUpperCase();
     const fetchData = async () => {
-      console.log("Fetching!");
-      const success = await handlePlayerSearch(playerTagString, () => { }, updatePlayerData)
+      const success = await handlePlayerSearch(normalizedTag.toUpperCase(), setIsLoadingPlayer, updatePlayerData);
 
       if (success) {
-        const normalizedTag = playerTagString.startsWith("#") ? playerTagString.substring(1) : playerTagString
-        setActivePlayerTag(normalizedTag)
+        setActivePlayerTag(normalizedTag);
       }
 
     }

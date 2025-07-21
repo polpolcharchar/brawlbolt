@@ -6,8 +6,9 @@ import { useRouter, usePathname } from "next/navigation"
 const PlayerDataContext = createContext<any>(null)
 
 export const PlayerDataProvider = ({ children }: { children: React.ReactNode }) => {
-  const [playerData, setPlayerData] = useState<Record<string, any>>({})
-  const [activePlayerTag, _setActivePlayerTag] = useState<string | null>(null)
+  const [playerData, setPlayerData] = useState<Record<string, any>>({});
+  const [activePlayerTag, _setActivePlayerTag] = useState<string | null>(null);
+  const [isLoadingPlayer, setIsLoadingPlayer] = useState<boolean>(false);
 
   const router = useRouter()
   const pathname = usePathname()
@@ -36,6 +37,8 @@ export const PlayerDataProvider = ({ children }: { children: React.ReactNode }) 
         updatePlayerData,
         activePlayerTag,
         setActivePlayerTag,
+        isLoadingPlayer,
+        setIsLoadingPlayer,
       }}
     >
       {children}

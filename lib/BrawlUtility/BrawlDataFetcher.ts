@@ -27,6 +27,8 @@ const requestServer = async (body: string, setIsLoading: (value: boolean) => voi
 
 export const handlePlayerSearch = async (tagToHandle: string, setIsLoading: (value: boolean) => void, updatePlayerData: (playerTag: string, playerD: any) => void) => {
 
+    setIsLoading(true);
+
     //Manage tag
     if (!isValidTag(tagToHandle)) return false;
 
@@ -40,11 +42,14 @@ export const handlePlayerSearch = async (tagToHandle: string, setIsLoading: (val
     const playerInfo = await getPlayerInfo(tagToHandle);
     if (!playerInfo) {
         updatePlayerData(tagToHandle, "Player not found");
+        setIsLoading(false);
         return false;
     }
 
     //Add name:
     updatePlayerData(tagToHandle, playerInfo['playerInfo']['name']);
+
+    setIsLoading(false);
 
     return true;
 };
