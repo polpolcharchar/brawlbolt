@@ -32,9 +32,6 @@ export function formatDate(dateStr: string): string {
 }
 
 export const MatchTable = ({ matchesJSON, playerTag }: { matchesJSON: any[], playerTag: string }) => {
-
-
-
     const [currentBattle, setCurrentBattle] = useState<any | null>(null);
 
     return (

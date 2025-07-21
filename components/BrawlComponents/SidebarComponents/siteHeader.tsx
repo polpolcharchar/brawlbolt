@@ -1,13 +1,13 @@
 "use client"
 
-import { Grip } from "lucide-react"
-import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { useSidebar } from "@/components/ui/sidebar"
+import { AlignJustify, ArrowUpLeft } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { PlayerSelector } from "../Selectors/PlayerSelector"
 
-export function SiteHeader() {
+export function SiteHeader({ sidebarOpen }: { sidebarOpen: boolean }) {
   const { toggleSidebar } = useSidebar()
   const router = useRouter()
 
@@ -20,7 +20,7 @@ export function SiteHeader() {
           size="icon"
           onClick={toggleSidebar}
         >
-          <Grip />
+          {sidebarOpen ? <ArrowUpLeft /> : <AlignJustify />}
         </Button>
         <Separator orientation="vertical" className="mr-2 h-4" />
         <PlayerSelector />

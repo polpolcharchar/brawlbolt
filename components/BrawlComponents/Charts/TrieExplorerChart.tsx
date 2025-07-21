@@ -11,6 +11,7 @@ import { LockIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { CustomSelector } from "../Selectors/CustomSelector";
+import { LinkCopyIndicator } from "../Selectors/LinkCopyIndicator";
 
 const CustomPlayerTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -261,7 +262,8 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
                         {"BoltGraph"}
                     </CardTitle>
                     <CardDescription>
-                        {playerTag}
+                        {/* {playerTag} */}
+                        <LinkCopyIndicator url={"https://www.brawlbolt.com/" + (isGlobal ? "globalBoltGraph" : ("boltGraph/" + playerTag))} title={"Share this page!"}/>
                     </CardDescription>
                 </div>
 

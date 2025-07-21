@@ -13,7 +13,7 @@ export default function LandingPage() {
   const { activePlayerTag } = usePlayerData();
 
   const handleRedirect = async (basePath: string) => {
-      router.push(`/${basePath}/${activePlayerTag.replace("#", "")}`)
+    router.push(`/${basePath}/${activePlayerTag.replace("#", "")}`)
   }
 
   return (
@@ -58,6 +58,41 @@ export default function LandingPage() {
           </CardContent>
         </Card>
       </div>
+
+      <Card className="max-w-4xl text-center space-y-0 text-gray-300 px-2">
+          <h2 className="text-3xl font-semibold mb-4">About BrawlBolt</h2>
+
+          {/* Overview Section */}
+          <section className="mb-6">
+            <h3 className="text-xl font-semibold text-gray-200 mb-2">Overview</h3>
+            <p className="text-gray-400">
+              BrawlBolt tracks your games and provides personalized detailed statistics using every piece of game data possible.
+              The options for personalized data analysis are unrivaled compared to other Brawl Stars tracking sites.
+              Search your account to get started for <b>FREE</b>!
+            </p>
+          </section>
+
+          {/* Tracking Section */}
+          <section className="mb-6">
+            <h3 className="text-xl font-semibold text-gray-200 mb-2">Tracking</h3>
+            <p className="text-gray-400">
+              Player games are passively tracked and compiled as needed.
+              As soon as you begin tracking your account, <u>every single game you play for the next month is saved</u>.
+              To ensure your account is continually tracked, <u>access your account's statistics at least once a month</u>.
+              Unfortunately, a record of games played before tracking began is inaccessible {"(other than the most recent 25 games)"}.
+            </p>
+          </section>
+
+          {/* Analysis Section */}
+          <section className="mb-6">
+            <h3 className="text-xl font-semibold text-gray-200 mb-2">Analysis</h3>
+            <p className="text-gray-400">
+              With optimized stat caching, it doesn{"'"}t matter how many games you play—statistics will always be available almost instantly.
+              Recursive data analysis allows for extremely detailed results. View the BoltGraph.
+            </p>
+          </section>
+
+      </Card>
     </div>
   )
 }

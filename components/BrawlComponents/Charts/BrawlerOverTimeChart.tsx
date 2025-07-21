@@ -1,5 +1,4 @@
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { CarouselApi } from "@/components/ui/carousel";
 import {
     ChartConfig,
     ChartContainer,
@@ -9,12 +8,12 @@ import {
 } from "@/components/ui/chart";
 import { brawlerLabels, modeLabels, rankedModeLabels } from "@/lib/BrawlUtility/BrawlConstants";
 import { fetchGlobalStats } from "@/lib/BrawlUtility/BrawlDataFetcher";
+import { Frown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Area, AreaChart, CartesianGrid, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { CustomSelector } from "../Selectors/CustomSelector";
 import { LinearNaturalChartToggle } from "../Selectors/LinearNaturalChartToggle";
 import { RegularRankedToggle } from "../Selectors/RegularRankedToggle";
-import { Frown } from "lucide-react";
 
 const chartConfig = {
     winrate: {
@@ -67,7 +66,7 @@ export const BrawlerOverTimeChart = ({
 
     const fetchData = async (rankedVsRegularToggleValue: string, mode: string, brawler: string) => {
 
-        if(brawler == "")return;
+        if (brawler == "") return;
 
         const statTypeString = rankedVsRegularToggleValue + mode + brawler;
 

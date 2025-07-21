@@ -82,7 +82,7 @@ export function BrawlSidebar({ children }: { children: React.ReactNode }) {
       open={sidebarOpen}
       onOpenChange={setSidebarOpen}
     >
-      <SiteHeader />
+      <SiteHeader sidebarOpen={sidebarOpen}/>
       <div className="flex flex-1">
         <Sidebar
           className="top-(--header-height) h-[calc(100svh-var(--header-height))]!"
