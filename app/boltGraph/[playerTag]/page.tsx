@@ -1,32 +1,17 @@
 "use client"
 
 import { TrieExplorerChart } from '@/components/BrawlComponents/Charts/TrieExplorerChart';
-import { isValidTag } from '@/lib/BrawlUtility/BrawlConstants';
-import { handlePlayerSearch } from '@/lib/BrawlUtility/BrawlDataFetcher';
+import { handleDynamicPlayerTagPath } from '@/components/BrawlComponents/HandleDynamicPlayerTag';
 import { usePlayerData } from '@/lib/BrawlUtility/PlayerDataProvider';
 import { useParams } from 'next/navigation';
-import { useEffect } from 'react';
 
 export default function UserPage() {
   const params = useParams();
   const playerTag = params.playerTag;
 
-  const { updatePlayerData, setActivePlayerTag, playerData, activePlayerTag, setIsLoadingPlayer } = usePlayerData();
-  useEffect(() => {
-    const playerTagString = playerTag?.toString();
-    if (!playerTagString || !isValidTag(playerTagString) || playerTagString in playerData) return;
+  handleDynamicPlayerTagPath({playerTagParam: playerTag});
 
-    const normalizedTag = (playerTagString.startsWith("#") ? playerTagString.substring(1) : playerTagString).toUpperCase();
-    const fetchData = async () => {
-      const success = await handlePlayerSearch(normalizedTag.toUpperCase(), setIsLoadingPlayer, updatePlayerData);
-
-      if (success) {
-        setActivePlayerTag(normalizedTag);
-      }
-
-    }
-    fetchData();
-  }, []);
+  const {activePlayerTag} = usePlayerData();
 
   return (
     <div>

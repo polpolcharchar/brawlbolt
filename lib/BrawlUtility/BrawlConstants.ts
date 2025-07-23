@@ -155,7 +155,8 @@ export const modeLabelMap = {
     wipeout5V5: "Wipeout 5v5",
     botDrop: "Bot Drop",
     brawlHockey5V5: "Brawl Hockey 5v5",
-    brawlHockey: "Brawl Hockey"
+    brawlHockey: "Brawl Hockey",
+    soulCollector: "Soul Collector"
 }
 export const rankedModeLabelMap = {
     brawlBall: "Brawl Ball",
