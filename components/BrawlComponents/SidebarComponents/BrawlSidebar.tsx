@@ -13,6 +13,7 @@ import {
 import {
   Bot,
   Github,
+  Mail,
   User
 } from "lucide-react"
 import * as React from "react"
@@ -66,14 +67,23 @@ const data = {
       url: "/github",
       icon: Github,
     },
+    {
+      title: "contact@brawlbolt.com",
+      url: "mailto:contact@brawlbolt.com",
+      icon: Mail
+    }
   ],
 }
 
 export function BrawlSidebar({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  const handleSidebarItemClick = () => {
-    setSidebarOpen(false);
+  const handleSidebarItemClick = (item: any) => {
+    if(item.title == "contact@brawlbolt.com"){
+      return;
+    }else{
+      setSidebarOpen(false);
+    }
   }
 
   return (
