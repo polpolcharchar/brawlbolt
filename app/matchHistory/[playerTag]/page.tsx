@@ -1,13 +1,13 @@
 "use client"
 
+import { handleDynamicPlayerTagPath } from '@/components/BrawlComponents/HandleDynamicPlayerTag';
 import ScarceDataAlertCard from '@/components/BrawlComponents/InfoCards/ScarceDataAlertCard';
 import { MatchTable } from '@/components/BrawlComponents/Tables/MatchTable/MatchTable';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { isValidTag } from '@/lib/BrawlUtility/BrawlConstants';
-import { fetchMatches, handlePlayerSearch } from '@/lib/BrawlUtility/BrawlDataFetcher';
+import { fetchMatches } from '@/lib/BrawlUtility/BrawlDataFetcher';
 import { usePlayerData } from '@/lib/BrawlUtility/PlayerDataProvider';
 import { CalendarSearch, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useParams } from 'next/navigation';
@@ -17,24 +17,14 @@ export default function UserPage() {
   const params = useParams();
   const playerTag = params.playerTag;
 
-  const { updatePlayerData, setActivePlayerTag, playerData, activePlayerTag, setIsLoadingPlayer } = usePlayerData();
-  useEffect(() => {
-    const playerTagString = playerTag?.toString();
-    if (!playerTagString || !isValidTag(playerTagString) || playerTagString in playerData) return;
+  handleDynamicPlayerTagPath({
+    playerTagParam: playerTag,
+    onSuccess: (normalizedTag) => {
+      jumpToGameDate(new Date().toISOString(), true, normalizedTag);
+    },
+  });
 
-    const normalizedTag = (playerTagString.startsWith("#") ? playerTagString.substring(1) : playerTagString).toUpperCase();
-
-    const fetchData = async () => {
-      const success = await handlePlayerSearch(normalizedTag.toUpperCase(), setIsLoadingPlayer, updatePlayerData);
-
-      if (success) {
-        setActivePlayerTag(normalizedTag);
-        jumpToGameDate(new Date().toISOString(), true, normalizedTag);
-      }
-
-    }
-    fetchData();
-  }, []);
+  const { activePlayerTag } = usePlayerData();
 
 
   const [popoverOpen, setPopoverOpen] = useState(false);
