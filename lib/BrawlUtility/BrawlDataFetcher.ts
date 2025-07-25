@@ -1,3 +1,4 @@
+import { parse } from "path";
 import { isValidTag } from "./BrawlConstants";
 
 const requestServer = async (body: string, setIsLoading: (value: boolean) => void) => {
@@ -178,20 +179,76 @@ export const initiateVerification = async (playerTag: string, callback: (success
         "verificationRequestType": "initiate"
     }
 
-    const result = await requestServer(JSON.stringify(requestBody), () => {});
-    
-    if(!result){
+    const result = await requestServer(JSON.stringify(requestBody), () => { });
+
+    if (!result) {
         callback(false)
         return false
     }
 
     const parsedResult = JSON.parse(result);
 
-    if("error" in parsedResult){
+    if ("error" in parsedResult) {
         callback(false)
         return false
     }
 
     callback(true, parsedResult["token"], parsedResult["iconIdToSet"]);
     return true;
+}
+
+export const verifyStep = async (playerTag: string, token: string, callback: (success: boolean, readyForPassword?: boolean, verificationsRemaining?: number, iconID?: number) => void) => {
+    const requestBody = {
+        "type": "verifyAccount",
+        "verificationRequestType": "verifyStep",
+        "playerTag": playerTag,
+        "token": token,
+    }
+
+    const result = await requestServer(JSON.stringify(requestBody), () => { });
+
+    if (!result) {
+        callback(false)
+        return false
+    }
+
+    const parsedResult = JSON.parse(result);
+
+    if ("error" in parsedResult) {
+        callback(false)
+        return false
+    } else if ("readyForPassword" in parsedResult && parsedResult["readyForPassword"]) {
+        callback(true, true, parsedResult["verificationsRemaining"], -1);
+        return true;
+    } else {
+        callback(true, false, parsedResult["verificationsRemaining"], parsedResult["newIconIdToSet"]);
+        return true;
+    }
+}
+
+export const finalizeVerification = async (playerTag: string, token: string, password: string, callback: (success: boolean) => void) => {
+    const requestBody = {
+        "type": "verifyAccount",
+        "verificationRequestType": "finalize",
+        "playerTag": playerTag,
+        "token": token,
+        "password": password
+    }
+
+    const result = await requestServer(JSON.stringify(requestBody), () => { });
+
+    if (!result) {
+        callback(false)
+        return false
+    }
+
+    const parsedResult = JSON.parse(result);
+
+    if ("error" in parsedResult) {
+        callback(false);
+        return false;
+    } else {
+        callback(true);
+        return true;
+    }
 }

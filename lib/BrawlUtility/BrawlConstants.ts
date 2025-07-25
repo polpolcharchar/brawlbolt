@@ -241,3 +241,18 @@ export function getMode(match: any): string {
     return "unknown";
   }
 }
+
+const BRAWLER_ICON_ID_TO_NAME: Record<number, string> = {
+  28000003: "Shelly",
+  28000007: "Nita",
+  28000004: "Colt",
+  28000010: "Bull",
+  28000005: "Brock",
+  28000009: "El Primo",
+  28000012: "Barley",
+  28000013: "Poco",
+  28000040: "Rosa",
+};
+export function getBrawlerNameFromIconID(id: number): string | undefined {
+  return BRAWLER_ICON_ID_TO_NAME[id];
+}
