@@ -170,3 +170,28 @@ export const fetchMatches = async (playerTag: string, datetime: string, numBefor
     }
 
 }
+
+export const initiateVerification = async (playerTag: string, callback: (success: boolean, token?: string, iconID?: number) => void) => {
+    const requestBody = {
+        "type": "verifyAccount",
+        "playerTag": playerTag,
+        "verificationRequestType": "initiate"
+    }
+
+    const result = await requestServer(JSON.stringify(requestBody), () => {});
+    
+    if(!result){
+        callback(false)
+        return false
+    }
+
+    const parsedResult = JSON.parse(result);
+
+    if("error" in parsedResult){
+        callback(false)
+        return false
+    }
+
+    callback(true, parsedResult["token"], parsedResult["iconIdToSet"]);
+    return true;
+}
