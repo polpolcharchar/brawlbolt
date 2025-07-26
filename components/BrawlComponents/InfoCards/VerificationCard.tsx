@@ -68,7 +68,7 @@ export const VerificationCard = () => {
             {/* Player Stats Card */}
             <Card className="shadow-lg">
                 <CardHeader>
-                    <CardTitle>
+                    <CardTitle className="text-2xl font-bold">
                         {tagToVerify ? `Verifying ${tagToVerify}` : 'Verify Account'}
                     </CardTitle>
                 </CardHeader>
@@ -76,7 +76,7 @@ export const VerificationCard = () => {
                 {verificationStage == "initial" && (
                     <CardContent className="flex flex-col gap-4">
 
-                        <CardDescription>This process will take around 5 minutes</CardDescription>
+                        <CardDescription>This process will take around 3 minutes</CardDescription>
 
                         <div className="flex gap-4">
                             <p className="text-lg font-bold">
@@ -160,7 +160,7 @@ export const VerificationCard = () => {
                         )}
 
                         <p className="text-lg font-bold">
-                            Waiting {waitingSeconds} second{waitingSeconds !== 1 ? "s" : ""} Brawl Stars' servers...
+                            Waiting {waitingSeconds} second{waitingSeconds !== 1 ? "s" : ""} for Brawl Stars' servers...
                         </p>
 
                         <div className="w-full h-4 bg-gray-300 rounded">

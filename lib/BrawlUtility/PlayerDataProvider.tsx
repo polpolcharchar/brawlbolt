@@ -21,12 +21,13 @@ export const PlayerDataProvider = ({ children }: { children: React.ReactNode }) 
     _setActivePlayerTag(newTag);
   }
 
-  const updatePlayerData = (playerTag: string, playerName: any, token: string = "") => {
+  const updatePlayerData = (playerTag: string, playerName: any, token: string, verified: boolean) => {
     setPlayerData((prevData) => ({
       ...prevData,
       [playerTag]: {
         name: playerName,
-        token: token
+        token: token,
+        verified: verified
       },
     }))
   }

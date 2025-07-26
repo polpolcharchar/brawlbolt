@@ -48,19 +48,6 @@ export default function UserPage() {
 
           </CardContent>
         </Card>
-
-        {/* Global Stats Card */}
-        {/* <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle>Explore Global Stats</CardTitle>
-            <CardDescription>See rankings, win rates, pick rates, and more across all brawlers and game modes.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button className="w-full mt-4 text-white" onClick={() => router.push("/globalBrawlerChart")}>
-              View Global Statistics
-            </Button>
-          </CardContent>
-        </Card> */}
       </div>
     </div>
   );

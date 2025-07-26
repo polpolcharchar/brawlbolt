@@ -19,6 +19,7 @@ import { handlePlayerSearch, verifyPassword } from "@/lib/BrawlUtility/BrawlData
 import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider"
 import { isValidTag } from "@/lib/BrawlUtility/BrawlConstants"
 import { Check, CheckCircle, ChevronDown, Loader } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export function PlayerSelector() {
   const {
@@ -28,7 +29,10 @@ export function PlayerSelector() {
     activePlayerTag,
     isLoadingPlayer,
     setIsLoadingPlayer
-  } = usePlayerData()
+  } = usePlayerData();
+
+  const router = useRouter()
+
 
   const [tagInput, setTagInput] = useState("");
   const [verifyInput, setVerifyInput] = useState("");
@@ -112,7 +116,10 @@ export function PlayerSelector() {
                     {data.name || tag}
                   </Button>
                   {playerData[tag]["token"] && (
-                    <span title="Verified"><CheckCircle className="text-(--primary)" /></span>
+                    <div className="flex items-center justify-center gap-1">
+                      <span title="Verified"><CheckCircle className="text-(--primary)" /></span>
+                      <p className="text-sm text-gray-500">Verified</p>
+                    </div>
                   )}
                 </div>
 
@@ -126,24 +133,35 @@ export function PlayerSelector() {
           {activePlayerTag && !playerData[activePlayerTag]["token"] && (
             <div className="space-y-2">
               <h4 className="text-lg font-semibold">Verify {activePlayerTag}</h4>
-              <div className="flex gap-2">
-                <Input
-                  value={verifyInput}
-                  onChange={(e) =>
-                    setVerifyInput(e.target.value)
-                  }
-                  type="password"
-                  placeholder="Enter your password"
-                  disabled={isLoadingPlayer}
-                />
-                <Button
-                  onClick={() => { handleVerifyPasswordSubmit() }}
-                  disabled={isVerifyingPassword || !verifyInput}
-                  className="text-white"
-                >
-                  {isLoadingPlayer ? "Loading..." : "Submit"}
+              {playerData[activePlayerTag]["verified"] ? (
+                <div>
+                  <div className="flex gap-2 mb-2">
+                    <Input
+                      value={verifyInput}
+                      onChange={(e) =>
+                        setVerifyInput(e.target.value)
+                      }
+                      type="password"
+                      placeholder="Enter your password"
+                      disabled={isLoadingPlayer}
+                    />
+                    <Button
+                      onClick={() => { handleVerifyPasswordSubmit() }}
+                      disabled={isVerifyingPassword || !verifyInput}
+                      className="text-white"
+                    >
+                      {isLoadingPlayer ? "Loading..." : "Submit"}
+                    </Button>
+                  </div>
+                  <Button className="w-full text-white" onClick={() => router.push("/verify")}>
+                    Forgot password? Re-verify Account
+                  </Button>
+                </div>
+              ) : (
+                <Button className="w-full text-white" onClick={() => router.push("/verify")}>
+                  Verify Account
                 </Button>
-              </div>
+              )}
             </div>
           )}
 
