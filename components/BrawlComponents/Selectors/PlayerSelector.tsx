@@ -1,25 +1,25 @@
 "use client"
 
-import { useState } from "react"
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent
-} from "@/components/ui/popover"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
+  DialogTrigger
 } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from "@/components/ui/popover"
+import { isValidTag } from "@/lib/BrawlUtility/BrawlConstants"
 import { handlePlayerSearch, verifyPassword } from "@/lib/BrawlUtility/BrawlDataFetcher"
 import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider"
-import { isValidTag } from "@/lib/BrawlUtility/BrawlConstants"
-import { Check, CheckCircle, ChevronDown, Loader } from "lucide-react"
+import { CheckCircle, ChevronDown, Loader } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useState } from "react"
 
 export function PlayerSelector() {
   const {
@@ -53,13 +53,15 @@ export function PlayerSelector() {
       const normalizedTag = tagToUse.startsWith("#") ? tagToUse.substring(1) : tagToUse
       setActivePlayerTag(normalizedTag)
       setTagInput("")
-      setOpen(false);
+      // setOpen(false);
     }
   }
 
   const [isVerifyingPassword, setIsVerifyingPassword] = useState(false);
   const handleVerifyPasswordSubmit = () => {
     setIsVerifyingPassword(true);
+
+    setVerifyErrorMessage("");
 
     const tagToVerify = activePlayerTag;
 
@@ -69,17 +71,9 @@ export function PlayerSelector() {
       } else {
         updatePlayerData(tagToVerify, playerData[tagToVerify].name, message);
       }
+      setIsVerifyingPassword(false);
     });
-
     setVerifyInput("");
-
-  }
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault()
-      handleNewTagSubmit()
-    }
   }
 
   return (
@@ -144,6 +138,11 @@ export function PlayerSelector() {
                       type="password"
                       placeholder="Enter your password"
                       disabled={isLoadingPlayer}
+                      onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                        if (e.key === "Enter") {
+                          handleVerifyPasswordSubmit();
+                        }
+                      }}
                     />
                     <Button
                       onClick={() => { handleVerifyPasswordSubmit() }}
@@ -152,6 +151,9 @@ export function PlayerSelector() {
                     >
                       {isLoadingPlayer ? "Loading..." : "Submit"}
                     </Button>
+                  </div>
+                  <div className="text-left font-bold text-red-500 mb-2">
+                      <p>{verifyErrorMessage}</p>
                   </div>
                   <Button className="w-full text-white" onClick={() => router.push("/verify")}>
                     Forgot password? Re-verify Account
@@ -173,8 +175,11 @@ export function PlayerSelector() {
                 onChange={(e) =>
                   setTagInput(e.target.value.toUpperCase().replaceAll("O", "0"))
                 }
-                onKeyDown={handleKeyDown}
-                placeholder="Enter a player tag..."
+                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                  if (e.key === "Enter") {
+                    handleNewTagSubmit();
+                  }
+                }} placeholder="Enter a player tag..."
                 disabled={isLoadingPlayer}
               />
               <Button

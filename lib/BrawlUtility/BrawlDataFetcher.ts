@@ -152,24 +152,26 @@ export const fetchGlobalScanInfo = async () => {
 
 }
 
-export const fetchMatches = async (playerTag: string, datetime: string, numBefore: number, numAfter: number, setIsLoading: (v: boolean) => void) => {
+export const fetchMatches = async (playerTag: string, datetime: string, numBefore: number, numAfter: number, setIsLoading: (v: boolean) => void, accountToken: string) => {
+    setIsLoading(true);
 
     const requestBody = {
         "type": "queryGames",
         "playerTag": playerTag,
         "datetime": datetime,
         "numBefore": numBefore,
-        "numAfter": numAfter
+        "numAfter": numAfter,
+        "token": accountToken
     }
 
     const requestResult = await requestServer(JSON.stringify(requestBody), setIsLoading);
+    setIsLoading(false);
 
     if (requestResult) {
         return requestResult;
     } else {
         return null;
     }
-
 }
 
 export const initiateVerification = async (playerTag: string, callback: (success: boolean, token?: string, iconID?: number) => void) => {

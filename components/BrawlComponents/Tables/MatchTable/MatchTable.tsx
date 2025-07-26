@@ -39,7 +39,6 @@ export const MatchTable = ({ matchesJSON, playerTag }: { matchesJSON: any[], pla
             <MatchInfoDialog battleData={currentBattle} setCurrentBattle={setCurrentBattle}></MatchInfoDialog>
 
             <Table className="w-full">
-                <TableCaption>{playerTag}</TableCaption>
                 <TableHeader>
                     <TableRow>
                         <TableHead className="min-w-[100px]">Date</TableHead>

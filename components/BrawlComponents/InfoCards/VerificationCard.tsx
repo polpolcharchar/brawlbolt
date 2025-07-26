@@ -5,12 +5,13 @@ import { Button } from "@/components/ui/button";
 import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
 import { finalizeVerification, initiateVerification, verifyStep } from "@/lib/BrawlUtility/BrawlDataFetcher";
 import { getBrawlerNameFromIconID } from "@/lib/BrawlUtility/BrawlConstants";
-import { Frown } from "lucide-react";
+import { ArrowRight, Frown } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 
 export const VerificationCard = () => {
 
-    const { activePlayerTag } = usePlayerData();
+    const { activePlayerTag, playerData, updatePlayerData } = usePlayerData();
 
     const [message, setMessage] = useState("");
 
@@ -27,6 +28,7 @@ export const VerificationCard = () => {
     const handlePasswordSubmit = () => {
         finalizeVerification(tagToVerify, verificationToken, inputPassword, (success: boolean) => {
             if (success) {
+                updatePlayerData(tagToVerify, playerData[tagToVerify]["name"], "", true);
                 setVerificationState("complete");
             } else {
                 setVerificationState("tryLater");
@@ -74,12 +76,17 @@ export const VerificationCard = () => {
                 </CardHeader>
 
                 {verificationStage == "initial" && (
-                    <CardContent className="flex flex-col gap-4">
+                    <CardContent className="flex flex-col gap-2">
 
-                        <CardDescription>This process will take around 3 minutes</CardDescription>
+                        <CardDescription>
+                            {"To prove you own an account, you simply have to change the account's icon a few times. "}
+                            {"This change can be reverted as soon as verification is finished."}<br />
+                            {"This process will take around 3 minutes. "}<br />
+                            {"When complete, you will set a BrawlBolt password that can be used for faster verification in the future. "}
+                        </CardDescription>
 
                         <div className="flex gap-4">
-                            <p className="text-lg font-bold">
+                            <p className="text-lg">
                                 You are verifying:
                             </p>
                             <PlayerSelector />
@@ -165,7 +172,7 @@ export const VerificationCard = () => {
 
                         <div className="w-full h-4 bg-gray-300 rounded">
                             <div
-                                className="h-full bg-blue-500 rounded"
+                                className="h-full bg-(--primary) rounded"
                                 style={{ width: `${((60 - waitingSeconds) / 60) * 100}%` }}
                             />
                         </div>
@@ -184,12 +191,17 @@ export const VerificationCard = () => {
                             Success! Enter a password:
                         </p>
 
-                        <input
+                        <Input
                             type="password"
                             placeholder="Enter your password"
                             value={inputPassword}
                             onChange={(e) => setInputPassword(e.target.value)}
                             className="px-4 py-2 border border-gray-400 rounded-md text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                                if (e.key === "Enter") {
+                                    handlePasswordSubmit();
+                                }
+                            }}
                         />
                         <Button onClick={handlePasswordSubmit} className="text-gray-200">
                             Submit
@@ -198,13 +210,14 @@ export const VerificationCard = () => {
                 )}
 
                 {verificationStage == "complete" && (
-                    <CardContent className="flex flex-col gap-4">
-                        <div className="flex gap-4">
-                            <p className="text-lg font-bold">
-                                Success! {tagToVerify} has been verified and your password has been saved.
-                            </p>
+                    <CardDescription className="mx-4 text-lg flex flex-col gap-2">
+                        {`Success! ${tagToVerify} has been verified and your password has been saved. `}
+                        {`You can now log in by providing your account's password in the account selector.`}
+                        <div className="flex items-center gap-2">
+                            <ArrowRight />
+                            <PlayerSelector />
                         </div>
-                    </CardContent>
+                    </CardDescription>
                 )}
 
                 {verificationStage == "tryLater" && (
