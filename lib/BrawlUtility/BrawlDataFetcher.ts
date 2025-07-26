@@ -197,7 +197,7 @@ export const initiateVerification = async (playerTag: string, callback: (success
     return true;
 }
 
-export const verifyStep = async (playerTag: string, token: string, callback: (success: boolean, readyForPassword?: boolean, verificationsRemaining?: number, iconID?: number) => void) => {
+export const verifyStep = async (playerTag: string, token: string, callback: (success: boolean, message: string, readyForPassword?: boolean, verificationsRemaining?: number, iconID?: number) => void) => {
     const requestBody = {
         "type": "verifyAccount",
         "verificationRequestType": "verifyStep",
@@ -208,20 +208,20 @@ export const verifyStep = async (playerTag: string, token: string, callback: (su
     const result = await requestServer(JSON.stringify(requestBody), () => { });
 
     if (!result) {
-        callback(false)
-        return false
+        callback(false, "success");
+        return false;
     }
 
     const parsedResult = JSON.parse(result);
 
     if ("error" in parsedResult) {
-        callback(false)
+        callback(false, parsedResult["error"]);
         return false
     } else if ("readyForPassword" in parsedResult && parsedResult["readyForPassword"]) {
-        callback(true, true, parsedResult["verificationsRemaining"], -1);
+        callback(true, "ready for password", true, parsedResult["verificationsRemaining"], -1);
         return true;
     } else {
-        callback(true, false, parsedResult["verificationsRemaining"], parsedResult["newIconIdToSet"]);
+        callback(true, "more verification steps required", false, parsedResult["verificationsRemaining"], parsedResult["newIconIdToSet"]);
         return true;
     }
 }
@@ -251,4 +251,31 @@ export const finalizeVerification = async (playerTag: string, token: string, pas
         callback(true);
         return true;
     }
+}
+
+export const verifyPassword = async (playerTag: string, password: string, callback: (success: boolean, message: string) => void) => {
+    const requestBody = {
+        "type": "verifyPassword",
+        "playerTag": playerTag,
+        "password": password
+    }
+
+    const requestResult = await requestServer(JSON.stringify(requestBody), () => {});
+
+    if(!requestResult){
+        callback(false, "unknown error");
+        return false;
+    }
+
+    const parsedResult = JSON.parse(requestResult);
+
+    if("error" in parsedResult){
+        callback(false, parsedResult["error"]);
+        return false;
+    }else{
+        callback(true, parsedResult["token"]);
+        return true;
+    }
+
+    
 }

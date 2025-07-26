@@ -3,29 +3,30 @@
 import React, { createContext, useContext, useState } from "react"
 import { useRouter, usePathname } from "next/navigation"
 
-const PlayerDataContext = createContext<any>(null)
+const PlayerDataContext = createContext<any>(null);
 
 export const PlayerDataProvider = ({ children }: { children: React.ReactNode }) => {
   const [playerData, setPlayerData] = useState<Record<string, any>>({});
   const [activePlayerTag, _setActivePlayerTag] = useState<string | null>(null);
   const [isLoadingPlayer, setIsLoadingPlayer] = useState<boolean>(false);
 
-  const router = useRouter()
-  const pathname = usePathname()
+  const router = useRouter();
+  const pathname = usePathname();
 
   const setActivePlayerTag = (newTag: string) => {
     if (activePlayerTag && pathname?.endsWith(activePlayerTag)) {
-      const newPath = pathname.replace(new RegExp(`${activePlayerTag}$`), newTag)
-      router.replace(newPath)
+      const newPath = pathname.replace(new RegExp(`${activePlayerTag}$`), newTag);
+      router.replace(newPath);
     }
-    _setActivePlayerTag(newTag)
+    _setActivePlayerTag(newTag);
   }
 
-  const updatePlayerData = (playerTag: string, playerD: any) => {
+  const updatePlayerData = (playerTag: string, playerName: any, token: string = "") => {
     setPlayerData((prevData) => ({
       ...prevData,
       [playerTag]: {
-        name: playerD,
+        name: playerName,
+        token: token
       },
     }))
   }
@@ -46,4 +47,4 @@ export const PlayerDataProvider = ({ children }: { children: React.ReactNode }) 
   )
 }
 
-export const usePlayerData = () => useContext(PlayerDataContext)
+export const usePlayerData = () => useContext(PlayerDataContext);

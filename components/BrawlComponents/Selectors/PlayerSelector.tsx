@@ -15,10 +15,10 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { handlePlayerSearch } from "@/lib/BrawlUtility/BrawlDataFetcher"
+import { handlePlayerSearch, verifyPassword } from "@/lib/BrawlUtility/BrawlDataFetcher"
 import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider"
 import { isValidTag } from "@/lib/BrawlUtility/BrawlConstants"
-import { ChevronDown, Loader } from "lucide-react"
+import { Check, CheckCircle, ChevronDown, Loader } from "lucide-react"
 
 export function PlayerSelector() {
   const {
@@ -31,10 +31,12 @@ export function PlayerSelector() {
   } = usePlayerData()
 
   const [tagInput, setTagInput] = useState("");
+  const [verifyInput, setVerifyInput] = useState("");
+  const [verifyErrorMessage, setVerifyErrorMessage] = useState("");
 
   const [open, setOpen] = useState(false);
 
-  const handleSubmit = async (passedTag: string | undefined = undefined) => {
+  const handleNewTagSubmit = async (passedTag: string | undefined = undefined) => {
 
     const tagToUse = passedTag ? passedTag : tagInput;
 
@@ -51,10 +53,28 @@ export function PlayerSelector() {
     }
   }
 
+  const [isVerifyingPassword, setIsVerifyingPassword] = useState(false);
+  const handleVerifyPasswordSubmit = () => {
+    setIsVerifyingPassword(true);
+
+    const tagToVerify = activePlayerTag;
+
+    verifyPassword(tagToVerify, verifyInput, (success: boolean, message: string) => {
+      if (!success) {
+        setVerifyErrorMessage(message);
+      } else {
+        updatePlayerData(tagToVerify, playerData[tagToVerify].name, message);
+      }
+    });
+
+    setVerifyInput("");
+
+  }
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault()
-      handleSubmit()
+      handleNewTagSubmit()
     }
   }
 
@@ -74,28 +94,58 @@ export function PlayerSelector() {
               : "Accounts..."}<ChevronDown />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-80 p-4 space-y-4">
+        <PopoverContent className="w-80 p-4 space-y-4 mx-2">
           <div className="space-y-2">
             <h4 className="font-semibold text-lg">Active Players</h4>
             <div className="grid gap-2 max-h-40 overflow-y-auto">
               {Object.entries(playerData).map(([tag, data]: any) => (
-                <Button
-                  key={tag}
-                  variant={tag === activePlayerTag ? "default" : "secondary"}
-                  onClick={() => {
-                    setActivePlayerTag(tag);
-                    setOpen(false);
-                  }}
-                  className="justify-start text-white"
-                >
-                  {data.name || tag}
-                </Button>
+                <div key={tag} className="flex w-full gap-2 items-center">
+                  <Button
+                    key={tag}
+                    variant={tag === activePlayerTag ? "default" : "secondary"}
+                    onClick={() => {
+                      setActivePlayerTag(tag);
+                      // setOpen(false);
+                    }}
+                    className="flex-grow justify-start text-white"
+                  >
+                    {data.name || tag}
+                  </Button>
+                  {playerData[tag]["token"] && (
+                    <span title="Verified"><CheckCircle className="text-(--primary)" /></span>
+                  )}
+                </div>
+
               ))}
               {Object.keys(playerData).length === 0 && (
                 <p className="text-sm text-muted-foreground">No players yet</p>
               )}
             </div>
           </div>
+
+          {activePlayerTag && !playerData[activePlayerTag]["token"] && (
+            <div className="space-y-2">
+              <h4 className="text-lg font-semibold">Verify {activePlayerTag}</h4>
+              <div className="flex gap-2">
+                <Input
+                  value={verifyInput}
+                  onChange={(e) =>
+                    setVerifyInput(e.target.value)
+                  }
+                  type="password"
+                  placeholder="Enter your password"
+                  disabled={isLoadingPlayer}
+                />
+                <Button
+                  onClick={() => { handleVerifyPasswordSubmit() }}
+                  disabled={isVerifyingPassword || !verifyInput}
+                  className="text-white"
+                >
+                  {isLoadingPlayer ? "Loading..." : "Submit"}
+                </Button>
+              </div>
+            </div>
+          )}
 
           <div className="space-y-2">
             <h4 className="text-lg font-semibold">Add New Player</h4>
@@ -110,7 +160,7 @@ export function PlayerSelector() {
                 disabled={isLoadingPlayer}
               />
               <Button
-                onClick={() => { handleSubmit() }}
+                onClick={() => { handleNewTagSubmit() }}
                 disabled={isLoadingPlayer || !isValidTag(tagInput)}
                 className="text-white"
               >
@@ -152,7 +202,7 @@ export function PlayerSelector() {
           <Button
             className="ml-2 text-white"
             onClick={() => {
-              handleSubmit("GJCLVRQLG");
+              handleNewTagSubmit("GJCLVRQLG");
             }}
             disabled={"GJCLVRQLG" in playerData}
           >
