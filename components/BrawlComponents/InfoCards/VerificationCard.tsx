@@ -15,7 +15,7 @@ export const VerificationCard = () => {
 
     const [message, setMessage] = useState("");
 
-    const [verificationStage, setVerificationState] = useState("initial");
+    const [verificationStage, setVerificationState] = useState("complete");
     const [tagToVerify, setTagToVerify] = useState("");
 
     const [verificationToken, setVerificationToken] = useState("");
@@ -36,32 +36,45 @@ export const VerificationCard = () => {
         });
     }
 
+    // Handle Countdown
     useEffect(() => {
+        if (verificationStage === "waiting" && waitingSeconds % 15 === 0) {
+            verifyStep(tagToVerify, verificationToken,
+                (success: boolean, message: string, readyForPassword?: boolean, verificationsRemaining?: number, iconID?: number) => {
+                    if(waitingSeconds == 0){
+                        if (!success) {
+                            setVerificationState("verifyStep");
+                            setMessage(message);
+                        } else if (readyForPassword) {
+                            setVerificationState("passwordEntry");
+                        } else if (!verificationsRemaining || !iconID) {
+                            console.log("Unexpected state!");
+                        } else {
+                            setVerificationState("verifyStep");
+                            setIconID(iconID);
+                            setVerificationStepsRemaining(verificationsRemaining);
+                        }
+                    }else{
+
+                        //Only care about successes here. If not successful, we will keep trying until 0 seconds
+                        if(success && readyForPassword){
+                            setVerificationState("passwordEntry");
+                        }else if(success && iconID && verificationsRemaining){
+                            setVerificationState("verifyStep");
+                            setIconID(iconID);
+                            setVerificationStepsRemaining(verificationsRemaining);
+                        }
+                    }
+
+                });
+        }
+
         if (verificationStage === "waiting" && waitingSeconds > 0) {
             const timer = setTimeout(() => {
                 setWaitingSeconds(prev => prev - 1);
             }, 1000);
 
             return () => clearTimeout(timer);
-        }
-
-        if (verificationStage === "waiting" && waitingSeconds === 0) {
-            verifyStep(tagToVerify, verificationToken,
-                (success: boolean, message: string, readyForPassword?: boolean, verificationsRemaining?: number, iconID?: number) => {
-
-                    if (!success) {
-                        setVerificationState("verifyStep");
-                        setMessage(message);
-                    } else if (readyForPassword) {
-                        setVerificationState("passwordEntry");
-                    } else if (!verificationsRemaining || !iconID) {
-                        console.log("Unexpected state!");
-                    } else {
-                        setVerificationState("verifyStep");
-                        setIconID(iconID);
-                        setVerificationStepsRemaining(verificationsRemaining);
-                    }
-                });
         }
     }, [verificationStage, waitingSeconds]);
 
@@ -217,6 +230,9 @@ export const VerificationCard = () => {
                             <ArrowRight />
                             <PlayerSelector />
                         </div>
+                        <Button className="text-white" onClick={() => setVerificationState("initial")}>
+                            Verify another account
+                        </Button>
                     </CardDescription>
                 )}
 
