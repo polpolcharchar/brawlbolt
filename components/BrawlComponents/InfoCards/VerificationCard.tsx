@@ -1,12 +1,12 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { PlayerSelector } from "../Selectors/PlayerSelector";
-import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
-import { finalizeVerification, initiateVerification, verifyStep } from "@/lib/BrawlUtility/BrawlDataFetcher";
-import { getBrawlerNameFromIconID } from "@/lib/BrawlUtility/BrawlConstants";
-import { ArrowRight, Frown } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { getBrawlerNameFromIconID } from "@/lib/BrawlUtility/BrawlConstants";
+import { finalizeVerification, initiateVerification, verifyStep } from "@/lib/BrawlUtility/BrawlDataFetcher";
+import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
+import { ArrowRight, Frown } from "lucide-react";
+import { useEffect, useState } from "react";
+import { PlayerSelector } from "../Selectors/PlayerSelector";
 
 
 export const VerificationCard = () => {
@@ -15,7 +15,7 @@ export const VerificationCard = () => {
 
     const [message, setMessage] = useState("");
 
-    const [verificationStage, setVerificationState] = useState("complete");
+    const [verificationStage, setVerificationState] = useState("initial");
     const [tagToVerify, setTagToVerify] = useState("");
 
     const [verificationToken, setVerificationToken] = useState("");
@@ -41,7 +41,7 @@ export const VerificationCard = () => {
         if (verificationStage === "waiting" && waitingSeconds % 15 === 0) {
             verifyStep(tagToVerify, verificationToken,
                 (success: boolean, message: string, readyForPassword?: boolean, verificationsRemaining?: number, iconID?: number) => {
-                    if(waitingSeconds == 0){
+                    if (waitingSeconds == 0) {
                         if (!success) {
                             setVerificationState("verifyStep");
                             setMessage(message);
@@ -54,12 +54,12 @@ export const VerificationCard = () => {
                             setIconID(iconID);
                             setVerificationStepsRemaining(verificationsRemaining);
                         }
-                    }else{
+                    } else {
 
                         //Only care about successes here. If not successful, we will keep trying until 0 seconds
-                        if(success && readyForPassword){
+                        if (success && readyForPassword) {
                             setVerificationState("passwordEntry");
-                        }else if(success && iconID && verificationsRemaining){
+                        } else if (success && iconID && verificationsRemaining) {
                             setVerificationState("verifyStep");
                             setIconID(iconID);
                             setVerificationStepsRemaining(verificationsRemaining);
@@ -80,7 +80,6 @@ export const VerificationCard = () => {
 
     return (
         <div className="grid gap-8 max-w-xl w-full md:grid-cols-1">
-            {/* Player Stats Card */}
             <Card className="shadow-lg">
                 <CardHeader>
                     <CardTitle className="text-2xl font-bold">
@@ -246,7 +245,6 @@ export const VerificationCard = () => {
                         </div>
                     </CardContent>
                 )}
-
             </Card>
         </div>
     );
