@@ -1,3 +1,4 @@
+import { parse } from "path";
 import { isValidTag } from "./BrawlConstants";
 
 const requestServer = async (body: string, setIsLoading: (value: boolean) => void) => {
@@ -25,7 +26,7 @@ const requestServer = async (body: string, setIsLoading: (value: boolean) => voi
     }
 }
 
-export const handlePlayerSearch = async (tagToHandle: string, setIsLoading: (value: boolean) => void, updatePlayerData: (playerTag: string, playerD: any) => void) => {
+export const handlePlayerSearch = async (tagToHandle: string, setIsLoading: (value: boolean) => void, updatePlayerData: (playerTag: string, playerName: any, token: string, verified: boolean) => void) => {
 
     setIsLoading(true);
 
@@ -36,18 +37,18 @@ export const handlePlayerSearch = async (tagToHandle: string, setIsLoading: (val
         tagToHandle = tagToHandle.substring(1);
     }
 
-    updatePlayerData(tagToHandle, tagToHandle);
+    updatePlayerData(tagToHandle, tagToHandle, "", false);
 
     // Get info
     const playerInfo = await getPlayerInfo(tagToHandle);
     if (!playerInfo) {
-        updatePlayerData(tagToHandle, "Player not found");
+        updatePlayerData(tagToHandle, "Player not found", "", false);
         setIsLoading(false);
         return false;
     }
 
     //Add name:
-    updatePlayerData(tagToHandle, playerInfo['playerInfo']['name']);
+    updatePlayerData(tagToHandle, playerInfo['playerInfo']['name'], "", playerInfo['verified']);
 
     setIsLoading(false);
 
@@ -151,22 +152,132 @@ export const fetchGlobalScanInfo = async () => {
 
 }
 
-export const fetchMatches = async (playerTag: string, datetime: string, numBefore: number, numAfter: number, setIsLoading: (v: boolean) => void) => {
+export const fetchMatches = async (playerTag: string, datetime: string, numBefore: number, numAfter: number, setIsLoading: (v: boolean) => void, accountToken: string) => {
+    setIsLoading(true);
 
     const requestBody = {
         "type": "queryGames",
         "playerTag": playerTag,
         "datetime": datetime,
         "numBefore": numBefore,
-        "numAfter": numAfter
+        "numAfter": numAfter,
+        "token": accountToken
     }
 
     const requestResult = await requestServer(JSON.stringify(requestBody), setIsLoading);
+    setIsLoading(false);
 
     if (requestResult) {
         return requestResult;
     } else {
         return null;
     }
+}
 
+export const initiateVerification = async (playerTag: string, callback: (success: boolean, token?: string, iconID?: number) => void) => {
+    const requestBody = {
+        "type": "verifyAccount",
+        "playerTag": playerTag,
+        "verificationRequestType": "initiate"
+    }
+
+    const result = await requestServer(JSON.stringify(requestBody), () => { });
+
+    if (!result) {
+        callback(false)
+        return false
+    }
+
+    const parsedResult = JSON.parse(result);
+
+    if ("error" in parsedResult) {
+        callback(false)
+        return false
+    }
+
+    callback(true, parsedResult["token"], parsedResult["iconIdToSet"]);
+    return true;
+}
+
+export const verifyStep = async (playerTag: string, token: string, callback: (success: boolean, message: string, readyForPassword?: boolean, verificationsRemaining?: number, iconID?: number) => void) => {
+    const requestBody = {
+        "type": "verifyAccount",
+        "verificationRequestType": "verifyStep",
+        "playerTag": playerTag,
+        "token": token,
+    }
+
+    const result = await requestServer(JSON.stringify(requestBody), () => { });
+
+    if (!result) {
+        callback(false, "success");
+        return false;
+    }
+
+    const parsedResult = JSON.parse(result);
+
+    if ("error" in parsedResult) {
+        callback(false, parsedResult["error"]);
+        return false
+    } else if ("readyForPassword" in parsedResult && parsedResult["readyForPassword"]) {
+        callback(true, "ready for password", true, parsedResult["verificationsRemaining"], -1);
+        return true;
+    } else {
+        callback(true, "more verification steps required", false, parsedResult["verificationsRemaining"], parsedResult["newIconIdToSet"]);
+        return true;
+    }
+}
+
+export const finalizeVerification = async (playerTag: string, token: string, password: string, callback: (success: boolean) => void) => {
+    const requestBody = {
+        "type": "verifyAccount",
+        "verificationRequestType": "finalize",
+        "playerTag": playerTag,
+        "token": token,
+        "password": password
+    }
+
+    const result = await requestServer(JSON.stringify(requestBody), () => { });
+
+    if (!result) {
+        callback(false)
+        return false
+    }
+
+    const parsedResult = JSON.parse(result);
+
+    if ("error" in parsedResult) {
+        callback(false);
+        return false;
+    } else {
+        callback(true);
+        return true;
+    }
+}
+
+export const verifyPassword = async (playerTag: string, password: string, callback: (success: boolean, message: string) => void) => {
+    const requestBody = {
+        "type": "verifyPassword",
+        "playerTag": playerTag,
+        "password": password
+    }
+
+    const requestResult = await requestServer(JSON.stringify(requestBody), () => {});
+
+    if(!requestResult){
+        callback(false, "unknown error");
+        return false;
+    }
+
+    const parsedResult = JSON.parse(requestResult);
+
+    if("error" in parsedResult){
+        callback(false, parsedResult["error"]);
+        return false;
+    }else{
+        callback(true, parsedResult["token"]);
+        return true;
+    }
+
+    
 }

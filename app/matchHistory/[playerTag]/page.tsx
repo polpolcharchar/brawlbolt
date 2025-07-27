@@ -2,16 +2,17 @@
 
 import { handleDynamicPlayerTagPath } from '@/components/BrawlComponents/HandleDynamicPlayerTag';
 import ScarceDataAlertCard from '@/components/BrawlComponents/InfoCards/ScarceDataAlertCard';
+import { PlayerSelector } from '@/components/BrawlComponents/Selectors/PlayerSelector';
 import { MatchTable } from '@/components/BrawlComponents/Tables/MatchTable/MatchTable';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { fetchMatches } from '@/lib/BrawlUtility/BrawlDataFetcher';
 import { usePlayerData } from '@/lib/BrawlUtility/PlayerDataProvider';
 import { CalendarSearch, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function UserPage() {
   const params = useParams();
@@ -19,17 +20,15 @@ export default function UserPage() {
 
   handleDynamicPlayerTagPath({
     playerTagParam: playerTag,
-    onSuccess: (normalizedTag) => {
-      jumpToGameDate(new Date().toISOString(), true, normalizedTag);
-    },
   });
 
-  const { activePlayerTag } = usePlayerData();
+  const { activePlayerTag, playerData } = usePlayerData();
 
 
   const [popoverOpen, setPopoverOpen] = useState(false);
 
   const [matchesJSON, setMatchesJSON] = useState<any[]>([]);
+  const hasLoadedInitialGames = useRef(false);
 
   const [forwardDisabled, setForwardDisabled] = useState(false);
   const [backwardDisabled, setBackwardDisabled] = useState(false);
@@ -60,7 +59,8 @@ export default function UserPage() {
       formattedDate,
       firstRequest ? 10 : 5,
       firstRequest ? 0 : 5,
-      setIsLoading
+      setIsLoading,
+      playerData[activePlayerTag]["token"]
     );
     if (!requestResult) return;
 
@@ -81,7 +81,8 @@ export default function UserPage() {
       pivotDatetime,
       goForward ? 0 : 10, // numBefore
       goForward ? 10 : 0,  // numAfter
-      setIsLoading
+      setIsLoading,
+      playerData[activePlayerTag]["token"]
     );
 
     if (!requestResult) return;
@@ -103,63 +104,89 @@ export default function UserPage() {
   };
 
   useEffect(() => {
-    jumpToGameDate(new Date().toISOString(), true);
-  }, []);
+    if(!hasLoadedInitialGames.current && !isLoading && activePlayerTag && playerData[activePlayerTag] && playerData[activePlayerTag]["token"]){
+      jumpToGameDate(new Date().toISOString(), true);
+      hasLoadedInitialGames.current = true;
+    }
+  }, [playerData[activePlayerTag]]);
 
   return (
     <div>
       <Card className='border m-2 bg-(--background)'>
         <CardHeader className="flex flex-col items-center">
-          <p className="text-2xl font-bold mb-2">Games Table</p>
-          <div className="flex items-center">
-            <Button
-              variant="outline"
-              size="icon"
-              className="mx-2"
-              onClick={() => changeGamesPage(false)}
-              disabled={backwardDisabled}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <div className="flex items-center justify-center">
-              <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
-                <PopoverTrigger asChild>
-                  <Button variant="ghost" className="px-4" onClick={() => setPopoverOpen(true)}>
-                    <CalendarSearch />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    onSelect={(date) => {
-                      if (date) {
-                        const formatted = formatDateForBrawlStars(date)
-                        jumpToGameDate(formatted)
-                      }
-                      setPopoverOpen(false);
-                    }}
-                    autoFocus
-                    captionLayout="dropdown"
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-            <Button
-              variant="outline"
-              size="icon"
-              className="mx-2"
-              onClick={() => changeGamesPage(true)}
-              disabled={forwardDisabled}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
+          <CardTitle className="text-2xl font-bold mb-0">Match History</CardTitle>
+          <CardDescription className='mb-2'>{activePlayerTag}</CardDescription>
 
         </CardHeader>
 
         <CardContent>
-          {playerTag && (
-            <MatchTable matchesJSON={matchesJSON} playerTag={playerTag?.toString()} />
+          {playerTag && playerData[playerTag.toString()] && playerData[playerTag.toString()]["token"] ? (
+            <div>
+              <div className="flex items-center">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="mx-2"
+                  onClick={() => changeGamesPage(false)}
+                  disabled={backwardDisabled}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <div className="flex items-center justify-center">
+                  <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+                    <PopoverTrigger asChild>
+                      <Button variant="ghost" className="px-4" onClick={() => setPopoverOpen(true)}>
+                        <CalendarSearch />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        onSelect={(date) => {
+                          if (date) {
+                            const formatted = formatDateForBrawlStars(date)
+                            jumpToGameDate(formatted)
+                          }
+                          setPopoverOpen(false);
+                        }}
+                        autoFocus
+                        captionLayout="dropdown"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="mx-2"
+                  onClick={() => changeGamesPage(true)}
+                  disabled={forwardDisabled}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+              <MatchTable matchesJSON={matchesJSON} playerTag={playerTag.toString()} />
+            </div>
+          ) : (
+            <div className='flex flex-col items-center justify-center text-center'>
+              {playerTag && playerData[playerTag.toString()] && (
+                playerData[playerTag.toString()]["verified"] ? (
+                  <div>
+                    <div className="flex gap-2 items-center justify-center text-lg max-w-xl mb-2">
+                      <PlayerSelector />{` is not logged in!`}
+                    </div>
+                    <p className='text-lg'>{`Enter ${playerTag}'s BrawlBolt password using the player selector.`}</p>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="flex gap-2 items-center justify-center text-lg max-w-xl mb-2">
+                      <PlayerSelector />{` is not BrawlBolt verified.`}
+                    </div>
+                    <p className='text-lg'>{`Verify ${playerTag} using the player selector.`}</p>
+                  </div>
+                )
+              )}
+            </div>
           )}
         </CardContent>
       </Card>

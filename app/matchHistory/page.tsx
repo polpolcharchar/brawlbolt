@@ -38,7 +38,10 @@ export default function UserPage() {
         <Card className="shadow-lg">
           <CardHeader>
             <CardTitle>View Your Games</CardTitle>
-            <CardDescription>Enter a Brawl Stars Player Tag to view your games.</CardDescription>
+            <CardDescription>
+              {"Enter a Brawl Stars Player Tag to view your games. "}<br/>
+              {"Your account must be BrawlBolt verified."}
+              </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
 

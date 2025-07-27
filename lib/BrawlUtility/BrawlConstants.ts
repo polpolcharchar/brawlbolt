@@ -121,6 +121,7 @@ export const modeLabels = [
     { "value": "brawlHockey5V5", "label": "Brawl Hockey 5v5" },
     { "value": "brawlHockey", "label": "Brawl Hockey" },
     { "value": "soulCollector", "label": "Soul Collector" },
+    { "value": "hunters", "label": "Hunters" },
 ]
 export const rankedModeLabels = [
     { "value": "brawlBall", "label": "Brawl Ball" },
@@ -156,7 +157,8 @@ export const modeLabelMap = {
     botDrop: "Bot Drop",
     brawlHockey5V5: "Brawl Hockey 5v5",
     brawlHockey: "Brawl Hockey",
-    soulCollector: "Soul Collector"
+    soulCollector: "Soul Collector",
+    hunters: "Hunters"
 }
 export const rankedModeLabelMap = {
     brawlBall: "Brawl Ball",
@@ -240,4 +242,19 @@ export function getMode(match: any): string {
   } else {
     return "unknown";
   }
+}
+
+const BRAWLER_ICON_ID_TO_NAME: Record<number, string> = {
+  28000003: "Shelly",
+  28000007: "Nita",
+  28000004: "Colt",
+  28000010: "Bull",
+  28000005: "Brock",
+  28000009: "El Primo",
+  28000012: "Barley",
+  28000013: "Poco",
+  28000040: "Rosa",
+};
+export function getBrawlerNameFromIconID(id: number): string | undefined {
+  return BRAWLER_ICON_ID_TO_NAME[id];
 }
