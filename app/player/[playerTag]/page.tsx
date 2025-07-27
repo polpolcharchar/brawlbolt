@@ -2,8 +2,9 @@
 
 import { handleDynamicPlayerTagPath } from '@/components/BrawlComponents/HandleDynamicPlayerTag';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { usePlayerData } from '@/lib/BrawlUtility/PlayerDataProvider';
+import { CheckCircle, XCircle } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 
 export default function UserPage() {
@@ -12,45 +13,48 @@ export default function UserPage() {
 
   handleDynamicPlayerTagPath({ playerTagParam: playerTag });
 
-  const {activePlayerTag} = usePlayerData();
+  const { activePlayerTag, playerData } = usePlayerData();
 
   const router = useRouter()
 
-  const handleRedirect = async (basePath: string) => {
-    router.push(`/${basePath}/${activePlayerTag?.toString().replace("#", "")}`)
-  }
-
   return (
-    <div className="flex flex-col items-center justify-center min-h-[90vh] px-4 py-12 space-y-10">
-      <div className="max-w-4xl text-center space-y-4">
-        <h1 className="text-4xl font-bold tracking-tight">BrawlBolt Account Page</h1>
-        <p className="text-lg text-gray-600">
-          {activePlayerTag}
-        </p>
+    playerData[activePlayerTag] ? (
+      <div className="flex flex-1 flex-col gap-4 p-4">
+        <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+          <Card className="bg-muted/50 aspect-video rounded-xl text-center border-none">
+            <p className="text-6xl font-bold">{playerData[activePlayerTag].name}</p>
+            <p className="text-2xl text-gray-500">#{activePlayerTag}</p>
+          </Card>
+          <Card className="bg-muted/50 aspect-video rounded-xl text-left border-none pl-2 gap-2 text-2xl text-(--foreground) font-bold">
+            <p>Favorite brawler:</p>
+            <p>Favorite mode:</p>
+            <p>Last seen:</p>
+
+            <div className="flex items-center gap-1">
+              <p>BrawlBolt verified:</p>
+              {playerData[activePlayerTag]["verified"] ? (
+                <CheckCircle className='text-(--primary)' />
+
+              ) : (
+                <div className='flex gap-2 items-center'>
+                <XCircle className='text-(--destructive)'/>
+                <Button className='text-(--foreground)' onClick={() => router.push("/verify")}>
+                  Claim Now
+                </Button>
+                </div>
+            )}
+            </div>
+
+          </Card>
+          <Card className="bg-muted/50 aspect-video rounded-xl text-center border-none">
+            Basic match history: last 5 games, win or loss, mode, rank, implement from backend
+          </Card>
+        </div>
+        <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min" />
       </div>
-      <div className="grid gap-8 max-w-xl w-full md:grid-cols-1">
-
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-lg">Coming Soon...</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-4">
-            <CardDescription>Favorite mode, brawler, and more!</CardDescription>
-            <Button className='text-white'
-              onClick={() => {
-                handleRedirect("boltGraph");
-              }}
-            >
-              Go to BoltGraph
-            </Button>
-          </CardContent>
-          <CardFooter>
-            <p className="text-[0.5rem] text-gray-500">{"Account Verification?"}</p>
-
-          </CardFooter>
-        </Card>
-      </div>
-    </div>
-
+    ) : (
+      <div></div>
+    )
   );
+
 }
