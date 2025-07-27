@@ -136,7 +136,7 @@ export function GlobalBrawlerTable<TData, TValue>({
         const startStr = formatDate(startDate);
         const endStr = formatDate(endDate);
 
-        if (scanNumGames === -1) {
+        if (!scanNumGames || scanNumGames === -1) {
             setScanInfoMessage(`Calculated using unique games from ${startStr} to ${endStr}.`);
         } else {
             setScanInfoMessage(`Calculated using ${scanNumGames.toLocaleString()} unique games from ${startStr} to ${endStr}.`);
