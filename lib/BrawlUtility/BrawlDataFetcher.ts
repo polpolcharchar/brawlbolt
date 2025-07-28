@@ -281,3 +281,18 @@ export const verifyPassword = async (playerTag: string, password: string, callba
 
     
 }
+
+export const fetchPlayerOverview = async (playerTag: string) => {
+    const requestBody = {
+        "playerTag": playerTag,
+        "type": "getPlayerOverview",
+    }
+
+    const requestResult = requestServer(JSON.stringify(requestBody), () => {});
+    if(requestResult){
+        return requestResult;
+    }else{
+        return null;
+    }
+}
+
