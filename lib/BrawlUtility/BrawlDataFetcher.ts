@@ -1,4 +1,3 @@
-import { parse } from "path";
 import { isValidTag } from "./BrawlConstants";
 
 const requestServer = async (body: string, setIsLoading: (value: boolean) => void) => {
@@ -6,15 +5,17 @@ const requestServer = async (body: string, setIsLoading: (value: boolean) => voi
     setIsLoading(true);
 
     try {
-        const response = await fetch("https://hfdejn2qu3.execute-api.us-west-1.amazonaws.com/default/BrawlTrackerHandlerPython", {
+        const response = await fetch("https://api.brawlbolt.com", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body,
+            body: JSON.stringify({"body": body}),
         });
 
         if (response.ok) {
-            const result = await response.text();
-            return result;
+            const result = await response.json();
+            const resultBody = result["body"];
+
+            return resultBody;
         } else {
             return false;
         }
@@ -41,7 +42,7 @@ export const handlePlayerSearch = async (tagToHandle: string, setIsLoading: (val
 
     // Get info
     const playerInfo = await getPlayerInfo(tagToHandle);
-    if (!playerInfo) {
+    if (!playerInfo || !playerInfo["playerInfo"]) {
         updatePlayerData(tagToHandle, "Player not found", "", false);
         setIsLoading(false);
         return false;
