@@ -69,7 +69,7 @@ export function PlayerSelector() {
       if (!success) {
         setVerifyErrorMessage(message);
       } else {
-        updatePlayerData(tagToVerify, playerData[tagToVerify].name, message);
+        updatePlayerData(tagToVerify, playerData[tagToVerify].name, message, playerData[tagToVerify]["verified"]);
       }
       setIsVerifyingPassword(false);
     });
