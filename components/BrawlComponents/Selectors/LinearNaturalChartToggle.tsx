@@ -18,7 +18,7 @@ export const LinearNaturalChartToggle = ({
     }
 
     return (
-        <div onClick={toggle} className="cursor-pointer mt-2">
+        <div onClick={toggle} className="cursor-pointer mt-2 text-(--foreground)">
             {type === "linear" ? (
                 <ChartLineIcon/>
             ) : (

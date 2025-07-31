@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-table"
 import * as React from "react"
 
+import { Skeleton } from "@/components/ui/skeleton"
 import {
     Table,
     TableBody,
@@ -22,7 +23,6 @@ import { fetchGlobalScanInfo, fetchGlobalStats } from "@/lib/BrawlUtility/BrawlD
 import { useEffect, useState } from "react"
 import { CustomSelector } from "../../Selectors/CustomSelector"
 import { RegularRankedToggle } from "../../Selectors/RegularRankedToggle"
-import { Skeleton } from "@/components/ui/skeleton"
 
 export type BrawlerData = {
     name: string
@@ -49,11 +49,8 @@ function getTableDataForChildrenStats(stats: any): BrawlerData[] {
         };
     });
 
-
-
     // Calculate the total numGames
-    const totalNumGames = tableData.reduce((total: any, entry: any) => total + entry.numGames, 0);
-
+    // const totalNumGames = tableData.reduce((total: any, entry: any) => total + entry.numGames, 0);
     // Append the "Total" row
     // tableData.push({
     //     name: 'Total',
@@ -90,15 +87,6 @@ export function GlobalBrawlerTable<TData, TValue>({
             desc: true,
         },
     ]);
-
-    const dateFormat: any = {
-        month: "numeric",
-        day: "numeric",
-        hour: "numeric",
-        hour12: true
-    }
-
-    const [gameCollectionDatetime, setGameCollectionDatetime] = useState("");
 
     const [data, setData] = useState<TData[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
@@ -156,14 +144,12 @@ export function GlobalBrawlerTable<TData, TValue>({
                 setScanDatetime(parsedScanInfo["filterID"]);
                 setScanHourRange(parsedScanInfo["hourRange"]);
             }
-
         }
 
         if (scanInfoMessage == "") {
             setScanInfoMessage("Loading global scan info...");
             fetchScanInfo();
         }
-
     }, []);
 
     // Fetch Chart Data
@@ -179,8 +165,6 @@ export function GlobalBrawlerTable<TData, TValue>({
             }
 
             const parsedStats = JSON.parse(stats);
-
-            setGameCollectionDatetime(parsedStats[0]["datetime"]);
 
             setData(getTableDataForChildrenStats(parsedStats[0]['trieData']) as TData[]);
         };
@@ -202,9 +186,9 @@ export function GlobalBrawlerTable<TData, TValue>({
     return (
         <Card className="border bg-(--background) m-2 shadow-none h-[calc(95svh-var(--header-height))]!">
             <CardHeader className="block justify-between items-start">
-                <CardTitle className="text-2xl font-bold mb-0">Brawler Table</CardTitle>
+                <CardTitle className="text-2xl font-bold mb-0 text-(--foreground)">Brawler Table</CardTitle>
 
-                <div className="text-sm text-gray-300 mb-4">
+                <div className="text-sm text-(--muted-foreground) mb-4">
                     <p>{scanInfoMessage}</p>
                     <p><u><b>Click rows to access historical data.</b></u></p>
                     <p>Hover values for 95% confidence interval (may not be applicable).</p>
@@ -266,6 +250,7 @@ export function GlobalBrawlerTable<TData, TValue>({
                                         <TableCell
                                             key={cell.id}
                                             onClick={() => onBrawlerClick(row.getValue("name"))}
+                                            className="text-(--foreground)"
                                         >
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>

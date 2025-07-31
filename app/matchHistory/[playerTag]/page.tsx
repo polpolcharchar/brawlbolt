@@ -14,7 +14,7 @@ import { CalendarSearch, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
-export default function UserPage() {
+export default function MatchHistoryPage() {
   const params = useParams();
   const playerTag = params.playerTag;
 
@@ -23,7 +23,6 @@ export default function UserPage() {
   });
 
   const { activePlayerTag, playerData } = usePlayerData();
-
 
   const [popoverOpen, setPopoverOpen] = useState(false);
 
@@ -34,7 +33,6 @@ export default function UserPage() {
   const [backwardDisabled, setBackwardDisabled] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
-
 
   function formatDateForBrawlStars(date: Date): string {
     const iso = date.toISOString();
@@ -114,15 +112,14 @@ export default function UserPage() {
     <div>
       <Card className='border m-2 bg-(--background)'>
         <CardHeader className="flex flex-col items-center">
-          <CardTitle className="text-2xl font-bold mb-0">Match History</CardTitle>
-          <CardDescription className='mb-2'>{activePlayerTag}</CardDescription>
-
+          <CardTitle className="text-2xl font-bold mb-0 text-(--foreground)">Match History</CardTitle>
+          <CardDescription className='mb-2 text-(--muted-foreground)'>{activePlayerTag}</CardDescription>
         </CardHeader>
 
         <CardContent>
           {playerTag && playerData[playerTag.toString()] && playerData[playerTag.toString()]["token"] ? (
             <div>
-              <div className="flex items-center">
+              <div className="flex items-center text-(--foreground)">
                 <Button
                   variant="outline"
                   size="icon"
@@ -168,14 +165,14 @@ export default function UserPage() {
               <MatchTable matchesJSON={matchesJSON} playerTag={playerTag.toString()} />
             </div>
           ) : (
-            <div className='flex flex-col items-center justify-center text-center'>
+            <div className='flex flex-col items-center justify-center text-center text-lg text-(--foreground)'>
               {playerTag && playerData[playerTag.toString()] && (
                 playerData[playerTag.toString()]["verified"] ? (
                   <div>
-                    <div className="flex gap-2 items-center justify-center text-lg max-w-xl mb-2">
+                    <div className="flex gap-2 items-center justify-center max-w-xl mb-2">
                       <PlayerSelector />{` is not logged in!`}
                     </div>
-                    <p className='text-lg'>{`Enter ${playerTag}'s BrawlBolt password using the player selector.`}</p>
+                    <p>{`Enter ${playerTag}'s BrawlBolt password using the player selector.`}</p>
                   </div>
                 ) : (
                   <div>

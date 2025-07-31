@@ -5,7 +5,7 @@ import { handleDynamicPlayerTagPath } from '@/components/BrawlComponents/HandleD
 import { usePlayerData } from '@/lib/BrawlUtility/PlayerDataProvider';
 import { useParams } from 'next/navigation';
 
-export default function UserPage() {
+export default function BoltGraphPage() {
   const params = useParams();
   const playerTag = params.playerTag;
 

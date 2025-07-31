@@ -2,11 +2,11 @@
 
 import { columns } from "@/components/BrawlComponents/Tables/BrawlerTable/Columns";
 import { GlobalBrawlerTable } from "@/components/BrawlComponents/Tables/BrawlerTable/GlobalBrawlerTable";
-import { rankedModeLabelMap, rankedModeLabels } from "@/lib/BrawlUtility/BrawlConstants";
+import { rankedModeLabelMap } from "@/lib/BrawlUtility/BrawlConstants";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function UserPage() {
+export default function GlobalBrawlerTablePage() {
   const router = useRouter();
 
   const [mode, setMode] = useState("");

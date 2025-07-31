@@ -80,7 +80,7 @@ export const VerificationCard = () => {
 
     return (
         <div className="grid gap-8 max-w-xl w-full md:grid-cols-1">
-            <Card className="shadow-lg">
+            <Card className="shadow-lg text-(--foreground)">
                 <CardHeader>
                     <CardTitle className="text-2xl font-bold">
                         {tagToVerify ? `Verifying ${tagToVerify}` : 'Verify Account'}
@@ -116,7 +116,7 @@ export const VerificationCard = () => {
                                 setVerificationToken(token);
                                 setIconID(iconID);
                             })
-                        }} disabled={!activePlayerTag} className="text-gray-200">
+                        }} disabled={!activePlayerTag} className="text-(--foreground)">
                             GO!
                         </Button>
 
@@ -135,7 +135,7 @@ export const VerificationCard = () => {
                             )}
 
                             {verificationStepsRemaining != -1 && (
-                                <p className="text-sm text-gray-500">
+                                <p className="text-sm text-(--muted-foreground)">
                                     Full verification requires multiple attempts. {verificationStepsRemaining} more verification(s) needed.
                                 </p>
                             )}
@@ -162,7 +162,7 @@ export const VerificationCard = () => {
                             setVerificationState("waiting");
                             setWaitingSeconds(60);
                             setMessage("");
-                        }} className="text-gray-200">
+                        }} className="text-(--foreground)">
                             Click here once it is changed
                         </Button>
                     </CardContent>
@@ -173,7 +173,7 @@ export const VerificationCard = () => {
                     <CardContent className="flex flex-col gap-4">
 
                         {verificationStepsRemaining != -1 && (
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-(--muted-foreground)">
                                 Full verification requires multiple attempts. {verificationStepsRemaining} more verification(s) needed.
                             </p>
                         )}
@@ -215,7 +215,7 @@ export const VerificationCard = () => {
                                 }
                             }}
                         />
-                        <Button onClick={handlePasswordSubmit} className="text-gray-200">
+                        <Button onClick={handlePasswordSubmit} className="text-(--foreground)">
                             Submit
                         </Button>
                     </CardContent>
@@ -229,7 +229,7 @@ export const VerificationCard = () => {
                             <ArrowRight />
                             <PlayerSelector />
                         </div>
-                        <Button className="text-white" onClick={() => setVerificationState("initial")}>
+                        <Button className="text-(--foreground)" onClick={() => setVerificationState("initial")}>
                             Verify another account
                         </Button>
                     </CardDescription>

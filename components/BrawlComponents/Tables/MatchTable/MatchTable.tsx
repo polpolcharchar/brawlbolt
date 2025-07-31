@@ -50,7 +50,7 @@ export const MatchTable = ({ matchesJSON, playerTag }: { matchesJSON: any[], pla
                 </TableHeader>
                 <TableBody>
                     {matchesJSON.map((match) => (
-                        <TableRow key={match.battleTime} onClick={() => setCurrentBattle(match)}>
+                        <TableRow key={match.battleTime} onClick={() => setCurrentBattle(match)} className="text-(--foreground)">
                             <TableCell>{formatDate(match.battleTime)}</TableCell>
                             <TableCell>
                                 {modeLabelMap[getMode(match) as keyof typeof modeLabelMap] ?? getMode(match)}

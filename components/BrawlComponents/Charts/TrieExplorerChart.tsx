@@ -18,8 +18,8 @@ const CustomPlayerTooltip = ({ active, payload }: any) => {
         const { value, payload: data } = payload[0];
         const modeName: string = data.value;
         return (
-            <div className="bg-black p-2 border rounded-lg shadow text-sm text-white">
-                <p>{modeLabelMap[modeName as keyof typeof modeLabelMap] ??
+            <div className="bg-black p-2 border rounded-lg shadow text-sm text-(--foreground)">
+                <p className="text-lg font-bold">{modeLabelMap[modeName as keyof typeof modeLabelMap] ??
                     data.value
                         .toLowerCase()
                         .split(' ')
@@ -234,9 +234,9 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
     // const pageSize = (window ? window.innerWidth : 1000 < 900 ? 8 : 10);
     const [pageSize, setPageSize] = useState(10);
     useEffect(() => {
-        if(window.innerWidth < 800){
+        if (window.innerWidth < 800) {
             setPageSize(8);
-        }else{
+        } else {
             setPageSize(10);
         }
     }, []);
@@ -258,16 +258,16 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
         <Card className="border-none rounded-none shadow-none min-h-[calc(95svh-var(--header-height))] bg-[--background] flex flex-col">
             <CardHeader className="block justify-between items-start">
                 <div className="flex items-center gap-2">
-                    <CardTitle className="text-3xl font-bold mb-4" style={{ textShadow: "0 4px 16px var(--chart-1), 0 2px 8px var(--chart-1)" }}>
+                    <CardTitle className="text-3xl font-bold mb-4 text-(--foreground)" style={{ textShadow: "0 4px 16px var(--chart-1), 0 2px 8px var(--chart-1)" }}>
                         {"BoltGraph"}
                     </CardTitle>
                     <CardDescription>
                         {/* {playerTag} */}
-                        <LinkCopyIndicator url={"https://www.brawlbolt.com/" + (isGlobal ? "globalBoltGraph" : ("boltGraph/" + playerTag))} title={"Share this page!"}/>
+                        <LinkCopyIndicator url={"https://www.brawlbolt.com/" + (isGlobal ? "globalBoltGraph" : ("boltGraph/" + playerTag))} title={"Share this page!"} />
                     </CardDescription>
                 </div>
 
-                <div className="flex flex-col">
+                <div className="flex flex-col text-(--foreground)">
                     <div className="flex flex-col py-2">
                         <div className="font-semibold text-lg mb-2">Query</div>
                         <div className="flex flex-wrap gap-3">
@@ -375,11 +375,11 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
                                     />
                                     <label
                                         htmlFor={"sortByStatType" + playerTag}
-                                        className="flex items-center gap-1 cursor-pointer"
+                                        className="flex items-center gap-1 cursor-pointer text-(--muted-foreground) text-xs"
                                         title="Lock sorting type to y-axis value"
                                     >
-                                        <LockIcon size={16} className="text-muted-foreground" />
-                                        <span className="text-xs text-muted-foreground">Lock to y-axis value</span>
+                                        <LockIcon size={16} />
+                                        <span>Lock to y-axis value</span>
                                     </label>
                                 </div>
                             </div>
@@ -407,7 +407,6 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
                                 tickLine={false}
                                 tickMargin={2}
                                 axisLine={false}
-                                // angle={window.innerWidth < 900 ? -90 : -45}
                                 angle={-45}
                                 textAnchor="end"
                                 tickFormatter={(tick: string) => {
@@ -418,7 +417,6 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
                                             .map(word => word.charAt(0).toUpperCase() + word.slice(1))
                                             .join(' ');
                                 }}
-                            // tick={window.innerWidth < 900 ? { fontSize: 12 } : {}}
                             />
 
                             <YAxis
@@ -463,7 +461,7 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
                 </div>
             </CardContent>
 
-            <CardFooter className="flex justify-center gap-4">
+            <CardFooter className="flex justify-center gap-4 text-(--foreground)">
                 <Button
                     variant="outline"
                     disabled={pageStartingIndex === 0}
@@ -473,7 +471,7 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
                 >
                     Previous
                 </Button>
-                <div className="text-sm text-muted-foreground self-center">
+                <div className="text-sm text-(--muted-foreground) self-center">
                     Page {Math.floor(pageStartingIndex / pageSize + 1)} of {totalPages}
                 </div>
                 <Button

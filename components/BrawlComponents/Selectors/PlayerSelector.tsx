@@ -33,7 +33,6 @@ export function PlayerSelector() {
 
   const router = useRouter()
 
-
   const [tagInput, setTagInput] = useState("");
   const [verifyInput, setVerifyInput] = useState("");
   const [verifyErrorMessage, setVerifyErrorMessage] = useState("");
@@ -82,7 +81,7 @@ export function PlayerSelector() {
         <PopoverTrigger asChild>
           <Button
             variant="outline"
-            className="!border-(--primary-foreground) !bg-(--card)"
+            className="!border-(--primary-foreground) !bg-(--card) text-(--foreground)"
           >
             {isLoadingPlayer && <div className="flex items-center justify-center">
               <Loader className="h-6 w-6 animate-spin text-muted-foreground" />
@@ -92,7 +91,7 @@ export function PlayerSelector() {
               : "Accounts..."}<ChevronDown />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-80 p-4 space-y-4 mx-2">
+        <PopoverContent className="w-80 p-4 space-y-4 mx-2 text-(--foreground)">
           <div className="space-y-2">
             <h4 className="font-semibold text-lg">Active Players</h4>
             <div className="grid gap-2 max-h-40 overflow-y-auto">
@@ -105,7 +104,7 @@ export function PlayerSelector() {
                       setActivePlayerTag(tag);
                       // setOpen(false);
                     }}
-                    className="flex-grow justify-start text-white"
+                    className="flex-grow justify-start text-(--foreground)"
                   >
                     {data.name || tag}
                   </Button>
@@ -147,20 +146,20 @@ export function PlayerSelector() {
                     <Button
                       onClick={() => { handleVerifyPasswordSubmit() }}
                       disabled={isVerifyingPassword || !verifyInput}
-                      className="text-white"
+                      className="text-(--foreground)"
                     >
                       {isLoadingPlayer ? "Loading..." : "Submit"}
                     </Button>
                   </div>
                   <div className="text-left font-bold text-red-500 mb-2">
-                      <p>{verifyErrorMessage}</p>
+                    <p>{verifyErrorMessage}</p>
                   </div>
-                  <Button className="w-full text-white" onClick={() => router.push("/verify")}>
+                  <Button className="w-full text-(--foreground)" onClick={() => router.push("/verify")}>
                     Forgot password? Re-verify Account
                   </Button>
                 </div>
               ) : (
-                <Button className="w-full text-white" onClick={() => router.push("/verify")}>
+                <Button className="w-full text-(--foreground)" onClick={() => router.push("/verify")}>
                   Verify Account
                 </Button>
               )}
@@ -185,7 +184,7 @@ export function PlayerSelector() {
               <Button
                 onClick={() => { handleNewTagSubmit() }}
                 disabled={isLoadingPlayer || !isValidTag(tagInput)}
-                className="text-white"
+                className="text-(--foreground)"
               >
                 {isLoadingPlayer ? "Loading..." : "Add"}
               </Button>
@@ -195,26 +194,26 @@ export function PlayerSelector() {
           {/* What is a tag Dialog */}
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="text-white bg-blue-600 hover:bg-blue-700">
+              <Button className="text-(--foreground)">
                 Player Tag?
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-md text-(--foreground)">
               <DialogHeader>
-                <DialogTitle className="text-2xl font-semibold text-gray-200">
+                <DialogTitle className="text-2xl font-bold">
                   Brawl Stars Player Tags
                 </DialogTitle>
               </DialogHeader>
 
               <div>
-                <h3 className="text-xl font-semibold text-gray-200">What is mine?</h3>
-                <p className="text-gray-400 mb-2">
+                <h3 className="text-xl font-semibold">What is mine?</h3>
+                <p className="text-(--muted-foreground) mb-2">
                   Your (or any friend's) player tag can be found on any in-game account
                   page, under the profile picture. It begins with a <code>#</code>.
                 </p>
 
-                <h3 className="text-xl font-semibold text-gray-200">What is a player tag?</h3>
-                <p className="text-gray-400 mb-2">
+                <h3 className="text-xl font-semibold">What is a player tag?</h3>
+                <p className="text-(--muted-foreground) mb-2">
                   Every Brawl Stars account has a unique identifier that is used by the API.
                   This is <span className="font-bold">not</span> your username.
                 </p>
@@ -223,7 +222,7 @@ export function PlayerSelector() {
           </Dialog>
 
           <Button
-            className="ml-2 text-white"
+            className="ml-2 text-(--foreground)"
             onClick={() => {
               handleNewTagSubmit("GJCLVRQLG");
             }}

@@ -3,6 +3,7 @@
 import { handleDynamicPlayerTagPath } from '@/components/BrawlComponents/HandleDynamicPlayerTag';
 import { LinkCopyIndicator } from '@/components/BrawlComponents/Selectors/LinkCopyIndicator';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { modeLabelMap } from '@/lib/BrawlUtility/BrawlConstants';
 import { fetchPlayerOverview } from '@/lib/BrawlUtility/BrawlDataFetcher';
@@ -11,7 +12,7 @@ import { CheckCircle, CheckSquare, MinusSquare, XCircle, XSquare } from 'lucide-
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export default function UserPage() {
+export default function PlayerPage() {
   const params = useParams();
   const playerTag = params.playerTag;
 
@@ -40,15 +41,14 @@ export default function UserPage() {
 
   return (
     playerData[activePlayerTag] ? (
-      <div className="flex flex-1 flex-col gap-4 p-4">
+      <Card className="flex flex-1 flex-col gap-4 p-4 bg-(--background) border-none">
 
         <div className='flex flex-col items-center'>
-          <p className="text-6xl font-bold">{playerData[activePlayerTag].name}</p>
-          <div className='flex items-center text-gray-500'>
-            <p className="text-2xl text-gray-500">#{activePlayerTag}</p>
+          <p className="text-6xl font-bold text-(--foreground)">{playerData[activePlayerTag].name}</p>
+          <div className='flex items-center text-(--muted-foreground)'>
+            <p className="text-2xl">#{activePlayerTag}</p>
             <LinkCopyIndicator url={'https://www.brawlbolt.com/player/' + activePlayerTag} title={"Copy Profile Link"} />
           </div>
-
         </div>
 
         <div className='text-2xl text-(--foreground) font-bold flex flex-col items-center'>
@@ -95,12 +95,12 @@ export default function UserPage() {
           </div>
         </div>
 
-        <div className="grid auto-rows-min gap-4 xl:grid-cols-3 lg:grid-cols-2 place-items-center justify-center">
+        <div className="grid auto-rows-min gap-4 xl:grid-cols-3 lg:grid-cols-2 place-items-center justify-center text-(--foreground)">
 
           <div className="bg-(--card) h-full rounded-xl w-fit xl:w-full md:px-4 flex flex-col items-center py-4">
             {playerOverview && (
               <div className='flex flex-col items-center'>
-                <p className='text-lg font-bold my-2'>Favorite Brawlers</p>
+                <p className='text-lg font-bold my-2'>Favorite Brawlers (Regular Modes)</p>
                 <Table className="w-fit">
                   <TableHeader>
                     <TableRow>
@@ -127,7 +127,7 @@ export default function UserPage() {
                 </Table>
 
                 <Button
-                  className="text-(--foreground) mt-2"
+                  className="mt-2"
                   onClick={() => router.push("/boltGraph")}
                 >
                   More Detail
@@ -162,7 +162,7 @@ export default function UserPage() {
                 </Table>
 
                 <Button
-                  className="text-(--foreground) mt-2"
+                  className="mt-2"
                   onClick={() => router.push("/boltGraph")}
                 >
                   More Detail
@@ -171,7 +171,7 @@ export default function UserPage() {
             )}
           </div>
 
-          <div className="bg-(--card) h-full rounded-xl w-fit xl:w-full md:px-4   flex flex-col items-center py-4">
+          <div className="bg-(--card) h-full rounded-xl w-fit xl:w-full md:px-4 flex flex-col items-center py-4">
             {playerOverview && (
               <div className='flex flex-col items-center'>
                 <p className='text-lg font-bold my-2'>Recent Games</p>
@@ -213,7 +213,7 @@ export default function UserPage() {
                 </Table>
 
                 <Button
-                  className="text-(--foreground) mt-2"
+                  className="mt-2"
                   onClick={() => router.push("/matchHistory")}
                 >
                   View full Match History
@@ -222,7 +222,7 @@ export default function UserPage() {
             )}
           </div>
         </div>
-      </div>
+      </Card>
 
 
     ) : (

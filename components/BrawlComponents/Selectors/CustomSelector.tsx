@@ -63,12 +63,12 @@ export const CustomSelector = ({
 
     const SelectorPopover = (
         <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
+            <PopoverTrigger asChild className="text-(--foreground)">
                 <Button
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="max-w-[200px] justify-between"
+                    className="max-w-[200px] justify-between hover:text-(--foreground)"
                     disabled={disabled}
                 >
                     {value
@@ -130,7 +130,7 @@ export const CustomSelector = ({
                 <TooltipTrigger asChild>
                     <span>{SelectorPopover}</span>
                 </TooltipTrigger>
-                <TooltipContent className="text-white">{hoverMessage}</TooltipContent>
+                <TooltipContent className="text-(--foreground)">{hoverMessage}</TooltipContent>
             </Tooltip>
         </TooltipProvider>
     ) : (

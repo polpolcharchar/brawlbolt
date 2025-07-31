@@ -1,8 +1,7 @@
 "use client";
 
 import { BrawlerOverTimeChart } from "@/components/BrawlComponents/Charts/BrawlerOverTimeChart";
-import { Card } from "@/components/ui/card";
-import { rankedModeLabelMap, rankedModeLabels } from "@/lib/BrawlUtility/BrawlConstants";
+import { rankedModeLabelMap } from "@/lib/BrawlUtility/BrawlConstants";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 

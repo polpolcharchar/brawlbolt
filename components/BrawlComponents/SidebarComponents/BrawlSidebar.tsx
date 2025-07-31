@@ -7,8 +7,7 @@ import {
   SidebarGroupContent,
   SidebarInset,
   SidebarMenu,
-  SidebarProvider,
-  SidebarRail
+  SidebarProvider
 } from "@/components/ui/sidebar"
 import {
   Bot,
@@ -17,9 +16,9 @@ import {
   User
 } from "lucide-react"
 import * as React from "react"
+import { useState } from "react"
 import { NavMain } from "./navMain"
 import { NavSecondary } from "./navSecondary"
-import { useState } from "react"
 import { SiteHeader } from "./siteHeader"
 
 const data = {
@@ -47,12 +46,12 @@ const data = {
       isActive: true,
       items: [
         {
-          title: "BoltGraph",
-          url: "/globalBoltGraph",
+          title: "Brawler Table",
+          url: "/globalBrawlerTable",
         },
         {
-          title: "Brawler Chart",
-          url: "/globalBrawlerChart",
+          title: "BoltGraph",
+          url: "/globalBoltGraph",
         },
         {
           title: "Brawler History",
@@ -104,7 +103,7 @@ export function BrawlSidebar({ children }: { children: React.ReactNode }) {
             <SidebarGroup>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-(--muted-foreground)">
                     {"This material is unofficial and is not endorsed by Supercell. For more information see Supercell's Fan Content Policy: "}
                     <a href="https://www.supercell.com/fan-content-policy" target="blank">www.supercell.com/fan-content-policy</a>
                     {"."}
