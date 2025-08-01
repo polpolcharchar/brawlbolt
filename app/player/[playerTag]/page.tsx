@@ -28,7 +28,7 @@ export default function PlayerPage() {
       const requestResult = await fetchPlayerOverview(activePlayerTag);
 
       if (requestResult) {
-        setPlayerOverview(JSON.parse(requestResult));
+        setPlayerOverview(requestResult);
       } else {
         console.log("Error");
       }

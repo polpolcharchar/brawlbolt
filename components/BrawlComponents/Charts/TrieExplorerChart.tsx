@@ -169,15 +169,13 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
             return;
         }
 
-        let jsonData = JSON.parse(rawData);
-
         // Global function returns an array of data points over time. Only use a single one
         if (isGlobal) {
-            jsonData = jsonData[0];
+            rawData = rawData[0];
         }
 
         // Handle maps if provided
-        const potentialMaps = jsonData['potentialMaps'] || [];
+        const potentialMaps = rawData['potentialMaps'] || [];
         if (potentialMaps.length > 0) {
             setMapLabels(
                 potentialMaps.map((map: string) => ({
@@ -189,7 +187,7 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
             setMapLabels([]);
         }
 
-        const trieData = jsonData['trieData'] || [];
+        const trieData = rawData['trieData'] || [];
 
         const mapped = trieData.map((item: any) => {
             const value = targetAttribute === "type" ? item.pathID.split('$')[2] : item.pathID.split('$').pop() || '';

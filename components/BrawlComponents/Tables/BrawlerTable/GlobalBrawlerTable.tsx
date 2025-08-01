@@ -138,11 +138,11 @@ export function GlobalBrawlerTable<TData, TValue>({
             const scanInfo: any = await fetchGlobalScanInfo();
 
             if (scanInfo) {
-                const parsedScanInfo = JSON.parse(scanInfo);
+                // const parsedScanInfo = JSON.parse(scanInfo);
 
-                setScanNumGames(parsedScanInfo["numGames"]);
-                setScanDatetime(parsedScanInfo["filterID"]);
-                setScanHourRange(parsedScanInfo["hourRange"]);
+                setScanNumGames(scanInfo["numGames"]);
+                setScanDatetime(scanInfo["filterID"]);
+                setScanHourRange(scanInfo["hourRange"]);
             }
         }
 
@@ -164,9 +164,7 @@ export function GlobalBrawlerTable<TData, TValue>({
                 return;
             }
 
-            const parsedStats = JSON.parse(stats);
-
-            setData(getTableDataForChildrenStats(parsedStats[0]['trieData']) as TData[]);
+            setData(getTableDataForChildrenStats(stats[0]['trieData']) as TData[]);
         };
 
         fetchData();

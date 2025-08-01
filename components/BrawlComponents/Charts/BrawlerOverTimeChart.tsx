@@ -91,9 +91,7 @@ export const BrawlerOverTimeChart = ({
             return;
         }
 
-        const parsedStats: any = JSON.parse(stats);
-
-        const chartDataStats = parsedStats.map((item: any) => {
+        const chartDataStats = stats.map((item: any) => {
 
             if (item["trieData"].length == 0) {
                 return undefined;

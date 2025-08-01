@@ -8,14 +8,12 @@ const requestServer = async (body: string, setIsLoading: (value: boolean) => voi
         const response = await fetch("https://api.brawlbolt.com", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({"body": body}),
+            body: body,
         });
 
         if (response.ok) {
             const result = await response.json();
-            const resultBody = result["body"];
-
-            return resultBody;
+            return result;
         } else {
             return false;
         }
@@ -62,7 +60,7 @@ export const getPlayerInfo = async (playerTag: string) => {
     const requestResult = await requestServer(requestBody, () => { });
 
     if (requestResult) {
-        return JSON.parse(requestResult);
+        return requestResult;
     } else {
         console.error("Failed to fetch player info");
         return null;
@@ -189,14 +187,12 @@ export const initiateVerification = async (playerTag: string, callback: (success
         return false
     }
 
-    const parsedResult = JSON.parse(result);
-
-    if ("error" in parsedResult) {
+    if ("error" in result) {
         callback(false)
         return false
     }
 
-    callback(true, parsedResult["token"], parsedResult["iconIdToSet"]);
+    callback(true, result["token"], result["iconIdToSet"]);
     return true;
 }
 
@@ -215,16 +211,14 @@ export const verifyStep = async (playerTag: string, token: string, callback: (su
         return false;
     }
 
-    const parsedResult = JSON.parse(result);
-
-    if ("error" in parsedResult) {
-        callback(false, parsedResult["error"]);
+    if ("error" in result) {
+        callback(false, result["error"]);
         return false
-    } else if ("readyForPassword" in parsedResult && parsedResult["readyForPassword"]) {
-        callback(true, "ready for password", true, parsedResult["verificationsRemaining"], -1);
+    } else if ("readyForPassword" in result && result["readyForPassword"]) {
+        callback(true, "ready for password", true, result["verificationsRemaining"], -1);
         return true;
     } else {
-        callback(true, "more verification steps required", false, parsedResult["verificationsRemaining"], parsedResult["newIconIdToSet"]);
+        callback(true, "more verification steps required", false, result["verificationsRemaining"], result["newIconIdToSet"]);
         return true;
     }
 }
@@ -245,9 +239,7 @@ export const finalizeVerification = async (playerTag: string, token: string, pas
         return false
     }
 
-    const parsedResult = JSON.parse(result);
-
-    if ("error" in parsedResult) {
+    if ("error" in result) {
         callback(false);
         return false;
     } else {
@@ -270,13 +262,11 @@ export const verifyPassword = async (playerTag: string, password: string, callba
         return false;
     }
 
-    const parsedResult = JSON.parse(requestResult);
-
-    if("error" in parsedResult){
-        callback(false, parsedResult["error"]);
+    if("error" in requestResult){
+        callback(false, requestResult["error"]);
         return false;
     }else{
-        callback(true, parsedResult["token"]);
+        callback(true, requestResult["token"]);
         return true;
     }
 

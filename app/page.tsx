@@ -55,7 +55,7 @@ export default function LandingPage() {
             <CardDescription>See rankings, win rates, pick rates, and more across all brawlers and game modes.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full mt-4 text-(--foreground)" onClick={() => router.push("/globalBrawlerChart")}>
+            <Button className="w-full mt-4 text-(--foreground)" onClick={() => router.push("/globalBrawlerTable")}>
               View Global Statistics
             </Button>
           </CardContent>

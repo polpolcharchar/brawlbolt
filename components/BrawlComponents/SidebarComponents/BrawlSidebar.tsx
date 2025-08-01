@@ -41,7 +41,7 @@ const data = {
     },
     {
       title: "Global Statistics",
-      url: "/globalBrawlerChart",
+      url: "/globalBrawlerTable",
       icon: Bot,
       isActive: true,
       items: [

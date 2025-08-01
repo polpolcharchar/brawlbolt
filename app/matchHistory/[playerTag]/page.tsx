@@ -62,8 +62,7 @@ export default function MatchHistoryPage() {
     );
     if (!requestResult) return;
 
-    const parsed = JSON.parse(requestResult);
-    setMatchesJSON(parsed);
+    setMatchesJSON(requestResult);
     setForwardDisabled(false);
     setBackwardDisabled(false);
   }
@@ -85,9 +84,7 @@ export default function MatchHistoryPage() {
 
     if (!requestResult) return;
 
-    const parsed = JSON.parse(requestResult);
-
-    if (parsed.length == 0) {
+    if (requestResult.length == 0) {
       if (goForward) {
         setForwardDisabled(true);
       } else {
@@ -96,7 +93,7 @@ export default function MatchHistoryPage() {
       return;
     }
 
-    setMatchesJSON(parsed);
+    setMatchesJSON(requestResult);
     setForwardDisabled(false);
     setBackwardDisabled(false);
   };
