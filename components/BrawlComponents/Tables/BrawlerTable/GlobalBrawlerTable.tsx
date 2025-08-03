@@ -182,7 +182,7 @@ export function GlobalBrawlerTable<TData, TValue>({
     });
 
     return (
-        <Card className="border bg-(--background) m-2 shadow-none h-[calc(95svh-var(--header-height))]!">
+        <Card className="border bg-(--background) m-2 shadow-none min-h-[500px] h-[calc(95svh-var(--header-height))]!">
             <CardHeader className="block justify-between items-start">
                 <CardTitle className="text-2xl font-bold mb-0 text-(--foreground)">Brawler Table</CardTitle>
 

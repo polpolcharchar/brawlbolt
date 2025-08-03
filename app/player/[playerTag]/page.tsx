@@ -127,7 +127,7 @@ export default function PlayerPage() {
                 </Table>
 
                 <Button
-                  className="mt-2"
+                  className="mt-2 text-(--foreground)"
                   onClick={() => router.push("/boltGraph")}
                 >
                   More Detail
@@ -162,7 +162,7 @@ export default function PlayerPage() {
                 </Table>
 
                 <Button
-                  className="mt-2"
+                  className="mt-2 text-(--foreground)"
                   onClick={() => router.push("/boltGraph")}
                 >
                   More Detail
@@ -213,7 +213,7 @@ export default function PlayerPage() {
                 </Table>
 
                 <Button
-                  className="mt-2"
+                  className="mt-2 text-(--foreground)"
                   onClick={() => router.push("/matchHistory")}
                 >
                   View full Match History
