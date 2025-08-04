@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { getMode, modeLabelMap } from "@/lib/BrawlUtility/BrawlConstants";
 import { useState } from "react";
-import { getAverageTrophies, MatchInfoDialog } from "./MatchInfoDialog";
+import { getAverageTrophies, getFormattedResultAndTrophyChange, MatchInfoDialog } from "./MatchInfoDialog";
 
 export function formatDate(dateStr: string): string {
 
@@ -56,7 +56,7 @@ export const MatchTable = ({ matchesJSON, playerTag }: { matchesJSON: any[], pla
                                 {modeLabelMap[getMode(match) as keyof typeof modeLabelMap] ?? getMode(match)}
                             </TableCell>
                             <TableCell>{match.event.map}</TableCell>
-                            <TableCell>{match.battle.trophyChange}</TableCell>
+                            <TableCell>{getFormattedResultAndTrophyChange(match.battle)}</TableCell>
                             <TableCell>{Math.round(getAverageTrophies(match.battle))}</TableCell>
                         </TableRow>
                     ))}

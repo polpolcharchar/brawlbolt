@@ -3,7 +3,7 @@ import { Star } from "lucide-react";
 import { formatDate } from "./MatchTable";
 import { getMode } from "@/lib/BrawlUtility/BrawlConstants";
 
-function getFormattedResultAndTrophyChange(battle: any) {
+export function getFormattedResultAndTrophyChange(battle: any) {
     function getResultFromTrophyChange(n: number): string {
         if (n > 0) return "Victory";
 
