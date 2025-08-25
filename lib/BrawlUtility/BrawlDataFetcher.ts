@@ -1,4 +1,4 @@
-import { isValidTag } from "./BrawlConstants";
+import { setBrawlerLabelUpdateAttempted, isValidTag, brawlerLabelUpdateAttempted, brawlerLabels, setBrawlerLabels } from "./BrawlConstants";
 
 const requestServer = async (body: string, setIsLoading: (value: boolean) => void) => {
 
@@ -255,22 +255,22 @@ export const verifyPassword = async (playerTag: string, password: string, callba
         "password": password
     }
 
-    const requestResult = await requestServer(JSON.stringify(requestBody), () => {});
+    const requestResult = await requestServer(JSON.stringify(requestBody), () => { });
 
-    if(!requestResult){
+    if (!requestResult) {
         callback(false, "unknown error");
         return false;
     }
 
-    if("error" in requestResult){
+    if ("error" in requestResult) {
         callback(false, requestResult["error"]);
         return false;
-    }else{
+    } else {
         callback(true, requestResult["token"]);
         return true;
     }
 
-    
+
 }
 
 export const fetchPlayerOverview = async (playerTag: string) => {
@@ -279,11 +279,37 @@ export const fetchPlayerOverview = async (playerTag: string) => {
         "type": "getPlayerOverview",
     }
 
-    const requestResult = requestServer(JSON.stringify(requestBody), () => {});
-    if(requestResult){
+    const requestResult = requestServer(JSON.stringify(requestBody), () => { });
+    if (requestResult) {
         return requestResult;
-    }else{
+    } else {
         return null;
     }
 }
 
+export const updateBrawlerLabels = async () => {
+
+    if (brawlerLabelUpdateAttempted) return;
+
+    setBrawlerLabelUpdateAttempted(true);
+
+    const requestBody = {
+        "type": "getBrawlerList",
+    }
+
+    const requestResult = await requestServer(JSON.stringify(requestBody), () => { });
+    if (requestResult) {
+        const brawlerLabels = requestResult["brawlers"].map((brawler: string) => {
+            const label = brawler
+                .toLowerCase()
+                .replace(/\b\w/g, (char) => char.toUpperCase());
+
+            return { value: brawler, label };
+        });
+
+        setBrawlerLabels(brawlerLabels);
+        return true;
+    } else {
+        return false;
+    }
+}

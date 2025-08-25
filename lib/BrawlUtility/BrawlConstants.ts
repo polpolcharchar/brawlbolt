@@ -1,4 +1,14 @@
-export const brawlerLabels = [
+
+// Initial labels
+// These may be updated from the API later
+export let brawlerLabelUpdateAttempted = false;
+export const setBrawlerLabelUpdateAttempted = (value: boolean) => {
+    brawlerLabelUpdateAttempted = value;
+}
+export const setBrawlerLabels = (labels: { value: string, label: string }[]) => {
+    brawlerLabels = labels;
+}
+export let brawlerLabels = [
     { "value": "8-BIT", "label": "8-Bit" },
     { "value": "ALLI", "label": "Alli" },
     { "value": "AMBER", "label": "Amber" },

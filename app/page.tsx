@@ -4,8 +4,10 @@
 import { PlayerSelector } from "@/components/BrawlComponents/Selectors/PlayerSelector"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { updateBrawlerLabels } from "@/lib/BrawlUtility/BrawlDataFetcher"
 import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider"
 import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 
 export default function LandingPage() {
   const router = useRouter()
@@ -15,6 +17,10 @@ export default function LandingPage() {
   const handleRedirect = async (basePath: string) => {
     router.push(`/${basePath}/${activePlayerTag.replace("#", "")}`)
   }
+
+  useEffect(() => {
+    updateBrawlerLabels();
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[90vh] px-4 py-12 space-y-10">

@@ -7,7 +7,7 @@ import {
     ChartTooltip
 } from "@/components/ui/chart";
 import { brawlerLabels, modeLabels, rankedModeLabels } from "@/lib/BrawlUtility/BrawlConstants";
-import { fetchGlobalStats } from "@/lib/BrawlUtility/BrawlDataFetcher";
+import { fetchGlobalStats, updateBrawlerLabels } from "@/lib/BrawlUtility/BrawlDataFetcher";
 import { Frown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Area, AreaChart, CartesianGrid, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from "recharts";
@@ -129,6 +129,10 @@ export const BrawlerOverTimeChart = ({
         }
 
     }, [mode, rankedVsRegularToggleValue, brawler, isActive]);
+
+    useEffect(() => {
+        updateBrawlerLabels();
+    }, []);
 
     return (
         <Card className="border bg-(--background) w-fit">
