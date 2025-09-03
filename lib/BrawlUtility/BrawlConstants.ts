@@ -238,6 +238,14 @@ const _mapToModeOverrides: Record<string, string> = {
     "Paperback Pond": "soulCollector",
     "Broiler Room": "soulCollector",
     "Kooky Gates": "soulCollector",
+
+    "Toot Town": "subwayRun",
+    "Metro Mayhem": "subwayRun",
+    "Backtrack Attack": "subwayRun",
+    "Loopy Line": "subwayRun",
+    "Trainbow Road": "subwayRun",
+    "Choo Choo Showdown": "subwayRun",
+    "T-Rail Rush": "subwayRun",
 }
 export function getMode(match: any): string {
   if (
