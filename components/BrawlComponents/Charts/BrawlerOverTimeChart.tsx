@@ -79,7 +79,7 @@ export const BrawlerOverTimeChart = ({
         brawlerTimeData[statTypeString] = "temp";
 
         const stats = await fetchGlobalStats(
-            10,
+            14,
             matchType,
             mode,
             brawler,
@@ -167,7 +167,7 @@ export const BrawlerOverTimeChart = ({
 
                 </div>
             </CardHeader>
-            <CardContent> {/* adjust 72px based on header height */}
+            <CardContent className="min-w-[60vw]">
                 <ChartContainer config={chartConfig} className="max-h-[60vh]">
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={chartData}>
@@ -272,12 +272,6 @@ export const BrawlerOverTimeChart = ({
                     </ResponsiveContainer>
                 </ChartContainer>
             </CardContent>
-            <CardFooter className="text-sm text-(--muted-foreground) text-center">
-                <Frown />
-                <p className="ml-2">
-                    {"Past global statistics have recently been reset due to a change in BrawlBolt formatting to allow for larger data sets. This will very likely not happen again."}
-                </p>
-            </CardFooter>
         </Card>
     );
 };
