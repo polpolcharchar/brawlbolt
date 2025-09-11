@@ -276,3 +276,13 @@ const BRAWLER_ICON_ID_TO_NAME: Record<number, string> = {
 export function getBrawlerNameFromIconID(id: number): string | undefined {
   return BRAWLER_ICON_ID_TO_NAME[id];
 }
+
+export const typeLabels = [
+  { "value": "regular", "label": "Regular" },
+  { "value": "ranked", "label": "Ranked" },
+]
+export const typeLabelsGlobal = [
+  { "value": "regular", "label": "Regular" },
+  { "value": "ranked", "label": "Ranked" },
+  { "value": "legendaryOrHigher", "label": "Legendary or Higher" }
+]

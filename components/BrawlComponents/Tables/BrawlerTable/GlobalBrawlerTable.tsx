@@ -18,11 +18,11 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { modeLabels, rankedModeLabels } from "@/lib/BrawlUtility/BrawlConstants"
+import { modeLabels, rankedModeLabels, typeLabelsGlobal } from "@/lib/BrawlUtility/BrawlConstants"
 import { fetchGlobalScanInfo, fetchGlobalStats } from "@/lib/BrawlUtility/BrawlDataFetcher"
 import { useEffect, useState } from "react"
 import { CustomSelector } from "../../Selectors/CustomSelector"
-import { RegularRankedToggle } from "../../Selectors/RegularRankedToggle"
+import { MatchTypeSelector } from "../../Selectors/MatchTypeSelector"
 
 export type BrawlerData = {
     name: string
@@ -69,8 +69,8 @@ interface DataTableProps<TData, TValue> {
     onBrawlerClick: (brawlerName: string) => void
     mode: string
     setMode: (value: string) => void
-    rankedVsRegularToggleValue: string
-    setRankedVsRegularToggleValue: (value: string) => void
+    matchType: string
+    setMatchType: (value: string) => void
 }
 
 export function GlobalBrawlerTable<TData, TValue>({
@@ -78,8 +78,8 @@ export function GlobalBrawlerTable<TData, TValue>({
     onBrawlerClick,
     mode,
     setMode,
-    rankedVsRegularToggleValue,
-    setRankedVsRegularToggleValue,
+    matchType,
+    setMatchType,
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([
         {
@@ -157,7 +157,7 @@ export function GlobalBrawlerTable<TData, TValue>({
         const fetchData = async () => {
             setLoading(true);
             setData([]);
-            const stats = await fetchGlobalStats(1, rankedVsRegularToggleValue, mode, "", "brawler");
+            const stats = await fetchGlobalStats(1, matchType, mode, "", "brawler");
             setLoading(false);
             if (!stats || stats.length === 0) {
                 console.error("No data returned from fetchGlobalStats");
@@ -168,7 +168,7 @@ export function GlobalBrawlerTable<TData, TValue>({
         };
 
         fetchData();
-    }, [mode, rankedVsRegularToggleValue]);
+    }, [mode, matchType]);
 
     const table = useReactTable({
         data,
@@ -193,15 +193,15 @@ export function GlobalBrawlerTable<TData, TValue>({
                 </div>
 
                 <div className="flex flex-wrap gap-4">
-                    <RegularRankedToggle
-                        rankedVsRegularToggleValue={rankedVsRegularToggleValue}
-                        setRankedVsRegularToggleValue={setRankedVsRegularToggleValue}
-                        statType=""
+                    <MatchTypeSelector
+                        matchType={matchType}
+                        setMatchType={setMatchType}
+                        isGlobal={true}
                     />
                     <CustomSelector
                         value={mode}
                         setValue={setMode}
-                        labels={(rankedVsRegularToggleValue == "regular" ? modeLabels : rankedModeLabels)}
+                        labels={(matchType == "regular" ? modeLabels : rankedModeLabels)}
                         noChoiceLabel="Select Mode..."
                         searchPlaceholder="Search Modes..."
                         emptySearch="No Mode Found"

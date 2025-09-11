@@ -9,7 +9,7 @@ export default function UserPage() {
   const searchParams = useSearchParams();
 
   const [mode, setMode] = useState("");
-  const [rankedVsRegularToggleValue, setRankedVsRegularToggleValue] = useState("ranked");
+  const [matchType, setMatchType] = useState("ranked");
 
   const [brawler, setBrawler] = useState<string>("");
 
@@ -22,11 +22,11 @@ export default function UserPage() {
     }
   }, [searchParams]);
 
-  const updateRankedVsRegularToggleValue = (newValue: string) => {
+  const updateMatchType = (newValue: string) => {
     if (newValue === "ranked" && rankedModeLabelMap[mode as keyof typeof rankedModeLabelMap] === undefined) {
       setMode("");
     }
-    setRankedVsRegularToggleValue(newValue);
+    setMatchType(newValue);
   };
 
   return (
@@ -34,8 +34,8 @@ export default function UserPage() {
       <BrawlerOverTimeChart
         mode={mode}
         setMode={setMode}
-        rankedVsRegularToggleValue={rankedVsRegularToggleValue}
-        setRankedVsRegularToggleValue={updateRankedVsRegularToggleValue}
+        matchType={matchType}
+        setMatchType={updateMatchType}
         brawler={brawler}
         setBrawler={setBrawler}
         isActive={true}

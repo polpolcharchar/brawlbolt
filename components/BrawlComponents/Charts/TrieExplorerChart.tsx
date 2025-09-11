@@ -12,6 +12,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { CustomSelector } from "../Selectors/CustomSelector";
 import { LinkCopyIndicator } from "../Selectors/LinkCopyIndicator";
+import { MatchTypeSelector } from "../Selectors/MatchTypeSelector";
 
 const CustomPlayerTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -58,8 +59,8 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
             setModeAndUpdateMap("brawlBall");
         }
 
-        if (value != "type" && rankedVsRegularToggleValue == "") {
-            updateRegularVsRankedToggleValueAndDependents("regular");
+        if (value != "type" && matchType == "") {
+            updateMatchTypeAndDependents("regular");
         }
 
         if (value == "map") {
@@ -70,7 +71,7 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
             setMode("");
             setMap("");
         } else if (value == "type") {
-            updateRegularVsRankedToggleValueAndDependents("");
+            updateMatchTypeAndDependents("");
         }
 
         // Update stat type and sorting:
@@ -90,9 +91,9 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
         ].filter(Boolean) as { value: string; label: string }[]//Filter out the null value if isGlobal
     );
 
-    const [rankedVsRegularToggleValue, setRankedVsRegularToggleValue] = useState(isGlobal ? "ranked" : "regular");
-    const updateRegularVsRankedToggleValueAndDependents = (value: string) => {
-        setRankedVsRegularToggleValue(value);
+    const [matchType, setMatchType] = useState(isGlobal ? "ranked" : "regular");
+    const updateMatchTypeAndDependents = (value: string) => {
+        setMatchType(value);
 
         if (value == "ranked" && (statType == "trophyChange" || statType == "trophyChangePerGame")) {
             setStatTypeAndUpdateDependents("winrateMinusStarRate");
@@ -102,10 +103,6 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
             setSortingStatType("winrate");
         }
     }
-    const [rankedVsRegularToggleLabels] = useState<{ value: string; label: string }[]>([
-        { value: "regular", label: "Regular" },
-        { value: "ranked", label: "Ranked" }
-    ]);
 
     const [statType, _setStatType] = useState("winrateMinusStarRate");
     const setStatTypeAndUpdateDependents = (value: string): void => {
@@ -122,12 +119,12 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
     const statTypeLabels = useMemo(() => {
         return [
             { value: "winrateMinusStarRate", label: "Winrate" },
-            rankedVsRegularToggleValue === "regular" && targetAttribute != "type" ? { value: "trophyChange", label: "Trophy Change" } : null,
-            rankedVsRegularToggleValue === "regular" && targetAttribute != "type" ? { value: "trophyChangePerGame", label: "Trophy Change / Game" } : null,
+            matchType === "regular" && targetAttribute != "type" ? { value: "trophyChange", label: "Trophy Change" } : null,
+            matchType === "regular" && targetAttribute != "type" ? { value: "trophyChangePerGame", label: "Trophy Change / Game" } : null,
             { value: "averageDuration", label: "Average Duration" },
             { value: "numGames", label: "Games Played" },
         ].filter(Boolean) as { value: string; label: string }[]
-    }, [rankedVsRegularToggleValue]);
+    }, [matchType]);
 
     const [mapLabels, setMapLabels] = useState<{ value: string; label: string }[]>([]);
 
@@ -137,12 +134,12 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
         return [
             { value: "winrate", label: "Winrate" },
             { value: "starRate", label: "Star Rate" },
-            rankedVsRegularToggleValue == "regular" && targetAttribute != "type" ? { value: "trophyChange", label: "Trophy Change" } : null,
-            rankedVsRegularToggleValue == "regular" && targetAttribute != "type" ? { value: "trophyChangePerGame", label: "Trophy Change / Game" } : null,
+            matchType == "regular" && targetAttribute != "type" ? { value: "trophyChange", label: "Trophy Change" } : null,
+            matchType == "regular" && targetAttribute != "type" ? { value: "trophyChangePerGame", label: "Trophy Change / Game" } : null,
             { value: "averageDuration", label: "Average Duration" },
             { value: "numGames", label: "Games Played" },
         ].filter(Boolean) as { value: string; label: string }[]
-    }, [rankedVsRegularToggleValue]);
+    }, [matchType]);
 
     const [chartData, setChartData] = useState<
         { value: string; winrate: number }[]
@@ -159,9 +156,9 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
         let rawData: any;
 
         if (isGlobal) {
-            rawData = await fetchGlobalStats(1, rankedVsRegularToggleValue, mode, brawler, targetAttribute);
+            rawData = await fetchGlobalStats(1, matchType, mode, brawler, targetAttribute);
         } else {
-            rawData = await fetchTrieData(rankedVsRegularToggleValue, mode, map, brawler, targetAttribute, playerTag, "overall", false, () => { });
+            rawData = await fetchTrieData(matchType, mode, map, brawler, targetAttribute, playerTag, "overall", false, () => { });
         }
 
         if (!rawData || rawData.length === 0) {
@@ -244,7 +241,7 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
 
     useEffect(() => {
         fetchAndSetChartData();
-    }, [brawler, mode, rankedVsRegularToggleValue, map, targetAttribute, playerData[playerTag]?.name]);
+    }, [brawler, mode, matchType, map, targetAttribute, playerData[playerTag]?.name]);
     useEffect(() => {
         setPageStartingIndex(0);
     }, [chartData]);
@@ -273,22 +270,17 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
                     <div className="flex flex-col py-2">
                         <div className="font-semibold text-lg mb-2">Query</div>
                         <div className="flex flex-wrap gap-3">
-                            <CustomSelector
-                                value={rankedVsRegularToggleValue}
-                                setValue={updateRegularVsRankedToggleValueAndDependents}
-                                labels={rankedVsRegularToggleLabels}
-                                noChoiceLabel="Select Type..."
-                                searchPlaceholder="Search Types..."
-                                emptySearch="No Type Found"
+                            <MatchTypeSelector
+                                matchType={matchType}
+                                setMatchType={updateMatchTypeAndDependents}
+                                isGlobal={isGlobal}
                                 disabled={targetAttribute == "type"}
-                                searchEnabled={false}
-                                canBeEmpty={false}
                                 hoverMessage={targetAttribute == "type" ? "Change x-axis to something other than type to modify this value!" : ""}
                             />
                             <CustomSelector
                                 value={mode}
                                 setValue={setModeAndUpdateMap}
-                                labels={rankedVsRegularToggleValue == "regular" ? modeLabels : rankedModeLabels}
+                                labels={matchType == "regular" ? modeLabels : rankedModeLabels}
                                 noChoiceLabel="Select Mode..."
                                 searchPlaceholder="Search Modes..."
                                 emptySearch="No Mode Found"

@@ -10,13 +10,13 @@ export default function GlobalBrawlerTablePage() {
   const router = useRouter();
 
   const [mode, setMode] = useState("");
-  const [rankedVsRegularToggleValue, setRankedVsRegularToggleValue] = useState("ranked");
+  const [matchType, setMatchType] = useState("ranked");
 
-  const updateRankedVsRegularToggleValue = (newValue: string) => {
+  const updateMatchType = (newValue: string) => {
     if (newValue === "ranked" && rankedModeLabelMap[mode as keyof typeof rankedModeLabelMap] === undefined) {
       setMode("");
     }
-    setRankedVsRegularToggleValue(newValue);
+    setMatchType(newValue);
   };
 
   const handleBrawlerClick = (brawlerName: string) => {
@@ -30,8 +30,8 @@ export default function GlobalBrawlerTablePage() {
       onBrawlerClick={handleBrawlerClick}
       mode={mode}
       setMode={setMode}
-      rankedVsRegularToggleValue={rankedVsRegularToggleValue}
-      setRankedVsRegularToggleValue={updateRankedVsRegularToggleValue}
+      matchType={matchType}
+      setMatchType={updateMatchType}
     />
   );
 }

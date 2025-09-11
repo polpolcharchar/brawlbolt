@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { Area, AreaChart, CartesianGrid, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { CustomSelector } from "../Selectors/CustomSelector";
 import { LinearNaturalChartToggle } from "../Selectors/LinearNaturalChartToggle";
-import { RegularRankedToggle } from "../Selectors/RegularRankedToggle";
+import { MatchTypeSelector } from "../Selectors/MatchTypeSelector";
 
 const chartConfig = {
     winrate: {
@@ -36,16 +36,16 @@ interface Stat {
 export const BrawlerOverTimeChart = ({
     mode,
     setMode,
-    rankedVsRegularToggleValue,
-    setRankedVsRegularToggleValue,
+    matchType,
+    setMatchType,
     brawler,
     setBrawler,
     isActive
 }: {
     mode: string,
     setMode: (value: string) => void,
-    rankedVsRegularToggleValue: string,
-    setRankedVsRegularToggleValue: (value: string) => void,
+    matchType: string,
+    setMatchType: (value: string) => void,
     brawler: string,
     setBrawler: (value: string) => void,
     isActive: boolean
@@ -64,11 +64,11 @@ export const BrawlerOverTimeChart = ({
 
     const [chartType, setChartType] = useState<"linear" | "natural">("linear");
 
-    const fetchData = async (rankedVsRegularToggleValue: string, mode: string, brawler: string) => {
+    const fetchData = async (matchType: string, mode: string, brawler: string) => {
 
         if (brawler == "") return;
 
-        const statTypeString = rankedVsRegularToggleValue + mode + brawler;
+        const statTypeString = matchType + mode + brawler;
 
         if (brawlerTimeData[statTypeString] !== undefined) {
             if (brawlerTimeData[statTypeString] !== "temp") {
@@ -80,7 +80,7 @@ export const BrawlerOverTimeChart = ({
 
         const stats = await fetchGlobalStats(
             10,
-            rankedVsRegularToggleValue,
+            matchType,
             mode,
             brawler,
             ""
@@ -125,10 +125,10 @@ export const BrawlerOverTimeChart = ({
 
     useEffect(() => {
         if (isActive) {
-            fetchData(rankedVsRegularToggleValue, mode, brawler);
+            fetchData(matchType, mode, brawler);
         }
 
-    }, [mode, rankedVsRegularToggleValue, brawler, isActive]);
+    }, [mode, matchType, brawler, isActive]);
 
     useEffect(() => {
         updateBrawlerLabels();
@@ -141,15 +141,15 @@ export const BrawlerOverTimeChart = ({
                     <CardTitle className="text-2xl font-bold mb-4 text-(--foreground)">Global Brawler History</CardTitle>
                 </div>
                 <div className="flex flex-wrap gap-4">
-                    <RegularRankedToggle
-                        rankedVsRegularToggleValue={rankedVsRegularToggleValue}
-                        setRankedVsRegularToggleValue={setRankedVsRegularToggleValue}
-                        statType="duration"
+                    <MatchTypeSelector
+                        matchType={matchType}
+                        setMatchType={setMatchType}
+                        isGlobal={true}
                     />
                     <CustomSelector
                         value={mode}
                         setValue={setMode}
-                        labels={rankedVsRegularToggleValue == "regular" ? modeLabels : rankedModeLabels}
+                        labels={matchType == "regular" ? modeLabels : rankedModeLabels}
                         noChoiceLabel="Select Mode..."
                         searchPlaceholder="Search Modes..."
                         emptySearch="No Mode Found"
