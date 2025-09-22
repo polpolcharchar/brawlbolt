@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { ChartTooltip } from "@/components/ui/chart";
 import { Checkbox } from "@/components/ui/checkbox";
 import { brawlerLabels, modeLabelMap, modeLabels, rankedModeLabels } from "@/lib/BrawlUtility/BrawlConstants";
-import { fetchGlobalStats, fetchTrieData, updateBrawlerLabels } from "@/lib/BrawlUtility/BrawlDataFetcher";
+import { fetchGlobalStats, fetchTrieData, updateBrawlerAndModeLabels } from "@/lib/BrawlUtility/BrawlDataFetcher";
 import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
 import { LockIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -250,7 +250,7 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
     }, [statType, sortingStatType]);
 
     useEffect(() => {
-        updateBrawlerLabels();
+        updateBrawlerAndModeLabels();
     }, []);
 
     return (

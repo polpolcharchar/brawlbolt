@@ -7,7 +7,7 @@ import {
     ChartTooltip
 } from "@/components/ui/chart";
 import { brawlerLabels, modeLabels, rankedModeLabels } from "@/lib/BrawlUtility/BrawlConstants";
-import { fetchGlobalStats, updateBrawlerLabels } from "@/lib/BrawlUtility/BrawlDataFetcher";
+import { fetchGlobalStats, updateBrawlerAndModeLabels } from "@/lib/BrawlUtility/BrawlDataFetcher";
 import { Frown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Area, AreaChart, CartesianGrid, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from "recharts";
@@ -131,7 +131,7 @@ export const BrawlerOverTimeChart = ({
     }, [mode, matchType, brawler, isActive]);
 
     useEffect(() => {
-        updateBrawlerLabels();
+        updateBrawlerAndModeLabels();
     }, []);
 
     return (

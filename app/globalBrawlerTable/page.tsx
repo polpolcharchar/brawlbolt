@@ -3,8 +3,9 @@
 import { columns } from "@/components/BrawlComponents/Tables/BrawlerTable/Columns";
 import { GlobalBrawlerTable } from "@/components/BrawlComponents/Tables/BrawlerTable/GlobalBrawlerTable";
 import { rankedModeLabelMap } from "@/lib/BrawlUtility/BrawlConstants";
+import { updateBrawlerAndModeLabels } from "@/lib/BrawlUtility/BrawlDataFetcher";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function GlobalBrawlerTablePage() {
   const router = useRouter();
@@ -13,7 +14,7 @@ export default function GlobalBrawlerTablePage() {
   const [matchType, setMatchType] = useState("ranked");
 
   const updateMatchType = (newValue: string) => {
-    if (newValue === "ranked" && rankedModeLabelMap[mode as keyof typeof rankedModeLabelMap] === undefined) {
+    if (newValue !== "regular" && rankedModeLabelMap[mode as keyof typeof rankedModeLabelMap] === undefined) {
       setMode("");
     }
     setMatchType(newValue);
@@ -22,6 +23,10 @@ export default function GlobalBrawlerTablePage() {
   const handleBrawlerClick = (brawlerName: string) => {
     router.push(`/brawlerHistory?brawler=${encodeURIComponent(brawlerName)}`);
   };
+
+  useEffect(() => {
+    updateBrawlerAndModeLabels();
+  }, []);
 
   return (
     <GlobalBrawlerTable

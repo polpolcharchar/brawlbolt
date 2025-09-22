@@ -1,4 +1,4 @@
-import { setBrawlerLabelUpdateAttempted, isValidTag, brawlerLabelUpdateAttempted, brawlerLabels, setBrawlerLabels } from "./BrawlConstants";
+import { setBrawlerModeLabelsUpdateAttempted, isValidTag, brawlerModeLabelsUpdateAttempted, brawlerLabels, setBrawlerLabels, setModeLabels } from "./BrawlConstants";
 
 const requestServer = async (body: string, setIsLoading: (value: boolean) => void) => {
 
@@ -287,14 +287,14 @@ export const fetchPlayerOverview = async (playerTag: string) => {
     }
 }
 
-export const updateBrawlerLabels = async () => {
+export const updateBrawlerAndModeLabels = async () => {
 
-    if (brawlerLabelUpdateAttempted) return;
+    if (brawlerModeLabelsUpdateAttempted) return;
 
-    setBrawlerLabelUpdateAttempted(true);
+    setBrawlerModeLabelsUpdateAttempted(true);
 
     const requestBody = {
-        "type": "getBrawlerList",
+        "type": "getBrawlerAndModeList",
     }
 
     const requestResult = await requestServer(JSON.stringify(requestBody), () => { });
@@ -308,6 +308,20 @@ export const updateBrawlerLabels = async () => {
         });
 
         setBrawlerLabels(brawlerLabels);
+
+        const modeLabels = requestResult["modes"].map((mode: string) => {
+            const label = mode
+                .replace(/([a-z])([A-Z])/g, '$1 $2') // to title case
+                .toLowerCase()
+                .split(/\s+/)
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+
+            return { value: mode, label };
+        });
+
+        setModeLabels(modeLabels);
+
         return true;
     } else {
         return false;

@@ -23,7 +23,7 @@ export default function UserPage() {
   }, [searchParams]);
 
   const updateMatchType = (newValue: string) => {
-    if (newValue === "ranked" && rankedModeLabelMap[mode as keyof typeof rankedModeLabelMap] === undefined) {
+    if (newValue !== "regular" && rankedModeLabelMap[mode as keyof typeof rankedModeLabelMap] === undefined) {
       setMode("");
     }
     setMatchType(newValue);

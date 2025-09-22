@@ -4,7 +4,7 @@
 import { PlayerSelector } from "@/components/BrawlComponents/Selectors/PlayerSelector"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { updateBrawlerLabels } from "@/lib/BrawlUtility/BrawlDataFetcher"
+import { updateBrawlerAndModeLabels } from "@/lib/BrawlUtility/BrawlDataFetcher"
 import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
@@ -19,7 +19,7 @@ export default function LandingPage() {
   }
 
   useEffect(() => {
-    updateBrawlerLabels();
+    updateBrawlerAndModeLabels();
   }, []);
 
   return (
