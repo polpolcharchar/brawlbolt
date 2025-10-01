@@ -27,7 +27,7 @@ export default function LandingPage() {
       <div className="max-w-4xl text-center space-y-4">
         <h1 className="text-4xl font-bold tracking-tight text-(--foreground)">Welcome to BrawlBolt</h1>
         <p className="text-lg text-(--muted-foreground)">
-          Lightning-Accurate Statistics
+          The Most Advanced Brawl Stars Statistic Tracker
         </p>
       </div>
 
