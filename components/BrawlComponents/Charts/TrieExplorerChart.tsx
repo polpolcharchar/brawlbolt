@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { brawlerLabels, modeLabelMap, modeLabels, rankedModeLabels } from "@/lib/BrawlUtility/BrawlConstants";
 import { fetchGlobalStats, fetchTrieData, updateBrawlerAndModeLabels } from "@/lib/BrawlUtility/BrawlDataFetcher";
 import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider";
-import { LockIcon } from "lucide-react";
+import { ArrowDownZA, LockIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { CustomSelector } from "../Selectors/CustomSelector";
@@ -130,6 +130,7 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
 
     const [sortingStatType, setSortingStatType] = useState(isGlobal ? "winrate" : "numGames");
     const [sortByStatType, setSortByStatType] = useState(isGlobal ? true : false);
+    const [doReverseSort, setDoReverseSort] = useState(false);
     const sortingTypeLabels = useMemo(() => {
         return [
             { value: "winrate", label: "Winrate" },
@@ -147,7 +148,7 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
     const sortChartData = () => {
         setChartData((prevData) => {
             return [...prevData].sort((a: any, b: any) => {
-                return b[sortingStatType] - a[sortingStatType];
+                return (b[sortingStatType] - a[sortingStatType]) * (doReverseSort ? -1 : 1);
             });
         });
     }
@@ -248,6 +249,9 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
     useEffect(() => {
         sortChartData();
     }, [statType, sortingStatType]);
+    useEffect(() => {
+        sortChartData();
+    }, [doReverseSort]);
 
     useEffect(() => {
         updateBrawlerAndModeLabels();
@@ -370,10 +374,29 @@ export const TrieExplorerChart = ({ playerTag, isGlobal }: { playerTag: string, 
                                     <label
                                         htmlFor={"sortByStatType" + playerTag}
                                         className="flex items-center gap-1 cursor-pointer text-(--muted-foreground) text-xs"
-                                        title="Lock sorting type to y-axis value"
+                                        title="Automatically sort by whatever is being graphed"
                                     >
                                         <LockIcon size={16} />
-                                        <span>Lock to y-axis value</span>
+                                        <span>Lock to y-axis attribute</span>
+                                    </label>
+                                </div>
+
+                                <div className="flex items-center gap-2 pt-2">
+                                    <Checkbox
+                                        id={"doReverseSort" + playerTag}
+                                        checked={doReverseSort}
+                                        onCheckedChange={() => {
+                                            setDoReverseSort(prev => !prev);
+                                        }}
+                                        className="cursor-pointer"
+                                    />
+                                    <label
+                                        htmlFor={"doReverseSort" + playerTag}
+                                        className="flex items-center gap-1 cursor-pointer text-(--muted-foreground) text-xs"
+                                        title=""
+                                    >
+                                        <ArrowDownZA size={16} />
+                                        <span>Reverse Sort</span>
                                     </label>
                                 </div>
                             </div>
