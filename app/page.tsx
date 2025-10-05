@@ -32,6 +32,23 @@ export default function LandingPage() {
       </div>
 
       <div className="grid gap-8 max-w-4xl w-full md:grid-cols-2">
+
+        {/* Global Stats Card */}
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-(--foreground)">Explore Global Stats</CardTitle>
+            <CardDescription>
+              See rankings, winrates, usage, and more across all brawlers and game modes.
+              Data is updated daily.
+              </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button className="w-full mt-4 text-(--foreground)" onClick={() => router.push("/globalBrawlerTable")}>
+              View Global Statistics
+            </Button>
+          </CardContent>
+        </Card>
+
         {/* Player Stats Card */}
         <Card className="shadow-lg">
           <CardHeader>
@@ -51,19 +68,6 @@ export default function LandingPage() {
               Match History
             </Button>
 
-          </CardContent>
-        </Card>
-
-        {/* Global Stats Card */}
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-(--foreground)">Explore Global Stats</CardTitle>
-            <CardDescription>See rankings, win rates, pick rates, and more across all brawlers and game modes.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button className="w-full mt-4 text-(--foreground)" onClick={() => router.push("/globalBrawlerTable")}>
-              View Global Statistics
-            </Button>
           </CardContent>
         </Card>
       </div>
