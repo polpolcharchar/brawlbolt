@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { updateBrawlerAndModeLabels } from "@/lib/BrawlUtility/BrawlDataFetcher"
 import { usePlayerData } from "@/lib/BrawlUtility/PlayerDataProvider"
+import { AlertTriangle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 
@@ -31,6 +32,18 @@ export default function LandingPage() {
         </p>
       </div>
 
+      <div className="flex flex-col items-center m-2">
+        <Card className="bg-yellow-100 border-yellow-400 shadow-md p-4 rounded-2xl flex items-center w-full max-w-xl  text-center">
+          <AlertTriangle className="text-yellow-600 w-6 h-6 mr-3" />
+          <CardContent>
+            <p className="text-yellow-800 font-medium">
+              As of 7/27, brawlbolt servers are down! They will be restored some time in the future, but this may not be soon!
+            </p>
+          </CardContent>
+        </Card>
+
+      </div>
+
       <div className="grid gap-8 max-w-4xl w-full md:grid-cols-2">
 
         {/* Global Stats Card */}
@@ -40,7 +53,7 @@ export default function LandingPage() {
             <CardDescription>
               See rankings, winrates, usage, and more across all brawlers and game modes.
               Data is updated daily.
-              </CardDescription>
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Button className="w-full mt-4 text-(--foreground)" onClick={() => router.push("/globalBrawlerTable")}>
