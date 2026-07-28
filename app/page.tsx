@@ -37,7 +37,8 @@ export default function LandingPage() {
           <AlertTriangle className="text-yellow-600 w-6 h-6 mr-3" />
           <CardContent>
             <p className="text-yellow-800 font-medium">
-              As of 7/27, brawlbolt servers are down! They will be restored some time in the future, but this may not be soon!
+              As of 7/27, brawlbolt tracking servers are down! They will be restored some time in the future, but this may not be soon!
+              Previously-collected account data is still accessible.
             </p>
           </CardContent>
         </Card>
