@@ -32,19 +32,6 @@ export default function LandingPage() {
         </p>
       </div>
 
-      <div className="flex flex-col items-center m-2">
-        <Card className="bg-yellow-100 border-yellow-400 shadow-md p-4 rounded-2xl flex items-center w-full max-w-xl  text-center">
-          <AlertTriangle className="text-yellow-600 w-6 h-6 mr-3" />
-          <CardContent>
-            <p className="text-yellow-800 font-medium">
-              As of 7/27, brawlbolt tracking servers are down! They will be restored some time in the future, but this may not be soon!
-              Previously-collected account data is still accessible.
-            </p>
-          </CardContent>
-        </Card>
-
-      </div>
-
       <div className="grid gap-8 max-w-4xl w-full md:grid-cols-2">
 
         {/* Global Stats Card */}
